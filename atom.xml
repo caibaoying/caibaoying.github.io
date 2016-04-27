@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Panda&#39;s blog</title>
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2016-04-26T20:27:53.138Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>Caibaoying</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="http://yoursite.com/2016/04/27/hello-world/"/>
+    <id>http://yoursite.com/2016/04/27/hello-world/</id>
+    <published>2016-04-26T21:57:09.435Z</published>
+    <updated>2016-04-26T20:27:53.138Z</updated>
+    
+    <content type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;documentation&lt;/a&gt; for more info. If you get any problems when using Hexo, you can find the answer in &lt;a href=&quot;https://hexo.io/docs/troubleshooting.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;troubleshooting&lt;/a&gt; or you can ask me on &lt;a href=&quot;https://github.com/hexojs/hexo/issues&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;Quick-Start&quot;&gt;&lt;a href=&quot;#Quick-Start&quot; class=&quot;headerlink&quot; title=&quot;Quick Start&quot;&gt;&lt;/a&gt;Quick Start&lt;/h2&gt;&lt;h3 id=&quot;Create-a-new-post&quot;&gt;&lt;a href=&quot;#Create-a-new-post&quot; class=&quot;headerlink&quot; title=&quot;Create a new post&quot;&gt;&lt;/a&gt;Create a new post&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo new &lt;span class=&quot;string&quot;&gt;&quot;My New Post&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/writing.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Writing&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;Run-server&quot;&gt;&lt;a href=&quot;#Run-server&quot; class=&quot;headerlink&quot; title=&quot;Run server&quot;&gt;&lt;/a&gt;Run server&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo server&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/server.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Server&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;Generate-static-files&quot;&gt;&lt;a href=&quot;#Generate-static-files&quot; class=&quot;headerlink&quot; title=&quot;Generate static files&quot;&gt;&lt;/a&gt;Generate static files&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo generate&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/generating.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Generating&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;Deploy-to-remote-sites&quot;&gt;&lt;a href=&quot;#Deploy-to-remote-sites&quot; class=&quot;headerlink&quot; title=&quot;Deploy to remote sites&quot;&gt;&lt;/a&gt;Deploy to remote sites&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo deploy&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/deployment.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Deployment&lt;/a&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>两个栈实现一个队列</title>
+    <link href="http://yoursite.com/2016/04/21/%E4%B8%A4%E4%B8%AA%E6%A0%88%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E9%98%9F%E5%88%97/"/>
+    <id>http://yoursite.com/2016/04/21/两个栈实现一个队列/</id>
+    <published>2016-04-21T08:06:40.000Z</published>
+    <updated>2016-04-26T15:24:19.694Z</updated>
+    
+    <content type="html">&lt;p&gt;题目描述： 使用两个栈实现一个队列&lt;/p&gt;
+&lt;p&gt;数据结构： 栈&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;思    路： 队列的特点是先进先出，所以两个栈，Stack1主要负责入栈，也就是队列中的元素，&lt;pre&gt;&lt;code&gt;Stack2负责出栈，也就是出队列中的元素。
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol&gt;
+&lt;li&gt;对于进队列：&lt;pre&gt;&lt;code&gt;1》如果Stack1为空，则直接进栈，相当于进队列;
+2》如果Stack1不为空，则入队列元素也是直接入栈;
+  入队列其实是元素的直接Push,主要是要满足先进的先出即可。
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ol&gt;
+&lt;li&gt;对于出队列：&lt;pre&gt;&lt;code&gt;1》如果Stack2为空，则将Stack1中的元素全部倒入Stack2中（stack1的元素全部pop
+到stack2中），如果Stack2不为空，则直接出栈，相当于出队列;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;问题小结： 对于Stack1到Stack2的倒入，每执行一次push都可以Pop到stack2中，但是思考到算法的效率，所以描述如上。&lt;/p&gt;
+&lt;p&gt; template &lt;class t=&quot;&quot;&gt;&lt;br&gt; class Stack&lt;br&gt; {&lt;br&gt; public:&lt;/class&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Stack()
+    :_array(NULL)
+    , _size(0)
+    , _capacity(0)
+{}
+Stack(const Stack&amp;lt;T&amp;gt;&amp;amp; s)
+{
+    _array = new T[s._size];
+    //memcpy(_array, array, sizeof(T)*s._size);
+    for (size_t i = 0; i &amp;lt; s._size; ++i)
+    {
+        _array[i] = s._array[i];
+    }
+    _size = s._size;
+    _capacity = s._size;
+}
+
+~Stack()
+{
+    if (_array)
+    {
+        delete[] _array;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; public:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;void Push(const T&amp;amp; x)      // Push an element in stack;
+{
+    _CheckCapacity();
+    _array[_size++] = x;
+}
+T&amp;amp; Pop()             // Pop an element out of stack;
+{
+    if (_array)
+    {
+        return _array[--_size];
+    }
+    else
+    {
+        delete[] _array;
+        _array = NULL;
+    }
+}
+void Print()
+{
+    if (_array)
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;依照进顺序:&amp;quot;;
+        for (size_t i = 0; i &amp;lt; _size; ++i)
+        {
+            cout &amp;lt;&amp;lt; &amp;quot; &amp;quot; &amp;lt;&amp;lt; _array[i];
+        }
+    }
+}
+
+size_t Size()
+{
+    return _size;
+}
+
+size_t Capacity()
+{
+    return _capacity;
+}
+
+bool Empty()
+{
+    return _size == 0;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; protected:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;void _CheckCapacity()
+{
+    if (_size &amp;gt;= _capacity)
+    {
+        _capacity = _capacity * 2 + 3;
+        T* tmp = new T[_capacity];
+        if (_array)
+        {
+            for (size_t i = 0; i &amp;lt; _size; ++i)
+            {
+                tmp[i] = _array[i];
+            }
+            delete[] _array;
+        }
+        _array = tmp;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; private:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;T* _array;
+size_t _size;
+size_t _capacity;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; };&lt;/p&gt;
+&lt;p&gt; template &lt;class t=&quot;&quot;&gt;&lt;br&gt; class Queue&lt;br&gt; {&lt;br&gt; public:&lt;/class&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Queue()      //不能省
+{}
+Queue(const Stack&amp;lt;T&amp;gt;&amp;amp; S1,const Stack&amp;lt;int&amp;gt;&amp;amp; S2)
+    :s1(S1)
+    , s2(S2)
+{}
+~Queue()
+{}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; public:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;void Inqueue(const T&amp;amp; x)
+{
+    s1.Push(x);
+    ////1m 2k; 1k 2k
+    //if (s2.Empty())
+    //{
+    //    s1.Push(x);
+    //}
+    ////1kong 2 man
+    ////1,2 man
+    //if (!s2.Empty())
+    //{
+    //    for (size_t i = 0; i &amp;lt; s2.Size(); ++i)
+    //    {
+    //        s1.Push(s2.Pop());
+    //    }
+    //    s1.Push(x);
+    //}
+}
+T&amp;amp; Outqueue()
+{
+    if (s1.Empty() &amp;amp;&amp;amp; s2.Empty())
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;没有元素&amp;quot; &amp;lt;&amp;lt; endl;
+    }
+    if (!s2.Empty())
+    {
+        return s2.Pop();
+    }
+    if (s2.Empty())
+    {
+        for (size_t i = s1.Size() - 1 ; i &amp;gt;= 1; --i)
+        {
+            s2.Push(s1.Pop());
+        }
+        return s1.Pop();
+    }    
+}
+void Print()
+{
+    s1.Print();
+    s2.Print();
+    cout &amp;lt;&amp;lt; endl;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; private:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Stack&amp;lt;T&amp;gt; s1;
+Stack&amp;lt;T&amp;gt; s2;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; };&lt;/p&gt;
+&lt;p&gt; //测试用例&lt;br&gt; void test1()&lt;br&gt; {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Queue&amp;lt;int&amp;gt; q;
+q.Inqueue(1);
+q.Inqueue(2);
+q.Inqueue(3);
+q.Inqueue(4);
+q.Inqueue(5);
+q.Inqueue(6);
+q.Print();
+
+cout &amp;lt;&amp;lt; q.Outqueue() &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; q.Outqueue() &amp;lt;&amp;lt; endl;
+cout &amp;lt;&amp;lt; q.Outqueue() &amp;lt;&amp;lt; endl;
+q.Inqueue(7);
+q.Inqueue(8);
+q.Inqueue(9);
+q.Print();
+q.Inqueue(10);
+q.Print();
+cout &amp;lt;&amp;lt; q.Outqueue() &amp;lt;&amp;lt; endl;
+q.Print();
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; }&lt;/p&gt;
+&lt;p&gt; void test2()&lt;br&gt; {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Queue&amp;lt;string&amp;gt; q;
+q.Inqueue(&amp;quot;x1&amp;quot;);
+q.Inqueue(&amp;quot;x2&amp;quot;);
+q.Inqueue(&amp;quot;x333333333333333333333333333&amp;quot;);
+q.Inqueue(&amp;quot;x4&amp;quot;);
+q.Inqueue(&amp;quot;x5&amp;quot;);
+q.Inqueue(&amp;quot;x7&amp;quot;);
+q.Inqueue(&amp;quot;x8&amp;quot;);
+q.Inqueue(&amp;quot;x9&amp;quot;);
+q.Inqueue(&amp;quot;x10&amp;quot;);
+q.Inqueue(&amp;quot;x11&amp;quot;);
+q.Print();
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; }&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;题目描述： 使用两个栈实现一个队列&lt;/p&gt;
+&lt;p&gt;数据结构： 栈&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;思    路： 队列的特点是先进先出，所以两个栈，Stack1主要负责入栈，也就是队列中的元素，&lt;pre&gt;&lt;code&gt;Stack2负责出栈，也就是出队列中的元素。
+&lt;/code&gt;&lt;/
+    
+    </summary>
+    
+      <category term="栈和队列面试题" scheme="http://yoursite.com/categories/%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
+    
+    
+      <category term="博客，栈和队列" scheme="http://yoursite.com/tags/%E5%8D%9A%E5%AE%A2%EF%BC%8C%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97/"/>
+    
+  </entry>
+  
+</feed>

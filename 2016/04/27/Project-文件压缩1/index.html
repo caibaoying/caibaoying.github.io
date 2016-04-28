@@ -76,7 +76,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/04/27/Project-文件压缩/" title="文件压缩之Heap" itemprop="url">文件压缩之Heap</a>
+      <a href="/2016/04/27/Project-文件压缩1/" title="文件压缩之Heap" itemprop="url">文件压缩之Heap</a>
   </h1>
   <p class="article-author">By
     
@@ -84,7 +84,7 @@
     </p>
   <p class="article-time">
     <time datetime="2016-04-27T03:45:46.000Z" itemprop="datePublished">2016-04-27</time>
-    更新日期:<time datetime="2016-04-28T04:27:10.401Z" itemprop="dateModified">2016-04-28</time>
+    更新日期:<time datetime="2016-04-28T05:53:33.706Z" itemprop="dateModified">2016-04-28</time>
     
   </p>
 </header>
@@ -106,16 +106,18 @@
 <li>压缩文件，根据配置文件解压缩文件</li>
 </ol>
 <p>数据结构：vector； 堆（push,pop,top等基本操作）； huffmanTree(哈夫曼编码）；<br>string；atoi,itoa；文件的读写，写入，读出等基本操作；位运算，仿函数和运算符重载等</p>
+<p>环境：VS2013</p>
 <p>上面简述了本项目的一些基本的信息，看着是不是有点乱啊，没关系，咱们从堆开始一步一步<br>剖析它。废话不多说，先从堆说起。</p>
 <h2 id="堆部分讲解："><a href="#堆部分讲解：" class="headerlink" title="堆部分讲解："></a>堆部分讲解：</h2><p>堆数据结构是一种数组对象，它可以被视为一棵完全二叉树结构。</p>
 <p>堆结构的二叉树存储是</p>
 <p>最大堆：每个父节点的都大于孩子节点。</p>
 <p>最小堆：每个父节点的都小于孩子节点。</p>
-<p><img src="image/heap.png" alt="heap"></p>
-<p>如图所示：它既不是最大堆也不是最小堆，那么就要对他进行调整，调整如下：<br>调整方式：<strong><em><code>向上调整</code></em></strong>，所谓向上调整，就是从从第一个非叶子节点开始调整，让每一个节点都满足小堆<br><img src="image/heap2.png" alt="heap"></p>
-<p>特殊情况：将原来的19改为12，调整后他就发生了如下的变化，</p>
-<p><img src="image/heap_special.png" alt="heap_special"></p>
-<p>如图所示，结果存在问题，所以这种情况就需要以该节点为根节点，<strong><code>向下调整</code></strong></p>
+<pre><code>![heap](image/heap.png)
+</code></pre><p>如图所示：它既不是最大堆也不是最小堆，那么就要对他进行调整，调整如下：<br>调整方式：<strong><em><code>向上调整</code></em></strong>，所谓向上调整，就是从从第一个非叶子节点开始调整，让每一个节点都满足小堆</p>
+<pre><code>![heap](image/heap2.png)
+</code></pre><p>特殊情况：将原来的19改为12，调整后他就发生了如下的变化，</p>
+<pre><code>![heap_special](image/heap_special.png)
+</code></pre><p>如图所示，结果存在问题，所以这种情况就需要以该节点为根节点，<strong><code>向下调整</code></strong></p>
 <h2 id="实现代码："><a href="#实现代码：" class="headerlink" title="实现代码："></a>实现代码：</h2><pre><code>#pragma once
 #pragma warning(disable:4018)
 #include &lt;vector&gt;
@@ -283,7 +285,7 @@ void testheap()
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/文件压缩-1/">文件压缩(1)</a>
+  <span></span> <a href="/tags/文件压缩之Heap/">文件压缩之Heap</a>
   </div>
 
 
@@ -296,7 +298,7 @@ void testheap()
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2016/04/27/Project-文件压缩/" data-title="文件压缩之Heap | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://yoursite.com/2016/04/27/Project-文件压缩1/" data-title="文件压缩之Heap | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -306,7 +308,7 @@ void testheap()
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2016/04/28/project-文件压缩2/" title="文件压缩之HuffmanTree">
+ <a href="/2016/04/28/Project-文件压缩2/" title="文件压缩之HuffmanTree">
   <strong>PREVIOUS:</strong><br/>
   <span>
   文件压缩之HuffmanTree</span>
@@ -346,9 +348,7 @@ void testheap()
 	<p class="asidetitle">分类</p>
 		<ul>
 		
-			<li><a href="/categories/Project/" title="Project">Project<sup>2</sup></a></li>
-		
-			<li><a href="/categories/project/" title="project">project<sup>0</sup></a></li>
+			<li><a href="/categories/Project/" title="Project">Project<sup>3</sup></a></li>
 		
 			<li><a href="/categories/栈和队列面试题/" title="栈和队列面试题">栈和队列面试题<sup>1</sup></a></li>
 		
@@ -363,9 +363,13 @@ void testheap()
 		
 			<li><a href="/tags/博客，栈和队列/" title="博客，栈和队列">博客，栈和队列<sup>1</sup></a></li>
 		
-			<li><a href="/tags/文件压缩-1/" title="文件压缩(1)">文件压缩(1)<sup>1</sup></a></li>
+			<li><a href="/tags/文件压缩之Heap/" title="文件压缩之Heap">文件压缩之Heap<sup>1</sup></a></li>
 		
-			<li><a href="/tags/文件压缩2/" title="文件压缩2">文件压缩2<sup>1</sup></a></li>
+			<li><a href="/tags/文件压缩之HuffmanTree/" title="文件压缩之HuffmanTree">文件压缩之HuffmanTree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/文件压缩之压缩操作/" title="文件压缩之压缩操作">文件压缩之压缩操作<sup>1</sup></a></li>
+		
+			<li><a href="/tags/文件压缩的压缩算法/" title="文件压缩的压缩算法">文件压缩的压缩算法<sup>0</sup></a></li>
 		
 		</ul>
 </div>

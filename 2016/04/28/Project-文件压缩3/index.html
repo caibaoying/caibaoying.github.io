@@ -1,0 +1,722 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>文件压缩之压缩与解压 | Panda&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Caibaoying">
+    
+    <meta name="description" content="可能有人要问了，不把压缩与解压缩分开呢？清晰明了，其实我自己也尝试过分开来写，自我感觉，这是自己给自己增加难度，因为两者有着紧密的联系，分开写，一是传参难，二是不好理解。
+压缩操作核心思想压缩是利用字符的huffman编码进行操作，每一个字符都有一个huffman编码，那么这个huffman编码怎么">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml## RSS address." title="Panda&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Panda&#39;s blog" title="Panda&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Panda&#39;s blog">Panda&#39;s blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/04/28/Project-文件压缩3/" title="文件压缩之压缩与解压" itemprop="url">文件压缩之压缩与解压</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://yoursite.com" title="Caibaoying">Caibaoying</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-04-28T04:30:58.000Z" itemprop="datePublished">2016-04-28</time>
+    更新日期:<time datetime="2016-04-28T05:55:04.959Z" itemprop="dateModified">2016-04-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#压缩操作"><span class="toc-number">1.</span> <span class="toc-text">压缩操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#核心思想"><span class="toc-number">1.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#压缩代码"><span class="toc-number">1.2.</span> <span class="toc-text">压缩代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解压缩"><span class="toc-number">1.3.</span> <span class="toc-text">解压缩</span></a></li></ol></li></ol>
+		</div>
+		
+		<p>可能有人要问了，不把压缩与解压缩分开呢？清晰明了，其实我自己也尝试过分开来写，自我感觉，这是自己给自己增加难度，因为两者有着紧密的联系，分开写，一是传参难，二是不好理解。</p>
+<h1 id="压缩操作"><a href="#压缩操作" class="headerlink" title="压缩操作"></a>压缩操作</h1><h2 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h2><p>压缩是利用字符的huffman编码进行操作，每一个字符都有一个huffman编码，那么这个huffman编码怎么来的，首先读整个文件，统计出每个字符出现的次数，然后利用这些_count建huffman树，根据所建的huffman树，出现次数多的，他的huffman编码短，出现次数少的，huffman编码可能会长一点，但是他个数少，所以整体来说，达到了压缩的目的。</p>
+<p> <strong>One Quession:</strong>这时有人疑问了，说，我拿出一个字符，结果你替换成了一堆编码，不仅没有压缩反而增容了，而且改变了原先的内容。我的回答是 是的，从目前来讲是这样的。所以从这引出了下一个问题。<br>解决上述问题的解决办法就是，将编码按位存储，如图：</p>
+<pre><code>![Compress](image/Compress1.png)
+</code></pre><p><strong>Second Quession:</strong>0000 0001 | CHAR =》 CHAR 不变，将保存的code ，tmp先左移零位，所以结果依然是 0000 0001 | CHAR = 0000 0001<br>操作code[1]=0000 0000 | CHAR tmp先左移1位，然后再与CHAR与 结果为0000 0001<br>code[2] 0000 0001 | CHAR tmp&lt;&lt;2; tmp| CHAR = 0000 0100 | 0000 0000 = 0000 0101<br>变够八位，将CHAR写入压缩文件。<br>对于（1） 与（2）的情况，就是不够八位，拿下一个字符来补，超过八位，存入下一个CHAR,文件结束后，不够八位的填零。</p>
+<ol>
+<li><p>压缩文件：顾名思义就是对文件的操作，而文件由字符组成，所以要对文件信息进行提取，最重要的信息有：<br>//文件信息结构体做堆成员<br>struct FileInfo<br>{<br> unsigned char _ch;   //字符<br> LongType _count;     //字符出现的次数，权值<br> string _code;        //Huffman编码</p>
+<p> FileInfo(unsigned char ch = 0)</p>
+<pre><code>:_ch(ch)
+, _count(0)
+, _code(&quot;&quot;)
+</code></pre><p> {}</p>
+<p> //以_count做权值，所以需重载 &lt;<br> bool operator &lt; (const FileInfo&amp; info)<br> {</p>
+<pre><code>return this-&gt;_count &lt; info._count;
+</code></pre><p> }</p>
+<p> bool operator != (const int&amp; illegal)const<br> {</p>
+<pre><code>if (this-&gt;_count != illegal)
+    return true;
+return false;
+</code></pre><p> }</p>
+<p> FileInfo operator + (const FileInfo&amp; info)<br> {</p>
+<pre><code>FileInfo FI;
+FI._count = this-&gt;_count + info._count;
+return FI;
+</code></pre><p> }<br>};</p>
+</li>
+</ol>
+<p>对于重载的这些运算符，因为——weight现在变成了结构体类型，所以需要重载这些。</p>
+<h2 id="压缩代码"><a href="#压缩代码" class="headerlink" title="压缩代码"></a>压缩代码</h2><p>bool Compress(const char* filename)<br>    {<br>        //1.打开文件，统计字符出现的次数<br>        //2.生成对应的HUffman编码<br>        //3.压缩文件<br>        //4.写配置文件，方便后续的解压缩</p>
+<pre><code>    assert(filename);
+    FILE* fOut = fopen(filename, &quot;rb&quot;);
+    assert(fOut);
+
+    //统计字符出现的次数
+    char ch = fgetc(fOut);
+    while (ch != EOF)
+    {
+        _infors[(unsigned char)ch]._count++;
+        ch = fgetc(fOut);
+    }
+
+    //生成对应的HuffmanCode
+    HuffmanTree&lt;FileInfo&gt; HT;
+    HuffmanTreeNode&lt;FileInfo&gt;* root = HT.CreateTree(_infors, 256, 0);
+    _GenerateHuffmanCode(root);
+
+    //3.压缩文件
+    CompressFile(filename);
+
+    //4.写配置文件，方便后续的解压缩
+    ConfigFile(filename);
+
+    return true;
+}
+
+//解压缩
+bool  NoCompress(const char* filename)
+{
+    //读配置文件，依照次数建树
+    assert(filename);
+
+    //读配置文件
+    string ConfigFile = filename;
+    ConfigFile = &quot;config.&quot; + ConfigFile;
+    FILE* fOutConfig = fopen(ConfigFile.c_str(), &quot;rb&quot;);
+    assert(fOutConfig);
+
+    //读压缩文件
+    string CompressFile = filename;
+    CompressFile = &quot;Compress.&quot; + CompressFile;
+    FILE* fOutCompress = fopen(CompressFile.c_str(), &quot;rb&quot;);
+    assert(fOutCompress);
+
+    //读压缩文件
+    string NoCompressFile = filename;
+    NoCompressFile = &quot;NoCompress.&quot; + NoCompressFile;
+    FILE* fInNoCompress = fopen(NoCompressFile.c_str(), &quot;wb&quot;);
+    assert(fInNoCompress);
+
+    //读配置文件，依照次数建树
+    //每次读一行
+    //long long size = 0;  atoi ()    ==&gt;  int 
+    //size &gt;&gt; 32  
+    //size |= int
+    //size &lt;&lt;= 32
+
+    //用文件个数作为终止条件
+    long long size = 0;
+    string str1 = GetLine(fOutConfig);
+    int tmp = atoi(str1.c_str());
+    size &gt;&gt;= 32;
+    size |= tmp;
+    size &lt;&lt;= 32;
+    string str2 = GetLine(fOutConfig);
+    tmp = atoi(str2.c_str());
+    size |= tmp;
+
+    str1.clear();
+    str2.clear();
+
+    string str = GetLine(fOutConfig);
+    while (!str.empty())
+    {
+        string str2;
+        str2 = str.substr(2);
+        _infors[str[0]]._count = atoi(str2.c_str());
+        str.clear();
+        str = GetLine(fOutConfig);
+    }
+
+    //创建哈弗曼树
+    HuffmanTree&lt;FileInfo&gt; HT;
+    HuffmanTreeNode&lt;FileInfo&gt;* root = HT.CreateTree(_infors, 256, 0);
+    HuffmanTreeNode&lt;FileInfo&gt;* cur = root;
+
+    //解压缩文件
+    int flag = 0;
+    char ch = fgetc(fOutCompress);
+    while (cur &amp;&amp; !feof(fOutCompress))
+    {
+        //拿出一个字符然后进行操作
+        int index = 0;
+        while (cur &amp;&amp; index &lt; 8)
+        {
+            char CHAR = 1;
+            CHAR = (CHAR &lt;&lt; index) &amp; ch;
+
+            if (CHAR)
+                cur = cur-&gt;_right;
+            else
+                cur = cur-&gt;_left;
+
+            if (cur &amp;&amp; cur-&gt;_left == NULL &amp;&amp; cur-&gt;_right == NULL)
+            {
+                fputc((unsigned char)cur-&gt;_weight._ch, fInNoCompress);
+                ++flag;
+                if (flag == size)
+                {
+                    break;
+                }
+                cur = root;
+            }
+            ++index;
+        }
+
+        ch = fgetc(fOutCompress);
+    }
+
+    fclose(fOutConfig);
+    fclose(fOutCompress);
+    fclose(fInNoCompress);
+    return true;
+}
+</code></pre><p>void _GenerateHuffmanCode(HuffmanTreeNode<fileinfo>* root)<br>    {<br>        if (NULL == root)<br>            return;</fileinfo></p>
+<pre><code>    _GenerateHuffmanCode(root-&gt;_left);
+    _GenerateHuffmanCode(root-&gt;_right);
+
+    //如果当前节点是叶子节点，则生成对应的哈夫曼编码
+    if (root-&gt;_left == NULL &amp;&amp; root-&gt;_right == NULL)
+    {
+        HuffmanTreeNode&lt;FileInfo&gt;* cur = root;
+        HuffmanTreeNode&lt;FileInfo&gt;* parent = cur-&gt;_parent;
+        string&amp; code = _infors[cur-&gt;_weight._ch]._code;
+
+        while (parent)
+        {
+            if (parent-&gt;_left == cur)
+            {
+                code += &apos;0&apos;;
+            }
+            else
+            {
+                code += &apos;1&apos;;
+            }
+            cur = cur-&gt;_parent;
+            parent = cur-&gt;_parent;
+        }
+
+        //逆置huffamanCode
+        reverse(code.begin() , code.end());
+        //cout &lt;&lt; root-&gt;_weight._ch &lt;&lt; &quot;:&quot; &lt;&lt; code &lt;&lt; &quot; &quot;&lt;&lt;endl;
+    }
+}
+</code></pre><p>void CompressFile(const char* filename)<br>    {<br>        assert(filename);</p>
+<pre><code>    FILE* fOut = fopen(filename, &quot;rb&quot;);
+    assert(fOut);
+
+    string CompressFile = filename;
+    CompressFile = &quot;Compress.&quot; + CompressFile;
+    FILE* fInCompress = fopen(CompressFile.c_str(), &quot;wb&quot;);
+    assert(fInCompress);
+
+    int flag = 0;  //一个code操作完后的所在位置
+    unsigned char CHAR = 0;    //要存入的字符
+
+    char ch = fgetc(fOut);
+    while (ch != EOF)
+    {
+        int index = 0;      //八个一组的下标
+
+        string code = _infors[(unsigned char)ch]._code;
+        while (index &lt; code.size())
+        {
+            unsigned char tmp = code[index] - &apos;0&apos;;
+            tmp &lt;&lt;= flag;
+            CHAR = CHAR | tmp;
+            if (flag == 7)
+            {
+                //将ch写入文件
+                fputc(CHAR, fInCompress);
+                CHAR = 0;
+            }
+            ++index;
+            ++flag;
+            if (flag == 8)
+            {
+                flag -= 8;
+            }
+        }
+
+        ch = fgetc(fOut);
+    }
+
+    //文件结束后加0
+    if (flag != 0)
+    {
+        fputc(CHAR, fInCompress);
+    }
+
+    fclose(fOut);
+    fclose(fInCompress);
+}
+
+
+//配置文件格式如：a,2
+void ConfigFile(const char* filename)
+{
+    assert(filename);
+
+    FILE* fOut = fopen(filename, &quot;rb&quot;);
+    assert(fOut);
+
+    string NoCompressFile = filename;
+    NoCompressFile =&quot;config.&quot; + NoCompressFile;
+    FILE* fInNoCompress = fopen(NoCompressFile.c_str(), &quot;wb&quot;);
+    assert(fInNoCompress);
+
+    int Height = 0;       //高32位
+    int Low = 0;          //低32位
+    long long size = GetSize(fOut);
+    Low |= (size &amp; 0xffffffff);
+    Height |= size &gt;&gt; 32;
+
+    char str1[128];
+    _itoa_s(Low, str1, 10);  //低位存储在第一行
+    fputs(str1, fInNoCompress);
+    fputc(&apos;\n&apos;, fInNoCompress);
+    //
+
+    char str2[128];
+    _itoa_s(Height, str2, 10); //高位存储在第二行
+    fputs(str2, fInNoCompress);
+    fputc(&apos;\n&apos;, fInNoCompress);
+    //delete[] str2;
+
+    //利用infors
+    for (int i = 0; i &lt; 256; ++i)
+    {
+        if (_infors[i]._count)
+        {
+            char buffer[128];
+            fputc(_infors[i]._ch, fInNoCompress);
+            fputc(&apos;,&apos;, fInNoCompress);
+
+            _itoa_s(_infors[i]._count, buffer, 10);
+            fputs(buffer, fInNoCompress);
+
+            //delete[] buffer;
+            fputc(&apos;\n&apos;, fInNoCompress);
+        }
+    }
+
+    fclose(fOut);
+    fclose(fInNoCompress);
+    //delete[] str1;
+    //delete[] str2;
+    //delete[] buffer;
+}
+</code></pre><h2 id="解压缩"><a href="#解压缩" class="headerlink" title="解压缩"></a>解压缩</h2><p>//统计源文件字符的总个数，原因：压缩文件是按8 位存储，最后八位可能没存储满，（我这里补零）<br>    //如果不统计源文件次数，最后的0也会解压缩（一般解压为堆顶元素），结果就会多出几个字符<br>    long long GetSize(FILE* fOut)<br>    {<br>        assert(fOut);<br>        long long size = 0;<br>        for (int i = 0; i &lt; 256; ++i)<br>        {<br>            if (_infors[i]._count)<br>            {<br>                size = size + _infors[i]._count;<br>            }<br>        }<br>        return size;<br>    }</p>
+<p>//解压缩<br>    bool  NoCompress(const char* filename)<br>    {<br>        //读配置文件，依照次数建树<br>        assert(filename);</p>
+<pre><code>    //读配置文件
+    string ConfigFile = filename;
+    ConfigFile = &quot;config.&quot; + ConfigFile;
+    FILE* fOutConfig = fopen(ConfigFile.c_str(), &quot;rb&quot;);
+    assert(fOutConfig);
+
+    //读压缩文件
+    string CompressFile = filename;
+    CompressFile = &quot;Compress.&quot; + CompressFile;
+    FILE* fOutCompress = fopen(CompressFile.c_str(), &quot;rb&quot;);
+    assert(fOutCompress);
+
+    //读压缩文件
+    string NoCompressFile = filename;
+    NoCompressFile = &quot;NoCompress.&quot; + NoCompressFile;
+    FILE* fInNoCompress = fopen(NoCompressFile.c_str(), &quot;wb&quot;);
+    assert(fInNoCompress);
+
+    //读配置文件，依照次数建树
+    //每次读一行
+    //long long size = 0;  atoi ()    ==&gt;  int 
+    //size &gt;&gt; 32  
+    //size |= int
+    //size &lt;&lt;= 32
+
+    //用文件个数作为终止条件
+    long long size = 0;
+    string str1 = GetLine(fOutConfig);
+    int tmp = atoi(str1.c_str());
+    size &gt;&gt;= 32;
+    size |= tmp;
+    size &lt;&lt;= 32;
+    string str2 = GetLine(fOutConfig);
+    tmp = atoi(str2.c_str());
+    size |= tmp;
+
+    str1.clear();
+    str2.clear();
+
+    string str = GetLine(fOutConfig);
+    while (!str.empty())
+    {
+        string str2;
+        str2 = str.substr(2);
+        _infors[str[0]]._count = atoi(str2.c_str());
+        str.clear();
+        str = GetLine(fOutConfig);
+    }
+
+    //创建哈弗曼树
+    HuffmanTree&lt;FileInfo&gt; HT;
+    HuffmanTreeNode&lt;FileInfo&gt;* root = HT.CreateTree(_infors, 256, 0);
+    HuffmanTreeNode&lt;FileInfo&gt;* cur = root;
+
+    //解压缩文件
+    int flag = 0;
+    char ch = fgetc(fOutCompress);
+    while (cur &amp;&amp; !feof(fOutCompress))
+    {
+        //拿出一个字符然后进行操作
+        int index = 0;
+        while (cur &amp;&amp; index &lt; 8)
+        {
+            char CHAR = 1;
+            CHAR = (CHAR &lt;&lt; index) &amp; ch;
+
+            if (CHAR)
+                cur = cur-&gt;_right;
+            else
+                cur = cur-&gt;_left;
+
+            if (cur &amp;&amp; cur-&gt;_left == NULL &amp;&amp; cur-&gt;_right == NULL)
+            {
+                fputc((unsigned char)cur-&gt;_weight._ch, fInNoCompress);
+                ++flag;
+                if (flag == size)
+                {
+                    break;
+                }
+                cur = root;
+            }
+            ++index;
+        }
+
+        ch = fgetc(fOutCompress);
+    }
+
+    fclose(fOutConfig);
+    fclose(fOutCompress);
+    fclose(fInNoCompress);
+    return true;
+}
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/文件压缩之压缩操作/">文件压缩之压缩操作</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Project/">Project</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://yoursite.com/2016/04/28/Project-文件压缩3/" data-title="文件压缩之压缩与解压 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/04/28/Project-文件压缩2/"  title="文件压缩之HuffmanTree">
+ <strong>NEXT:</strong><br/> 
+ <span>文件压缩之HuffmanTree
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#压缩操作"><span class="toc-number">1.</span> <span class="toc-text">压缩操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#核心思想"><span class="toc-number">1.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#压缩代码"><span class="toc-number">1.2.</span> <span class="toc-text">压缩代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解压缩"><span class="toc-number">1.3.</span> <span class="toc-text">解压缩</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Project/" title="Project">Project<sup>3</sup></a></li>
+		
+			<li><a href="/categories/栈和队列面试题/" title="栈和队列面试题">栈和队列面试题<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/博客，栈和队列/" title="博客，栈和队列">博客，栈和队列<sup>1</sup></a></li>
+		
+			<li><a href="/tags/文件压缩之Heap/" title="文件压缩之Heap">文件压缩之Heap<sup>1</sup></a></li>
+		
+			<li><a href="/tags/文件压缩之HuffmanTree/" title="文件压缩之HuffmanTree">文件压缩之HuffmanTree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/文件压缩之压缩操作/" title="文件压缩之压缩操作">文件压缩之压缩操作<sup>1</sup></a></li>
+		
+			<li><a href="/tags/文件压缩的压缩算法/" title="文件压缩的压缩算法">文件压缩的压缩算法<sup>0</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml## RSS address." target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="widget tag">
+<h3 class="title">我的Github</h3>
+<ul>
+   <li>
+   <a href="https://github.com/caibaoying/caibaoying.github.io.git" title="Baoying Cai's Github">
+       <font color="purple">GitHub</font>
+   </li>
+</ul>
+
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://yoursite.com" target="_blank" title="Caibaoying">Caibaoying</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"Panda2016"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

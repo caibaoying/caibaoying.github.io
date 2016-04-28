@@ -4,20 +4,20 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>两个栈实现一个队列 | Panda&#39;s blog</title>
+    <title>Project-文件压缩 | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="题目描述： 使用两个栈实现一个队列
-数据结构： 栈
-
-思    路： 队列的特点是先进先出，所以两个栈，Stack1主要负责入栈，也就是队列中的元素，Stack2负责出栈，也就是出队列中的元素。
+    <meta name="description" content="项目名称：文件压缩
+实现思路如下
 
 
-
-对于进队列：1》如果Stack1为空，则直接进栈，相当于进队列;
-2》如果Stack1不为空，则入">
+用vector创建堆，而且是小堆
+从堆顶拿元素作为huffmanTree的叶子节点构建HuffmaTree,生成huffmanm编码
+写配置文件（方便后续的解压缩）
+压缩文件，根据配置文件解压缩文件
+数据结构：vector； 堆（push,pop,top等基本操">
     
     
     
@@ -75,15 +75,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/04/21/两个栈实现一个队列/" title="两个栈实现一个队列" itemprop="url">两个栈实现一个队列</a>
+      <a href="/2016/04/27/Project-文件压缩/" title="Project-文件压缩" itemprop="url">Project-文件压缩</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-04-21T08:06:40.000Z" itemprop="datePublished">2016-04-21</time>
-    更新日期:<time datetime="2016-04-26T15:24:19.694Z" itemprop="dateModified">2016-04-26</time>
+    <time datetime="2016-04-27T03:45:46.000Z" itemprop="datePublished">2016-04-27</time>
+    更新日期:<time datetime="2016-04-28T02:23:25.282Z" itemprop="dateModified">2016-04-28</time>
     
   </p>
 </header>
@@ -92,236 +92,156 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#项目名称：文件压缩"><span class="toc-number">1.</span> <span class="toc-text">项目名称：文件压缩</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#实现思路如下"><span class="toc-number">1.1.</span> <span class="toc-text">实现思路如下</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#堆部分讲解："><span class="toc-number">1.2.</span> <span class="toc-text">堆部分讲解：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现代码："><span class="toc-number">1.3.</span> <span class="toc-text">实现代码：</span></a></li></ol></li></ol>
 		</div>
 		
-		<p>题目描述： 使用两个栈实现一个队列</p>
-<p>数据结构： 栈</p>
-<ul>
-<li>思    路： 队列的特点是先进先出，所以两个栈，Stack1主要负责入栈，也就是队列中的元素，<pre><code>Stack2负责出栈，也就是出队列中的元素。
-</code></pre></li>
+		<h1 id="项目名称：文件压缩"><a href="#项目名称：文件压缩" class="headerlink" title="项目名称：文件压缩"></a>项目名称：文件压缩</h1><ul>
+<li><h2 id="实现思路如下"><a href="#实现思路如下" class="headerlink" title="实现思路如下"></a>实现思路如下</h2></li>
 </ul>
 <ol>
-<li>对于进队列：<pre><code>1》如果Stack1为空，则直接进栈，相当于进队列;
-2》如果Stack1不为空，则入队列元素也是直接入栈;
-  入队列其实是元素的直接Push,主要是要满足先进的先出即可。
-</code></pre></li>
+<li>用vector创建堆，而且是小堆</li>
+<li>从堆顶拿元素作为huffmanTree的叶子节点构建HuffmaTree,生成huffmanm编码</li>
+<li>写配置文件（方便后续的解压缩）</li>
+<li><p>压缩文件，根据配置文件解压缩文件</p>
+<p>数据结构：vector； 堆（push,pop,top等基本操作）； huffmanTree(哈夫曼编码）；<br>string；atoi,itoa；文件的读写，写入，读出等基本操作；位运算，仿函数和运算符重载等</p>
+</li>
 </ol>
-<ol>
-<li>对于出队列：<pre><code>1》如果Stack2为空，则将Stack1中的元素全部倒入Stack2中（stack1的元素全部pop
-到stack2中），如果Stack2不为空，则直接出栈，相当于出队列;
-</code></pre></li>
-</ol>
-<ul>
-<li><p>问题小结： 对于Stack1到Stack2的倒入，每执行一次push都可以Pop到stack2中，但是思考到算法的效率，所以描述如上。</p>
-<p> template <class t=""><br> class Stack<br> {<br> public:</class></p>
-<pre><code>Stack()
-    :_array(NULL)
-    , _size(0)
-    , _capacity(0)
-{}
-Stack(const Stack&lt;T&gt;&amp; s)
+<p>上面简述了本项目的一些基本的信息，看着是不是有点乱啊，没关系，咱们从堆开始一步一步<br>剖析它。废话不多说，先从堆说起。</p>
+<h2 id="堆部分讲解："><a href="#堆部分讲解：" class="headerlink" title="堆部分讲解："></a>堆部分讲解：</h2><p>堆数据结构是一种数组对象，它可以被视为一棵完全二叉树结构。</p>
+<p>堆结构的二叉树存储是</p>
+<p>最大堆：每个父节点的都大于孩子节点。</p>
+<p>最小堆：每个父节点的都小于孩子节点。</p>
+<p><img src="image/heap.png" alt="heap"></p>
+<p>如图所示：它既不是最大堆也不是最小堆，那么就要对他进行调整，调整如下：<br>调整方式：<strong><em><code>向上调整</code></em></strong>，所谓向上调整，就是从从第一个非叶子节点开始调整，让每一个节点都满足小堆<br><img src="image/heap2.png" alt="heap"></p>
+<p>特殊情况：将原来的19改为12，调整后他就发生了如下的变化，</p>
+<p><img src="image/heap_special.png" alt="heap_special"></p>
+<p>如图所示，结果存在问题，所以这种情况就需要以该节点为根节点，<strong><code>向下调整</code></strong></p>
+<h2 id="实现代码："><a href="#实现代码：" class="headerlink" title="实现代码："></a>实现代码：</h2><p>#pragma once</p>
+<p>#pragma warning(disable:4018)</p>
+<p>#include <vector></vector></p>
+<p>#include<iostream><br>using namespace std;</iostream></p>
+<p>//仿函数<br>template <class t=""><br>struct Less<br>{<br>    //重载 &lt; ,如果是string类型，自定义string，string需重载 &lt;<br>    bool operator()(const T&amp; a, const T&amp; b)const<br>    {<br>        return a &lt; b;<br>    }<br>};</class></p>
+<p>template <class t=""><br>struct Greater<br>{<br>    //重载 &gt;<br>    bool operator()(const T&amp; a, const T&amp; b)const<br>    {<br>        return a &gt; b;<br>    }<br>};</class></p>
+<p>template <class t,class="" compare="NodeCompress<T">&gt;<br>class MinHeap<br>{<br>public:<br>    MinHeap()<br>        :_array(NULL)<br>    {}<br>    // 最小堆<br>    //向上调整<br>    MinHeap(const vector<t>&amp; array)<br>    {<br>        for (size_t i = 0; i &lt; array.size(); ++i)<br>        {<br>            _array.push_back(array[i]);<br>        }<br>        moveUp(_array);<br>    }</t></class></p>
+<pre><code>//打印结果
+void Display()
 {
-    _array = new T[s._size];
-    //memcpy(_array, array, sizeof(T)*s._size);
-    for (size_t i = 0; i &lt; s._size; ++i)
+    for (size_t i = 0; i &lt; _array.size(); ++i)
     {
-        _array[i] = s._array[i];
+        cout &lt;&lt; _array[i] &lt;&lt; &quot; &quot;;
     }
-    _size = s._size;
-    _capacity = s._size;
+    cout &lt;&lt; endl;
 }
 
-~Stack()
+//push(x)后向上调整
+void Push(const T&amp; x)
 {
-    if (_array)
+    _array.push_back(x);
+    moveUp(_array);
+}
+
+void Pop()
+{
+    if (!_array.empty())
     {
-        delete[] _array;
+        swap(_array[0], _array[_array.size() - 1]);
+        _array.pop_back();
+        moveDown(0);
     }
 }
-</code></pre><p> public:</p>
-<pre><code>void Push(const T&amp; x)      // Push an element in stack;
+
+//接口，得到堆顶的值，即最小值
+T&amp; Top()
 {
-    _CheckCapacity();
-    _array[_size++] = x;
-}
-T&amp; Pop()             // Pop an element out of stack;
-{
-    if (_array)
+    if (_array[0])
     {
-        return _array[--_size];
-    }
-    else
-    {
-        delete[] _array;
-        _array = NULL;
-    }
-}
-void Print()
-{
-    if (_array)
-    {
-        cout &lt;&lt; &quot;依照进顺序:&quot;;
-        for (size_t i = 0; i &lt; _size; ++i)
-        {
-            cout &lt;&lt; &quot; &quot; &lt;&lt; _array[i];
-        }
+        return _array[0];
     }
 }
 
 size_t Size()
 {
-    return _size;
+    return _array.size();
 }
 
-size_t Capacity()
+~MinHeap()
+{}
+</code></pre><p>public:<br>    bool IsEmpty()const<br>    {<br>        if (_array.empty())<br>        {<br>            return true;<br>        }<br>    }</p>
+<pre><code>//向上调整
+void moveUp(vector&lt;T&gt;&amp; array)
 {
-    return _capacity;
-}
-
-bool Empty()
-{
-    return _size == 0;
-}
-</code></pre><p> protected:</p>
-<pre><code>void _CheckCapacity()
-{
-    if (_size &gt;= _capacity)
+    int child = array.size() - 1;
+    int parent = (child-1) / 2;
+    while (child &gt; 0)
     {
-        _capacity = _capacity * 2 + 3;
-        T* tmp = new T[_capacity];
-        if (_array)
+        //如果右孩子存在，且小于左孩子
+        if (child + 1 &lt; array.size() &amp;&amp; (compare()(array[child+1] , array[child])))
         {
-            for (size_t i = 0; i &lt; _size; ++i)
-            {
-                tmp[i] = _array[i];
-            }
-            delete[] _array;
+            ++child;
         }
-        _array = tmp;
-    }
-}
-</code></pre><p> private:</p>
-<pre><code>T* _array;
-size_t _size;
-size_t _capacity;
-</code></pre><p> };</p>
-<p> template <class t=""><br> class Queue<br> {<br> public:</class></p>
-<pre><code>Queue()      //不能省
-{}
-Queue(const Stack&lt;T&gt;&amp; S1,const Stack&lt;int&gt;&amp; S2)
-    :s1(S1)
-    , s2(S2)
-{}
-~Queue()
-{}
-</code></pre><p> public:</p>
-<pre><code>void Inqueue(const T&amp; x)
-{
-    s1.Push(x);
-    ////1m 2k; 1k 2k
-    //if (s2.Empty())
-    //{
-    //    s1.Push(x);
-    //}
-    ////1kong 2 man
-    ////1,2 man
-    //if (!s2.Empty())
-    //{
-    //    for (size_t i = 0; i &lt; s2.Size(); ++i)
-    //    {
-    //        s1.Push(s2.Pop());
-    //    }
-    //    s1.Push(x);
-    //}
-}
-T&amp; Outqueue()
-{
-    if (s1.Empty() &amp;&amp; s2.Empty())
-    {
-        cout &lt;&lt; &quot;没有元素&quot; &lt;&lt; endl;
-    }
-    if (!s2.Empty())
-    {
-        return s2.Pop();
-    }
-    if (s2.Empty())
-    {
-        for (size_t i = s1.Size() - 1 ; i &gt;= 1; --i)
-        {
-            s2.Push(s1.Pop());
-        }
-        return s1.Pop();
-    }    
-}
-void Print()
-{
-    s1.Print();
-    s2.Print();
-    cout &lt;&lt; endl;
-}
-</code></pre><p> private:</p>
-<pre><code>Stack&lt;T&gt; s1;
-Stack&lt;T&gt; s2;
-</code></pre><p> };</p>
-<p> //测试用例<br> void test1()<br> {</p>
-<pre><code>Queue&lt;int&gt; q;
-q.Inqueue(1);
-q.Inqueue(2);
-q.Inqueue(3);
-q.Inqueue(4);
-q.Inqueue(5);
-q.Inqueue(6);
-q.Print();
 
-cout &lt;&lt; q.Outqueue() &lt;&lt; endl;
-cout &lt;&lt; q.Outqueue() &lt;&lt; endl;
-cout &lt;&lt; q.Outqueue() &lt;&lt; endl;
-q.Inqueue(7);
-q.Inqueue(8);
-q.Inqueue(9);
-q.Print();
-q.Inqueue(10);
-q.Print();
-cout &lt;&lt; q.Outqueue() &lt;&lt; endl;
-q.Print();
-</code></pre><p> }</p>
-<p> void test2()<br> {</p>
-<pre><code>Queue&lt;string&gt; q;
-q.Inqueue(&quot;x1&quot;);
-q.Inqueue(&quot;x2&quot;);
-q.Inqueue(&quot;x333333333333333333333333333&quot;);
-q.Inqueue(&quot;x4&quot;);
-q.Inqueue(&quot;x5&quot;);
-q.Inqueue(&quot;x7&quot;);
-q.Inqueue(&quot;x8&quot;);
-q.Inqueue(&quot;x9&quot;);
-q.Inqueue(&quot;x10&quot;);
-q.Inqueue(&quot;x11&quot;);
-q.Print();
-</code></pre><p> }</p>
-</li>
-</ul>
+        //较小的一个和根节点比较
+        if (compare()(array[child] , array[parent]))
+        {
+            swap(array[parent], array[child]);
+            moveDown(child);
+        }
+        --parent;
+        child = parent*2 + 1;
+    }
+}
+
+//向上调整后，必须要向下调整，树的高度大于二可能出现bug,所以此举是确保万无一失
+//原理与向上相似，方向相反
+void moveDown(int parent)
+{
+    int child = (parent) * 2 + 1;
+    while (child &lt; _array.size())
+    {
+        if (child + 1 &lt; _array.size() &amp;&amp; compare()(_array[child + 1] , _array[child]))
+        {
+            ++child;
+        }
+        if (compare()(_array[child] , _array[parent]))
+        {
+            swap(_array[parent], _array[child]);
+            parent = child;
+            child = child * 2 + 1;
+        }
+        else
+        {
+            break;
+        }
+    }
+}
+</code></pre><p>private:<br>    vector<t> _array;<br>};</t></p>
+<p>//测试堆<br>void testheap()<br>{<br>    vector<int> arr = { 10, 16, 18, 12, 9, 13, 15, 17, 14, 11 };<br>    MinHeap<int,less<int>&gt; heap(arr);<br>    heap.Display();</int,less<int></int></p>
+<pre><code>heap.Push(2);
+heap.Display();
+
+heap.Pop();
+heap.Display();
+</code></pre><p>}</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/博客，栈和队列/">博客，栈和队列</a>
+  <span></span> <a href="/tags/文件压缩-1/">文件压缩(1)</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/栈和队列面试题/">栈和队列面试题</a>
+  <a class="article-category-link" href="/categories/Project/">Project</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2016/04/21/两个栈实现一个队列/" data-title="两个栈实现一个队列 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://yoursite.com/2016/04/27/Project-文件压缩/" data-title="Project-文件压缩 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -330,19 +250,11 @@ q.Print();
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/04/27/Project-文件压缩/" title="Project-文件压缩">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  Project-文件压缩</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/04/05/hello-world/"  title="Hello World">
+<a href="/2016/04/21/两个栈实现一个队列/"  title="两个栈实现一个队列">
  <strong>NEXT:</strong><br/> 
- <span>Hello World
+ <span>两个栈实现一个队列
 </span>
 </a>
 </div>
@@ -359,7 +271,7 @@ q.Print();
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#项目名称：文件压缩"><span class="toc-number">1.</span> <span class="toc-text">项目名称：文件压缩</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#实现思路如下"><span class="toc-number">1.1.</span> <span class="toc-text">实现思路如下</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#堆部分讲解："><span class="toc-number">1.2.</span> <span class="toc-text">堆部分讲解：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现代码："><span class="toc-number">1.3.</span> <span class="toc-text">实现代码：</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">

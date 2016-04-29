@@ -4,21 +4,19 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>文件压缩之Heap | Panda&#39;s blog</title>
+    <title>文件压缩之HuffmanTree | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="项目名称：文件压缩
-实现思路如下
+    <meta name="description" content="HuffmanTree特点：
+huffman树，又称最优二叉树，是加权路径长度最短的二叉树。
 
 
-用vector创建堆，而且是小堆
-从堆顶拿元素作为huffmanTree的叶子节点构建HuffmaTree,生成huffmanm编码
-写配置文件（方便后续的解压缩）
-压缩文件，根据配置文件解压缩文件
+【贪心算法】：是指在求解问题是，当前的选择总是看起来是最好的选择，不考虑整体，所以算法所达成的目的是当前最优解，而不是整体最优。
 
-数据结构：vector； 堆（push,pop,top等基本">
+构建huffmanTree
+实现思路huffman树建立在堆的基础之上">
     
     
     
@@ -76,15 +74,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/04/27/Project-文件压缩/" title="文件压缩之Heap" itemprop="url">文件压缩之Heap</a>
+      <a href="/2016/04/27/Project-文件压缩/" title="文件压缩之HuffmanTree" itemprop="url">文件压缩之HuffmanTree</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-04-27T03:45:46.000Z" itemprop="datePublished">2016-04-27</time>
-    更新日期:<time datetime="2016-04-28T04:27:10.401Z" itemprop="dateModified">2016-04-28</time>
+    <time datetime="2016-04-27T03:40:58.000Z" itemprop="datePublished">2016-04-27</time>
+    更新日期:<time datetime="2016-04-29T01:32:34.942Z" itemprop="dateModified">2016-04-29</time>
     
   </p>
 </header>
@@ -93,197 +91,87 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#项目名称：文件压缩"><span class="toc-number">1.</span> <span class="toc-text">项目名称：文件压缩</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#实现思路如下"><span class="toc-number">1.1.</span> <span class="toc-text">实现思路如下</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#堆部分讲解："><span class="toc-number">1.2.</span> <span class="toc-text">堆部分讲解：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现代码："><span class="toc-number">1.3.</span> <span class="toc-text">实现代码：</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HuffmanTree"><span class="toc-number">1.</span> <span class="toc-text">HuffmanTree</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#特点："><span class="toc-number">1.1.</span> <span class="toc-text">特点：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建huffmanTree"><span class="toc-number">1.2.</span> <span class="toc-text">构建huffmanTree</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.3.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
 		</div>
 		
-		<h1 id="项目名称：文件压缩"><a href="#项目名称：文件压缩" class="headerlink" title="项目名称：文件压缩"></a>项目名称：文件压缩</h1><ul>
-<li><h2 id="实现思路如下"><a href="#实现思路如下" class="headerlink" title="实现思路如下"></a>实现思路如下</h2></li>
-</ul>
-<ol>
-<li>用vector创建堆，而且是小堆</li>
-<li>从堆顶拿元素作为huffmanTree的叶子节点构建HuffmaTree,生成huffmanm编码</li>
-<li>写配置文件（方便后续的解压缩）</li>
-<li>压缩文件，根据配置文件解压缩文件</li>
+		<h1 id="HuffmanTree"><a href="#HuffmanTree" class="headerlink" title="HuffmanTree"></a>HuffmanTree</h1><h2 id="特点："><a href="#特点：" class="headerlink" title="特点："></a>特点：</h2><ol>
+<li><strong>huffman树</strong>，又称最优二叉树，是加权路径长度最短的二叉树。</li>
 </ol>
-<p>数据结构：vector； 堆（push,pop,top等基本操作）； huffmanTree(哈夫曼编码）；<br>string；atoi,itoa；文件的读写，写入，读出等基本操作；位运算，仿函数和运算符重载等</p>
-<p>上面简述了本项目的一些基本的信息，看着是不是有点乱啊，没关系，咱们从堆开始一步一步<br>剖析它。废话不多说，先从堆说起。</p>
-<h2 id="堆部分讲解："><a href="#堆部分讲解：" class="headerlink" title="堆部分讲解："></a>堆部分讲解：</h2><p>堆数据结构是一种数组对象，它可以被视为一棵完全二叉树结构。</p>
-<p>堆结构的二叉树存储是</p>
-<p>最大堆：每个父节点的都大于孩子节点。</p>
-<p>最小堆：每个父节点的都小于孩子节点。</p>
-<p><img src="image/heap.png" alt="heap"></p>
-<p>如图所示：它既不是最大堆也不是最小堆，那么就要对他进行调整，调整如下：<br>调整方式：<strong><em><code>向上调整</code></em></strong>，所谓向上调整，就是从从第一个非叶子节点开始调整，让每一个节点都满足小堆<br><img src="image/heap2.png" alt="heap"></p>
-<p>特殊情况：将原来的19改为12，调整后他就发生了如下的变化，</p>
-<p><img src="image/heap_special.png" alt="heap_special"></p>
-<p>如图所示，结果存在问题，所以这种情况就需要以该节点为根节点，<strong><code>向下调整</code></strong></p>
-<h2 id="实现代码："><a href="#实现代码：" class="headerlink" title="实现代码："></a>实现代码：</h2><pre><code>#pragma once
-#pragma warning(disable:4018)
-#include &lt;vector&gt;
-#include&lt;iostream&gt;
-using namespace std;
+<ol>
+<li>【贪心算法】：是指在求解问题是，当前的选择总是看起来是最好的选择，不考虑整体，所以算法所达成的目的是当前最优解，而不是整体最优。</li>
+</ol>
+<h2 id="构建huffmanTree"><a href="#构建huffmanTree" class="headerlink" title="构建huffmanTree"></a>构建huffmanTree</h2><ol>
+<li><p><strong>实现思路</strong><br>huffman树建立在堆的基础之上，在此之前必须先建好堆，我这里为建小堆，建好小堆之后，每次取到最小堆的两个最小的节点，将这两个最小节点的权值相加，当做parent节点，然后将parent入堆，在拿出最小的两个节点，new 出parent节点，依此步骤直到堆为空，这样构建出来的树则为huffmanTree，该树根节点的元素权值最大，因为拿元素出现的次数作为权值，所以出现次数最多的元素的huffman编码最短，依此原理对文件进行压缩，这里你肯定出现了一些疑问，不要紧，先掌握huffman树，后续有详细讲解。</p>
+</li>
+<li><p><strong>huffman编码：</strong><br>从根节点开始，遍历这棵树直到到达该节点，所走的路径。从根节点开始，向左子树走，为0，向右子树为1，假设最后生成的编码为：101101；那么这个编码就是该节点所对应的huffman编码。如图：<br><img src="image/huffmanCode.png" alt="huffmanCode"></p>
+</li>
+<li><p><strong>huffman树的节点：</strong><br>template <class t=""><br>struct HuffmanTreeNode<br>{<br> HuffmanTreeNode<t><em> _left;       //左孩子<br> HuffmanTreeNode<t></t></em> _right;      //右孩子<br> HuffmanTreeNode<t>* _parent;     //指向父节点，方便解压回溯遍历<br> T _weight;                       //权值</t></t></class></p>
+<p> HuffmanTreeNode(const T&amp; weight)</p>
+<pre><code>:_weight(weight)
+, _left(NULL)
+, _right(NULL)
+, _parent(NULL)
+</code></pre><p> {}<br>};</p>
+</li>
+</ol>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>//仿函数<br>//权值weight比较,传给Heap让小堆的形成要按照权值的大小进行比较得出<br>template <class t=""><br>struct NodeCompress<br>{<br>    bool operator()(HuffmanTreeNode<t><em> a, const HuffmanTreeNode<t></t></em> b)<br>    {<br>        return a-&gt;_weight &lt; b-&gt;_weight;<br>    }<br>};<br>//构建哈弗曼树<br>template <class t=""><br>//用class 编不过<br>struct HuffmanTree<br>{<br>    typedef HuffmanTreeNode<t> Node;</t></class></t></class></p>
+<pre><code>HuffmanTree()
+    :_root(NULL)
+{}
 
-//仿函数
-template &lt;class T&gt;
-struct Less
+~HuffmanTree()
+{}
+
+//先序遍历
+void PrevHuffmanTree()
 {
-    //重载 &lt; ,如果是string类型，自定义string，string需重载 &lt; 
-    bool operator()(const T&amp; a, const T&amp; b)const
-    {
-        return a &lt; b;
-    }
-};
-
-template &lt;class T&gt;
-struct Greater
-{
-    //重载 &gt;
-    bool operator()(const T&amp; a, const T&amp; b)const
-    {
-        return a &gt; b;
-    }
-};
-
-template &lt;class T,class compare = NodeCompress&lt;T&gt;&gt;
-class MinHeap
-{
-public:
-    MinHeap()
-        :_array(NULL)
-    {}
-    // 最小堆
-    //向上调整
-    MinHeap(const vector&lt;T&gt;&amp; array)
-    {
-        for (size_t i = 0; i &lt; array.size(); ++i)
-        {
-            _array.push_back(array[i]);
-        }
-        moveUp(_array);
-    }
-
-    //打印结果
-    void Display()
-    {
-        for (size_t i = 0; i &lt; _array.size(); ++i)
-        {
-            cout &lt;&lt; _array[i] &lt;&lt; &quot; &quot;;
-        }
-        cout &lt;&lt; endl;
-    }
-
-    //push(x)后向上调整
-    void Push(const T&amp; x)
-    {
-        _array.push_back(x);
-        moveUp(_array);
-    }
-
-    void Pop()
-    {
-        if (!_array.empty())
-        {
-            swap(_array[0], _array[_array.size() - 1]);
-            _array.pop_back();
-            moveDown(0);
-        }
-    }
-
-    //接口，得到堆顶的值，即最小值
-    T&amp; Top()
-    {
-        if (_array[0])
-        {
-            return _array[0];
-        }
-    }
-
-    size_t Size()
-    {
-        return _array.size();
-    }
-
-    ~MinHeap()
-    {}
-public:
-    bool IsEmpty()const
-    {
-        if (_array.empty())
-        {
-            return true;
-        }
-    }
-
-    //向上调整
-    void moveUp(vector&lt;T&gt;&amp; array)
-    {
-        int child = array.size() - 1;
-        int parent = (child-1) / 2;
-        while (child &gt; 0)
-        {
-            //如果右孩子存在，且小于左孩子
-            if (child + 1 &lt; array.size() &amp;&amp; (compare()(array[child+1] , array[child])))
-            {
-                ++child;
-            }
-
-            //较小的一个和根节点比较
-            if (compare()(array[child] , array[parent]))
-            {
-                swap(array[parent], array[child]);
-                moveDown(child);
-            }
-            --parent;
-            child = parent*2 + 1;
-        }
-    }
-
-    //向上调整后，必须要向下调整，树的高度大于二可能出现bug,所以此举是确保万无一失
-    //原理与向上相似，方向相反
-    void moveDown(int parent)
-    {
-        int child = (parent) * 2 + 1;
-        while (child &lt; _array.size())
-        {
-            if (child + 1 &lt; _array.size() &amp;&amp; compare()(_array[child + 1] , _array[child]))
-            {
-                ++child;
-            }
-            if (compare()(_array[child] , _array[parent]))
-            {
-                swap(_array[parent], _array[child]);
-                parent = child;
-                child = child * 2 + 1;
-            }
-            else
-            {
-                break;
-            }
-        }
-    }
-private:
-    vector&lt;T&gt; _array;
-};
-
-//测试堆
-void testheap()
-{
-    vector&lt;int&gt; arr = { 10, 16, 18, 12, 9, 13, 15, 17, 14, 11 };
-    MinHeap&lt;int,Less&lt;int&gt;&gt; heap(arr);
-    heap.Display();
-
-    heap.Push(2);
-    heap.Display();
-
-    heap.Pop();
-    heap.Display();
+    _PrevHuffmanTree(_root);
 }
-</code></pre>  
+</code></pre><p>public:<br>    //建造HuffmanTree<br>    //建大堆,由于以次数建树，所以权值大的，靠近堆顶，HuffmanCode短，<br>    Node<em> CreateTree(const T</em> a, size_t size, int illegal)<br>    {<br>        assert(a);</p>
+<pre><code>    MinHeap&lt;Node*, NodeCompress&lt;T&gt;&gt; minHeap;
+    for (int i = 0; i &lt; size; ++i)
+    {
+        if (a[i] != illegal)
+        {
+            Node* node = new Node(a[i]);
+            minHeap.Push(node);
+        }
+    }
+
+    //不能用empty判空
+    while (minHeap.Size() &gt; 1)
+    {
+        //拿出权值最小的两个数
+        Node* left = minHeap.Top();
+        minHeap.Pop();
+        Node*  right= minHeap.Top();
+        minHeap.Pop();
+
+        //权值之和建根节点
+        Node* parent = new Node(left-&gt;_weight + right-&gt;_weight);
+
+        //链接
+        parent-&gt;_left = left;
+        parent-&gt;_right = right;
+        left-&gt;_parent = parent;
+        right-&gt;_parent = parent;
+
+        _root = parent;
+
+        //将根节点push进堆
+        minHeap.Push(parent);
+    }
+    return _root;
+}
+</code></pre><p>protected:<br>    void _PrevHuffmanTree(Node<em> root)<br>    {<br>        Node</em> cur = root;<br>        if (cur == NULL)<br>        {<br>            return;<br>        }<br>        cout &lt;&lt; cur-&gt;_weight &lt;&lt; “ “;<br>        _PrevHuffmanTree(cur-&gt;_left);<br>        _PrevHuffmanTree(cur-&gt;_right);<br>    }<br>protected:<br>    Node* _root;<br>};</p>
+<p>//测试哈夫曼树的正确性<br>void TestHuffmanTree()<br>{<br>    int array[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9};<br>    HuffmanTree<int> hf;<br>    hf.CreateTree(array, sizeof(array) / sizeof(int), -1);<br>    hf.PrevHuffmanTree();<br>    cout &lt;&lt; endl;<br>}</int></p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/文件压缩-1/">文件压缩(1)</a>
+  <span></span> <a href="/tags/文件压缩之HuffmanTree/">文件压缩之HuffmanTree</a>
   </div>
 
 
@@ -296,7 +184,7 @@ void testheap()
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2016/04/27/Project-文件压缩/" data-title="文件压缩之Heap | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://yoursite.com/2016/04/27/Project-文件压缩/" data-title="文件压缩之HuffmanTree | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -306,18 +194,18 @@ void testheap()
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2016/04/28/project-文件压缩2/" title="文件压缩之HuffmanTree">
+ <a href="/2016/04/28/Project-文件压缩3/" title="文件压缩之压缩与解压">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  文件压缩之HuffmanTree</span>
+  文件压缩之压缩与解压</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2016/04/21/两个栈实现一个队列/"  title="两个栈实现一个队列">
+<a href="/2016/04/27/Project-文件压缩1/"  title="文件压缩之Heap">
  <strong>NEXT:</strong><br/> 
- <span>两个栈实现一个队列
+ <span>文件压缩之Heap
 </span>
 </a>
 </div>
@@ -334,7 +222,7 @@ void testheap()
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#项目名称：文件压缩"><span class="toc-number">1.</span> <span class="toc-text">项目名称：文件压缩</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#实现思路如下"><span class="toc-number">1.1.</span> <span class="toc-text">实现思路如下</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#堆部分讲解："><span class="toc-number">1.2.</span> <span class="toc-text">堆部分讲解：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现代码："><span class="toc-number">1.3.</span> <span class="toc-text">实现代码：</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HuffmanTree"><span class="toc-number">1.</span> <span class="toc-text">HuffmanTree</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#特点："><span class="toc-number">1.1.</span> <span class="toc-text">特点：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建huffmanTree"><span class="toc-number">1.2.</span> <span class="toc-text">构建huffmanTree</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.3.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">
@@ -346,9 +234,7 @@ void testheap()
 	<p class="asidetitle">分类</p>
 		<ul>
 		
-			<li><a href="/categories/Project/" title="Project">Project<sup>2</sup></a></li>
-		
-			<li><a href="/categories/project/" title="project">project<sup>0</sup></a></li>
+			<li><a href="/categories/Project/" title="Project">Project<sup>3</sup></a></li>
 		
 			<li><a href="/categories/栈和队列面试题/" title="栈和队列面试题">栈和队列面试题<sup>1</sup></a></li>
 		
@@ -363,9 +249,11 @@ void testheap()
 		
 			<li><a href="/tags/博客，栈和队列/" title="博客，栈和队列">博客，栈和队列<sup>1</sup></a></li>
 		
-			<li><a href="/tags/文件压缩-1/" title="文件压缩(1)">文件压缩(1)<sup>1</sup></a></li>
+			<li><a href="/tags/文件压缩之Heap/" title="文件压缩之Heap">文件压缩之Heap<sup>1</sup></a></li>
 		
-			<li><a href="/tags/文件压缩2/" title="文件压缩2">文件压缩2<sup>1</sup></a></li>
+			<li><a href="/tags/文件压缩之HuffmanTree/" title="文件压缩之HuffmanTree">文件压缩之HuffmanTree<sup>1</sup></a></li>
+		
+			<li><a href="/tags/文件压缩之压缩与解压/" title="文件压缩之压缩与解压">文件压缩之压缩与解压<sup>1</sup></a></li>
 		
 		</ul>
 </div>

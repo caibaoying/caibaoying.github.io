@@ -80,7 +80,7 @@ huffman树，又称最优二叉树，是加权路径长度最短的二叉树。
     </p>
   <p class="article-time">
     <time datetime="2016-04-28T02:40:58.000Z" itemprop="datePublished">2016-04-28</time>
-    更新日期:<time datetime="2016-04-29T00:59:24.459Z" itemprop="dateModified">2016-04-29</time>
+    更新日期:<time datetime="2016-04-29T01:01:16.714Z" itemprop="dateModified">2016-04-29</time>
     
   </p>
 </header>
@@ -99,8 +99,7 @@ huffman树，又称最优二叉树，是加权路径长度最短的二叉树。
 <h2 id="构建huffmanTree"><a href="#构建huffmanTree" class="headerlink" title="构建huffmanTree"></a>构建huffmanTree</h2><ol>
 <li><p><strong>实现思路</strong><br>huffman树建立在堆的基础之上，在此之前必须先建好堆，我这里为建小堆，建好小堆之后，每次取到最小堆的两个最小的节点，将这两个最小节点的权值相加，当做parent节点，然后将parent入堆，在拿出最小的两个节点，new 出parent节点，依此步骤直到堆为空，这样构建出来的树则为huffmanTree，该树根节点的元素权值最大，因为拿元素出现的次数作为权值，所以出现次数最多的元素的huffman编码最短，依此原理对文件进行压缩，这里你肯定出现了一些疑问，不要紧，先掌握huffman树，后续有详细讲解。</p>
 </li>
-<li><p><strong>huffman编码：</strong><br>从根节点开始，遍历这棵树直到到达该节点，所走的路径。从根节点开始，向左子树走，为0，向右子树为1，假设最后生成的编码为：101101；那么这个编码就是该节点所对应的huffman编码。如图：</p>
-<p><img src="image/huffmanCode.png" alt="huffmanCode"></p>
+<li><p><strong>huffman编码：</strong><br>从根节点开始，遍历这棵树直到到达该节点，所走的路径。从根节点开始，向左子树走，为0，向右子树为1，假设最后生成的编码为：101101；那么这个编码就是该节点所对应的huffman编码。如图：<br><img src="image/huffmanCode.png" alt="huffmanCode"></p>
 </li>
 <li><p><strong>huffman树的节点：</strong><br>template <class t=""><br>struct HuffmanTreeNode<br>{<br> HuffmanTreeNode<t><em> _left;       //左孩子<br> HuffmanTreeNode<t></t></em> _right;      //右孩子<br> HuffmanTreeNode<t>* _parent;     //指向父节点，方便解压回溯遍历<br> T _weight;                       //权值</t></t></class></p>
 <p> HuffmanTreeNode(const T&amp; weight)</p>

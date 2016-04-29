@@ -84,7 +84,7 @@
     </p>
   <p class="article-time">
     <time datetime="2016-04-27T03:45:46.000Z" itemprop="datePublished">2016-04-27</time>
-    更新日期:<time datetime="2016-04-28T05:53:33.706Z" itemprop="dateModified">2016-04-28</time>
+    更新日期:<time datetime="2016-04-29T00:18:30.251Z" itemprop="dateModified">2016-04-29</time>
     
   </p>
 </header>
@@ -112,12 +112,9 @@
 <p>堆结构的二叉树存储是</p>
 <p>最大堆：每个父节点的都大于孩子节点。</p>
 <p>最小堆：每个父节点的都小于孩子节点。</p>
-<pre><code>![heap](image/heap.png)
-</code></pre><p>如图所示：它既不是最大堆也不是最小堆，那么就要对他进行调整，调整如下：<br>调整方式：<strong><em><code>向上调整</code></em></strong>，所谓向上调整，就是从从第一个非叶子节点开始调整，让每一个节点都满足小堆</p>
-<pre><code>![heap](image/heap2.png)
-</code></pre><p>特殊情况：将原来的19改为12，调整后他就发生了如下的变化，</p>
-<pre><code>![heap_special](image/heap_special.png)
-</code></pre><p>如图所示，结果存在问题，所以这种情况就需要以该节点为根节点，<strong><code>向下调整</code></strong></p>
+<p>如图所示：它既不是最大堆也不是最小堆，那么就要对他进行调整，调整如下：<br>调整方式：<strong><em><code>向上调整</code></em></strong>，所谓向上调整，就是从从第一个非叶子节点开始调整，让每一个节点都满足小堆</p>
+<p>特殊情况：将原来的19改为12，调整后他就发生了如下的变化，</p>
+<p>如图所示，结果存在问题，所以这种情况就需要以该节点为根节点，<strong><code>向下调整</code></strong></p>
 <h2 id="实现代码："><a href="#实现代码：" class="headerlink" title="实现代码："></a>实现代码：</h2><pre><code>#pragma once
 #pragma warning(disable:4018)
 #include &lt;vector&gt;
@@ -367,7 +364,7 @@ void testheap()
 		
 			<li><a href="/tags/文件压缩之HuffmanTree/" title="文件压缩之HuffmanTree">文件压缩之HuffmanTree<sup>1</sup></a></li>
 		
-			<li><a href="/tags/文件压缩之压缩操作/" title="文件压缩之压缩操作">文件压缩之压缩操作<sup>1</sup></a></li>
+			<li><a href="/tags/文件压缩之压缩与解压/" title="文件压缩之压缩与解压">文件压缩之压缩与解压<sup>1</sup></a></li>
 		
 		</ul>
 </div>

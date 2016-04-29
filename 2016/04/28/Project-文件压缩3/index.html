@@ -76,7 +76,7 @@
     </p>
   <p class="article-time">
     <time datetime="2016-04-28T04:30:58.000Z" itemprop="datePublished">2016-04-28</time>
-    更新日期:<time datetime="2016-04-28T05:55:04.959Z" itemprop="dateModified">2016-04-28</time>
+    更新日期:<time datetime="2016-04-29T00:18:27.068Z" itemprop="dateModified">2016-04-29</time>
     
   </p>
 </header>
@@ -91,8 +91,7 @@
 		<p>可能有人要问了，不把压缩与解压缩分开呢？清晰明了，其实我自己也尝试过分开来写，自我感觉，这是自己给自己增加难度，因为两者有着紧密的联系，分开写，一是传参难，二是不好理解。</p>
 <h1 id="压缩操作"><a href="#压缩操作" class="headerlink" title="压缩操作"></a>压缩操作</h1><h2 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h2><p>压缩是利用字符的huffman编码进行操作，每一个字符都有一个huffman编码，那么这个huffman编码怎么来的，首先读整个文件，统计出每个字符出现的次数，然后利用这些_count建huffman树，根据所建的huffman树，出现次数多的，他的huffman编码短，出现次数少的，huffman编码可能会长一点，但是他个数少，所以整体来说，达到了压缩的目的。</p>
 <p> <strong>One Quession:</strong>这时有人疑问了，说，我拿出一个字符，结果你替换成了一堆编码，不仅没有压缩反而增容了，而且改变了原先的内容。我的回答是 是的，从目前来讲是这样的。所以从这引出了下一个问题。<br>解决上述问题的解决办法就是，将编码按位存储，如图：</p>
-<pre><code>![Compress](image/Compress1.png)
-</code></pre><p><strong>Second Quession:</strong>0000 0001 | CHAR =》 CHAR 不变，将保存的code ，tmp先左移零位，所以结果依然是 0000 0001 | CHAR = 0000 0001<br>操作code[1]=0000 0000 | CHAR tmp先左移1位，然后再与CHAR与 结果为0000 0001<br>code[2] 0000 0001 | CHAR tmp&lt;&lt;2; tmp| CHAR = 0000 0100 | 0000 0000 = 0000 0101<br>变够八位，将CHAR写入压缩文件。<br>对于（1） 与（2）的情况，就是不够八位，拿下一个字符来补，超过八位，存入下一个CHAR,文件结束后，不够八位的填零。</p>
+<p><strong>Second Quession:</strong>0000 0001 | CHAR =》 CHAR 不变，将保存的code ，tmp先左移零位，所以结果依然是 0000 0001 | CHAR = 0000 0001<br>操作code[1]=0000 0000 | CHAR tmp先左移1位，然后再与CHAR与 结果为0000 0001<br>code[2] 0000 0001 | CHAR tmp&lt;&lt;2; tmp| CHAR = 0000 0100 | 0000 0000 = 0000 0101<br>变够八位，将CHAR写入压缩文件。<br>对于（1） 与（2）的情况，就是不够八位，拿下一个字符来补，超过八位，存入下一个CHAR,文件结束后，不够八位的填零。</p>
 <ol>
 <li><p>压缩文件：顾名思义就是对文件的操作，而文件由字符组成，所以要对文件信息进行提取，最重要的信息有：<br>//文件信息结构体做堆成员<br>struct FileInfo<br>{<br> unsigned char _ch;   //字符<br> LongType _count;     //字符出现的次数，权值<br> string _code;        //Huffman编码</p>
 <p> FileInfo(unsigned char ch = 0)</p>
@@ -476,7 +475,7 @@ void ConfigFile(const char* filename)
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/文件压缩之压缩操作/">文件压缩之压缩操作</a>
+  <span></span> <a href="/tags/文件压缩之压缩与解压/">文件压缩之压缩与解压</a>
   </div>
 
 
@@ -550,7 +549,7 @@ void ConfigFile(const char* filename)
 		
 			<li><a href="/tags/文件压缩之HuffmanTree/" title="文件压缩之HuffmanTree">文件压缩之HuffmanTree<sup>1</sup></a></li>
 		
-			<li><a href="/tags/文件压缩之压缩操作/" title="文件压缩之压缩操作">文件压缩之压缩操作<sup>1</sup></a></li>
+			<li><a href="/tags/文件压缩之压缩与解压/" title="文件压缩之压缩与解压">文件压缩之压缩与解压<sup>1</sup></a></li>
 		
 		</ul>
 </div>

@@ -76,7 +76,7 @@
     </p>
   <p class="article-time">
     <time datetime="2016-04-28T04:30:58.000Z" itemprop="datePublished">2016-04-28</time>
-    更新日期:<time datetime="2016-05-03T07:15:49.320Z" itemprop="dateModified">2016-05-03</time>
+    更新日期:<time datetime="2016-05-03T10:58:07.292Z" itemprop="dateModified">2016-05-03</time>
     
   </p>
 </header>
@@ -93,30 +93,48 @@
 <p> <strong>One Quession:</strong>这时有人疑问了，说，我拿出一个字符，结果你替换成了一堆编码，不仅没有压缩反而增容了，而且改变了原先的内容。我的回答是 是的，从目前来讲是这样的。所以从这引出了下一个问题。<br>解决上述问题的解决办法就是，将编码按位存储，如图：</p>
 <p><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/Compress1.png" alt=""></p>
 <ol>
-<li><p>压缩文件：顾名思义就是对文件的操作，而文件由字符组成，所以要对文件信息进行提取，最重要的信息有：<br>//文件信息结构体做堆成员<br>struct FileInfo<br>{<br> unsigned char _ch;   //字符<br> LongType _count;     //字符出现的次数，权值<br> string _code;        //Huffman编码</p>
-<p> FileInfo(unsigned char ch = 0)</p>
-<pre><code>:_ch(ch)
-, _count(0)
-, _code(&quot;&quot;)
-</code></pre><p> {}</p>
-<p> //以_count做权值，所以需重载 &lt;<br> bool operator &lt; (const FileInfo&amp; info)<br> {</p>
-<pre><code>return this-&gt;_count &lt; info._count;
-</code></pre><p> }</p>
-<p> bool operator != (const int&amp; illegal)const<br> {</p>
-<pre><code>if (this-&gt;_count != illegal)
-    return true;
-return false;
-</code></pre><p> }</p>
-<p> FileInfo operator + (const FileInfo&amp; info)<br> {</p>
-<pre><code>FileInfo FI;
-FI._count = this-&gt;_count + info._count;
-return FI;
-</code></pre><p> }<br>};</p>
+<li><p>压缩文件：顾名思义就是对文件的操作，而文件由字符组成，所以要对文件信息进行提取，最重要的信息有：<br>//文件信息结构体做堆成员<br> struct FileInfo<br> {</p>
+<pre><code>unsigned char _ch;   //字符
+LongType _count;     //字符出现的次数，权值
+string _code;        //Huffman编码
+
+FileInfo(unsigned char ch = 0)
+    :_ch(ch)
+    , _count(0)
+    , _code(&quot;&quot;)
+{}
+
+//以_count做权值，所以需重载 &lt; 
+bool operator &lt; (const FileInfo&amp; info)
+{
+    return this-&gt;_count &lt; info._count;
+}
+
+bool operator != (const int&amp; illegal)const
+{
+    if (this-&gt;_count != illegal)
+        return true;
+    return false;
+}
+
+FileInfo operator + (const FileInfo&amp; info)
+{
+    FileInfo FI;
+    FI._count = this-&gt;_count + info._count;
+    return FI;
+}
+</code></pre><p> };</p>
 </li>
 </ol>
 <p>对于重载的这些运算符，因为——weight现在变成了结构体类型，所以需要重载这些。</p>
-<h2 id="压缩代码"><a href="#压缩代码" class="headerlink" title="压缩代码"></a>压缩代码</h2><p>bool Compress(const char* filename)<br>    {<br>        //1.打开文件，统计字符出现的次数<br>        //2.生成对应的HUffman编码<br>        //3.压缩文件<br>        //4.写配置文件，方便后续的解压缩</p>
-<pre><code>    assert(filename);
+<h2 id="压缩代码"><a href="#压缩代码" class="headerlink" title="压缩代码"></a>压缩代码</h2><pre><code>bool Compress(const char* filename)
+{
+    //1.打开文件，统计字符出现的次数
+    //2.生成对应的HUffman编码
+    //3.压缩文件
+    //4.写配置文件，方便后续的解压缩
+
+    assert(filename);
     FILE* fOut = fopen(filename, &quot;rb&quot;);
     assert(fOut);
 
@@ -240,8 +258,13 @@ bool  NoCompress(const char* filename)
     fclose(fInNoCompress);
     return true;
 }
-</code></pre><p>void _GenerateHuffmanCode(HuffmanTreeNode<fileinfo>* root)<br>    {<br>        if (NULL == root)<br>            return;</fileinfo></p>
-<pre><code>    _GenerateHuffmanCode(root-&gt;_left);
+
+void _GenerateHuffmanCode(HuffmanTreeNode&lt;FileInfo&gt;* root)
+{
+    if (NULL == root)
+        return;
+
+    _GenerateHuffmanCode(root-&gt;_left);
     _GenerateHuffmanCode(root-&gt;_right);
 
     //如果当前节点是叶子节点，则生成对应的哈夫曼编码
@@ -270,8 +293,11 @@ bool  NoCompress(const char* filename)
         //cout &lt;&lt; root-&gt;_weight._ch &lt;&lt; &quot;:&quot; &lt;&lt; code &lt;&lt; &quot; &quot;&lt;&lt;endl;
     }
 }
-</code></pre><p>void CompressFile(const char* filename)<br>    {<br>        assert(filename);</p>
-<pre><code>    FILE* fOut = fopen(filename, &quot;rb&quot;);
+void CompressFile(const char* filename)
+{
+    assert(filename);
+
+    FILE* fOut = fopen(filename, &quot;rb&quot;);
     assert(fOut);
 
     string CompressFile = filename;

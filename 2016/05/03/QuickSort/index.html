@@ -4,20 +4,15 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>两个栈实现一个队列 | Panda&#39;s blog</title>
+    <title>QuickSort1 | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="题目描述： 使用两个栈实现一个队列
-数据结构： 栈
-
-思    路： 队列的特点是先进先出，所以两个栈，Stack1主要负责入栈，也就是队列中的元素，Stack2负责出栈，也就是出队列中的元素。
-
-
-
-对于进队列：1》如果Stack1为空，则直接进栈，相当于进队列;
-2》如果Stack1不为空，则入">
+    <meta name="description" content="快速排序快速排序是对冒泡排序的一种改进。
+思想：
+如上图所示，一趟快排后的结果就是：key,左边的都比key小，右边的都比key大；接下来的步骤是如图：
+代码实现void QuickSort(int* a, int left,int right){    assert(a);    int mid ">
     
     
     
@@ -75,15 +70,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/04/21/两个栈实现一个队列/" title="两个栈实现一个队列" itemprop="url">两个栈实现一个队列</a>
+      <a href="/2016/05/03/QuickSort/" title="QuickSort1" itemprop="url">QuickSort1</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-04-21T08:06:40.000Z" itemprop="datePublished">2016-04-21</time>
-    更新日期:<time datetime="2016-04-26T15:24:19.694Z" itemprop="dateModified">2016-04-26</time>
+    <time datetime="2016-05-03T08:07:42.000Z" itemprop="datePublished">2016-05-03</time>
+    更新日期:<time datetime="2016-05-03T10:17:37.677Z" itemprop="dateModified">2016-05-03</time>
     
   </p>
 </header>
@@ -92,236 +87,61 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#快速排序"><span class="toc-number">1.</span> <span class="toc-text">快速排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想："><span class="toc-number">1.1.</span> <span class="toc-text">思想：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三数取中法："><span class="toc-number">1.3.</span> <span class="toc-text">三数取中法：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链接"><span class="toc-number">1.4.</span> <span class="toc-text">链接</span></a></li></ol></li></ol>
 		</div>
 		
-		<p>题目描述： 使用两个栈实现一个队列</p>
-<p>数据结构： 栈</p>
+		<h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><p>快速排序是对<a href="http://caibaoying.github.io/2016/05/03/BubbSort/" target="_blank" rel="external">冒泡排序</a>的一种改进。</p>
+<h2 id="思想："><a href="#思想：" class="headerlink" title="思想："></a>思想：</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/QuickSort1.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/QuickSort2.png" alt=""></p>
+<p>如上图所示，一趟快排后的结果就是：key,左边的都比key小，右边的都比key大；<br>接下来的步骤是如图：<br><img src="http://o6l9ml5eb.bkt.clouddn.com/QuickSort3.png" alt=""></p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>void QuickSort(int* a, int left,int right)<br>{<br>    assert(a);<br>    int mid = ThreeMid(a, left, right);<br>    swap(a[mid], a[right]);<br>    int last = right;         //[0,9]<br>    int key = a[right];<br>    if (left &gt;= last)<br>    {<br>        return;<br>    }<br>    while (left &lt; last)<br>    {<br>        while (left &lt; last &amp;&amp; a[left] &lt;= key)<br>        {<br>            ++left;<br>        }<br>        while (left &lt; last &amp;&amp; a[last] &gt;= key)<br>        {<br>            –last;<br>        }<br>        if (left &lt; last)<br>        {<br>            swap(a[left], a[last]);<br>        }<br>    }<br>    if (a[left] &gt;= key)<br>    {<br>        swap(a[left], a[right]);<br>    }<br>    if (left - 1 &gt;= 0)    //防止下标越界<br>    {<br>        QuickSort(a, 0, left - 1);<br>    }<br>    QuickSort(a, left + 1, right);<br>}</p>
+<p><strong>有朋友要问了，ThreeMid是什么鬼？</strong><br>解释如下：<br>快排的复杂度是期望O(nlogn)的，也就是平均情况下每次选取的基准值能把序列分成大小相近的两份，但是如果输入数据已经是一有序数据，或者接近于有序，每次选的key是接近于Max/Min的数据，那么每次分治就分得极为不平均(每次分出1 和 n- 1两块)，递归的深度不是O(logn)而是O(n)所以总复杂度就囧了。一个办法就是<strong>三数取中法</strong>。</p>
+<p>一般快排最坏的情况时间复杂度为：O(N^2)</p>
+<h2 id="三数取中法："><a href="#三数取中法：" class="headerlink" title="三数取中法："></a>三数取中法：</h2><p>关于这一改进的最简单的描述大概是这样的：与一般的快速排序方法不同，它并不是选择待排数组的第一个数作为中轴，而是选用待排数组最左边、最右边和最中间的三个元素的中间值作为中轴。这一改进对于原来的快速排序算法来说，主要优势：它使得最坏情况发生的几率减小了。</p>
 <ul>
-<li>思    路： 队列的特点是先进先出，所以两个栈，Stack1主要负责入栈，也就是队列中的元素，<pre><code>Stack2负责出栈，也就是出队列中的元素。
-</code></pre></li>
+<li><strong>三数取中代码</strong><br>int ThreeMid(int* a, int left, int right)<br>{<br>  assert(a);<br>  int mid = left + (right - left) / 2;<br>  if (a[left] &gt; a[right])<br>  {<pre><code>if (a[right] &gt; a[mid])
+{
+    return right;
+}
+else if (a[mid] &gt; a[left])
+{
+    return left;
+}
+else
+    return mid;
+</code></pre>  }<br>  // (a[left] &lt; a[right])<br>  else<br>  {<pre><code>if (a[right] &lt; a[mid])
+{
+    return right;
+}
+else if (a[mid] &lt; a[left])
+{
+    return left;
+}
+else
+    return mid;
+</code></pre>  }<br>}</li>
 </ul>
-<ol>
-<li>对于进队列：<pre><code>1》如果Stack1为空，则直接进栈，相当于进队列;
-2》如果Stack1不为空，则入队列元素也是直接入栈;
-  入队列其实是元素的直接Push,主要是要满足先进的先出即可。
-</code></pre></li>
-</ol>
-<ol>
-<li>对于出队列：<pre><code>1》如果Stack2为空，则将Stack1中的元素全部倒入Stack2中（stack1的元素全部pop
-到stack2中），如果Stack2不为空，则直接出栈，相当于出队列;
-</code></pre></li>
-</ol>
-<ul>
-<li><p>问题小结： 对于Stack1到Stack2的倒入，每执行一次push都可以Pop到stack2中，但是思考到算法的效率，所以描述如上。</p>
-<p> template <class t=""><br> class Stack<br> {<br> public:</class></p>
-<pre><code>Stack()
-    :_array(NULL)
-    , _size(0)
-    , _capacity(0)
-{}
-Stack(const Stack&lt;T&gt;&amp; s)
-{
-    _array = new T[s._size];
-    //memcpy(_array, array, sizeof(T)*s._size);
-    for (size_t i = 0; i &lt; s._size; ++i)
-    {
-        _array[i] = s._array[i];
-    }
-    _size = s._size;
-    _capacity = s._size;
-}
-
-~Stack()
-{
-    if (_array)
-    {
-        delete[] _array;
-    }
-}
-</code></pre><p> public:</p>
-<pre><code>void Push(const T&amp; x)      // Push an element in stack;
-{
-    _CheckCapacity();
-    _array[_size++] = x;
-}
-T&amp; Pop()             // Pop an element out of stack;
-{
-    if (_array)
-    {
-        return _array[--_size];
-    }
-    else
-    {
-        delete[] _array;
-        _array = NULL;
-    }
-}
-void Print()
-{
-    if (_array)
-    {
-        cout &lt;&lt; &quot;依照进顺序:&quot;;
-        for (size_t i = 0; i &lt; _size; ++i)
-        {
-            cout &lt;&lt; &quot; &quot; &lt;&lt; _array[i];
-        }
-    }
-}
-
-size_t Size()
-{
-    return _size;
-}
-
-size_t Capacity()
-{
-    return _capacity;
-}
-
-bool Empty()
-{
-    return _size == 0;
-}
-</code></pre><p> protected:</p>
-<pre><code>void _CheckCapacity()
-{
-    if (_size &gt;= _capacity)
-    {
-        _capacity = _capacity * 2 + 3;
-        T* tmp = new T[_capacity];
-        if (_array)
-        {
-            for (size_t i = 0; i &lt; _size; ++i)
-            {
-                tmp[i] = _array[i];
-            }
-            delete[] _array;
-        }
-        _array = tmp;
-    }
-}
-</code></pre><p> private:</p>
-<pre><code>T* _array;
-size_t _size;
-size_t _capacity;
-</code></pre><p> };</p>
-<p> template <class t=""><br> class Queue<br> {<br> public:</class></p>
-<pre><code>Queue()      //不能省
-{}
-Queue(const Stack&lt;T&gt;&amp; S1,const Stack&lt;int&gt;&amp; S2)
-    :s1(S1)
-    , s2(S2)
-{}
-~Queue()
-{}
-</code></pre><p> public:</p>
-<pre><code>void Inqueue(const T&amp; x)
-{
-    s1.Push(x);
-    ////1m 2k; 1k 2k
-    //if (s2.Empty())
-    //{
-    //    s1.Push(x);
-    //}
-    ////1kong 2 man
-    ////1,2 man
-    //if (!s2.Empty())
-    //{
-    //    for (size_t i = 0; i &lt; s2.Size(); ++i)
-    //    {
-    //        s1.Push(s2.Pop());
-    //    }
-    //    s1.Push(x);
-    //}
-}
-T&amp; Outqueue()
-{
-    if (s1.Empty() &amp;&amp; s2.Empty())
-    {
-        cout &lt;&lt; &quot;没有元素&quot; &lt;&lt; endl;
-    }
-    if (!s2.Empty())
-    {
-        return s2.Pop();
-    }
-    if (s2.Empty())
-    {
-        for (size_t i = s1.Size() - 1 ; i &gt;= 1; --i)
-        {
-            s2.Push(s1.Pop());
-        }
-        return s1.Pop();
-    }    
-}
-void Print()
-{
-    s1.Print();
-    s2.Print();
-    cout &lt;&lt; endl;
-}
-</code></pre><p> private:</p>
-<pre><code>Stack&lt;T&gt; s1;
-Stack&lt;T&gt; s2;
-</code></pre><p> };</p>
-<p> //测试用例<br> void test1()<br> {</p>
-<pre><code>Queue&lt;int&gt; q;
-q.Inqueue(1);
-q.Inqueue(2);
-q.Inqueue(3);
-q.Inqueue(4);
-q.Inqueue(5);
-q.Inqueue(6);
-q.Print();
-
-cout &lt;&lt; q.Outqueue() &lt;&lt; endl;
-cout &lt;&lt; q.Outqueue() &lt;&lt; endl;
-cout &lt;&lt; q.Outqueue() &lt;&lt; endl;
-q.Inqueue(7);
-q.Inqueue(8);
-q.Inqueue(9);
-q.Print();
-q.Inqueue(10);
-q.Print();
-cout &lt;&lt; q.Outqueue() &lt;&lt; endl;
-q.Print();
-</code></pre><p> }</p>
-<p> void test2()<br> {</p>
-<pre><code>Queue&lt;string&gt; q;
-q.Inqueue(&quot;x1&quot;);
-q.Inqueue(&quot;x2&quot;);
-q.Inqueue(&quot;x333333333333333333333333333&quot;);
-q.Inqueue(&quot;x4&quot;);
-q.Inqueue(&quot;x5&quot;);
-q.Inqueue(&quot;x7&quot;);
-q.Inqueue(&quot;x8&quot;);
-q.Inqueue(&quot;x9&quot;);
-q.Inqueue(&quot;x10&quot;);
-q.Inqueue(&quot;x11&quot;);
-q.Print();
-</code></pre><p> }</p>
-</li>
-</ul>
+<p>　</p>
+<h2 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h2><p>百度百科上对他的介绍很全面，有兴趣的朋友可以看看，<a href="http://baike.baidu.com/link?url=Zd92TwIYSEAjh21voyMlUwhL6SCgljeCfiW0Cd2_xgmvDS1FDmxGJfdG0sVj1DVLd2jS-WfA9d8gdqtIBQp3K_" target="_blank" rel="external">快速排序算法链接</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/博客，栈和队列/">博客，栈和队列</a>
+  <span></span> <a href="/tags/QuickSort1/">QuickSort1</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/栈和队列面试题/">栈和队列面试题</a>
+  <a class="article-category-link" href="/categories/排序/">排序</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2016/04/21/两个栈实现一个队列/" data-title="两个栈实现一个队列 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://yoursite.com/2016/05/03/QuickSort/" data-title="QuickSort1 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -330,19 +150,11 @@ q.Print();
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/04/27/Project-文件压缩1/" title="文件压缩之Heap">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  文件压缩之Heap</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/04/05/hello-world/"  title="Hello World">
+<a href="/2016/05/03/BubbSort/"  title="BubbSort">
  <strong>NEXT:</strong><br/> 
- <span>Hello World
+ <span>BubbSort
 </span>
 </a>
 </div>
@@ -359,7 +171,7 @@ q.Print();
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#快速排序"><span class="toc-number">1.</span> <span class="toc-text">快速排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想："><span class="toc-number">1.1.</span> <span class="toc-text">思想：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三数取中法："><span class="toc-number">1.3.</span> <span class="toc-text">三数取中法：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链接"><span class="toc-number">1.4.</span> <span class="toc-text">链接</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">

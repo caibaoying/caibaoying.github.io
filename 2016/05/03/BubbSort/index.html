@@ -9,7 +9,9 @@
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="冒泡排序">
+    <meta name="description" content="冒泡排序思想降序道理相同，这里不再例举。
+代码实现
+flag标志位表示该数组是不是有序的，遍历依此如果有序，则直接breakvoid BubbSort(int* a, size_t size){ assert(a); int flag = 1; for (int i = 0; i &amp;lt; size">
     
     
     
@@ -75,7 +77,7 @@
     </p>
   <p class="article-time">
     <time datetime="2016-05-03T05:52:46.000Z" itemprop="datePublished">2016-05-03</time>
-    更新日期:<time datetime="2016-05-03T07:13:05.760Z" itemprop="dateModified">2016-05-03</time>
+    更新日期:<time datetime="2016-05-03T07:57:33.438Z" itemprop="dateModified">2016-05-03</time>
     
   </p>
 </header>
@@ -84,10 +86,32 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#冒泡排序"><span class="toc-number">1.</span> <span class="toc-text">冒泡排序</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#冒泡排序"><span class="toc-number">1.</span> <span class="toc-text">冒泡排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
 		</div>
 		
-		<h1 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h1>  
+		<h1 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h1><h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/BubbSort.png" alt=""><br>降序道理相同，这里不再例举。</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><ol>
+<li><p>flag标志位表示该数组是不是有序的，遍历依此如果有序，则直接break<br>void BubbSort(int* a, size_t size)<br>{<br> assert(a);<br> int flag = 1;<br> for (int i = 0; i &lt; size; ++i)<br> {</p>
+<pre><code>for (int j = 1; j &lt; size - i; ++j)
+{
+    //升序
+    if (a[j - 1] &gt; a[j])
+    {
+        swap(a[j - 1], a[j]);
+        flag = 0;
+    }
+}
+if (flag)
+    break;
+</code></pre><p> }<br>}</p>
+</li>
+<li><p><strong>优化版</strong></p>
+</li>
+</ol>
+<p>代码描述：<br>    情景：假如有个a[100]，前50位是有序的，后50位无序，或者，前50无序，后50有序<br>    综合以上情况，代码如下：</p>
+<pre><code>//如果说 **j-1** ,** j** 这两个位置发生了交换，那么说明从j这个位置开始往后可能是无序的，如果有序，就不发生交换，cur == 0; 循环结束；如果无序，则cur !=0 ,接着往下冒泡，直到有序。
+</code></pre><p>void BubbOptimizaSort(int* a, size_t size)<br>{<br>    assert(a);<br>    int cur = size;<br>    while (cur &gt; 0)<br>    {<br>        int tmp = cur;     //保存size<br>        cur = 0;<br>        for (int j = 1; j &lt; tmp; ++j)<br>        {<br>            if (a[j - 1] &gt; a[j])<br>            {<br>                swap(a[j - 1], a[j]);<br>                cur = j;<br>            }<br>        }<br>    }<br>}</p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 
@@ -136,7 +160,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#冒泡排序"><span class="toc-number">1.</span> <span class="toc-text">冒泡排序</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#冒泡排序"><span class="toc-number">1.</span> <span class="toc-text">冒泡排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">

@@ -12,11 +12,10 @@
     <meta name="description" content="快速排序快速排序是对冒泡排序的一种改进。
 思想：
 如上图所示，一趟快排后的结果就是：key,左边的都比key小，右边的都比key大；接下来的步骤是如图：
-代码实现
+代码实现&amp;lt;pre&amp;gt;
 void QuickSort(int* a, int left,int right)
 {
-    assert(a);
-    int ">
+    assert(a">
     
     
     
@@ -82,7 +81,7 @@ void QuickSort(int* a, int left,int right)
     </p>
   <p class="article-time">
     <time datetime="2016-05-03T08:07:42.000Z" itemprop="datePublished">2016-05-03</time>
-    更新日期:<time datetime="2016-05-03T10:46:03.689Z" itemprop="dateModified">2016-05-03</time>
+    更新日期:<time datetime="2016-05-03T10:51:56.454Z" itemprop="dateModified">2016-05-03</time>
     
   </p>
 </header>
@@ -97,7 +96,7 @@ void QuickSort(int* a, int left,int right)
 		<h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><p>快速排序是对<a href="http://caibaoying.github.io/2016/05/03/BubbSort/" target="_blank" rel="external">冒泡排序</a>的一种改进。</p>
 <h2 id="思想："><a href="#思想：" class="headerlink" title="思想："></a>思想：</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/QuickSort1.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/QuickSort2.png" alt=""></p>
 <p>如上图所示，一趟快排后的结果就是：key,左边的都比key小，右边的都比key大；<br>接下来的步骤是如图：<br><img src="http://o6l9ml5eb.bkt.clouddn.com/QuickSort3.png" alt=""></p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><pre>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><pre><code>&lt;pre&gt;
 void QuickSort(int* a, int left,int right)
 {
     assert(a);
@@ -105,72 +104,75 @@ void QuickSort(int* a, int left,int right)
     swap(a[mid], a[right]);
     int last = right;         //[0,9]
     int key = a[right];
-    if (left >= last)
+    if (left &gt;= last)
     {
         return;
     }
-    while (left < last)
+    while (left &lt; last)
     {
-        while (left < last && a[left] <= key)="" {="" ++left;="" }="" while="" (left="" <="" last="" &&="" a[last]="">= key)
+        while (left &lt; last &amp;&amp; a[left] &lt;= key)
+        {
+            ++left;
+        }
+        while (left &lt; last &amp;&amp; a[last] &gt;= key)
         {
             --last;
         }
-        if (left < last)
+        if (left &lt; last)
         {
             swap(a[left], a[last]);
         }
     }
-    if (a[left] >= key)
+    if (a[left] &gt;= key)
     {
         swap(a[left], a[right]);
     }
-    if (left - 1 >= 0)    //防止下标越界
+    if (left - 1 &gt;= 0)    //防止下标越界
     {
         QuickSort(a, 0, left - 1);
     }
     QuickSort(a, left + 1, right);
 }
-</=></pre>
-
-<p><strong>有朋友要问了，ThreeMid是什么鬼？</strong><br>解释如下：<br>快排的复杂度是期望O(nlogn)的，也就是平均情况下每次选取的基准值能把序列分成大小相近的两份，但是如果输入数据已经是一有序数据，或者接近于有序，每次选的key是接近于Max/Min的数据，那么每次分治就分得极为不平均(每次分出1 和 n- 1两块)，递归的深度不是O(logn)而是O(n)所以总复杂度就囧了。一个办法就是<strong>三数取中法</strong>。</p>
+&lt;/pre&gt;
+</code></pre><p><strong>有朋友要问了，ThreeMid是什么鬼？</strong><br>解释如下：<br>快排的复杂度是期望O(nlogn)的，也就是平均情况下每次选取的基准值能把序列分成大小相近的两份，但是如果输入数据已经是一有序数据，或者接近于有序，每次选的key是接近于Max/Min的数据，那么每次分治就分得极为不平均(每次分出1 和 n- 1两块)，递归的深度不是O(logn)而是O(n)所以总复杂度就囧了。一个办法就是<strong>三数取中法</strong>。</p>
 <p>一般快排最坏的情况时间复杂度为：O(N^2)</p>
 <h2 id="三数取中法："><a href="#三数取中法：" class="headerlink" title="三数取中法："></a>三数取中法：</h2><p>关于这一改进的最简单的描述大概是这样的：与一般的快速排序方法不同，它并不是选择待排数组的第一个数作为中轴，而是选用待排数组最左边、最右边和最中间的三个元素的中间值作为中轴。这一改进对于原来的快速排序算法来说，主要优势：它使得最坏情况发生的几率减小了。</p>
 <ul>
 <li><strong>三数取中代码</strong></li>
-<li><pre>
-int ThreeMid(int* a, int left, int right)
-{
-  assert(a);
-  int mid = left + (right - left) / 2;
-  if (a[left] > a[right])
+<li>  <pre>
+  int ThreeMid(int* a, int left, int right)
   {
-      if (a[right] > a[mid])
+      assert(a);
+      int mid = left + (right - left) / 2;
+      if (a[left] > a[right])
       {
-          return right;
+          if (a[right] > a[mid])
+          {
+              return right;
+          }
+          else if (a[mid] > a[left])
+          {
+              return left;
+          }
+          else
+              return mid;
       }
-      else if (a[mid] > a[left])
-      {
-          return left;
-      }
+      // (a[left] < a[right])
       else
-          return mid;
-  }
-  // (a[left] < a[right])
-  else
-  {
-      if (a[right] < a[mid])
       {
-          return right;
+          if (a[right] < a[mid])
+          {
+              return right;
+          }
+          else if (a[mid] < a[left])
+          {
+              return left;
+          }
+          else
+              return mid;
       }
-      else if (a[mid] < a[left])
-      {
-          return left;
-      }
-      else
-          return mid;
   }
-}
-</pre>
+  </pre>
 
 </li>
 </ul>

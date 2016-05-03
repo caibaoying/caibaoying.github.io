@@ -4,19 +4,10 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>文件压缩之HuffmanTree | Panda&#39;s blog</title>
+    <title>QuickSort实现二 | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
-    
-    <meta name="description" content="HuffmanTree特点：
-huffman树，又称最优二叉树，是加权路径长度最短的二叉树。
-
-
-【贪心算法】：是指在求解问题是，当前的选择总是看起来是最好的选择，不考虑整体，所以算法所达成的目的是当前最优解，而不是整体最优。
-
-构建huffmanTree
-实现思路huffman树建立在堆的基础之上">
     
     
     
@@ -74,15 +65,15 @@ huffman树，又称最优二叉树，是加权路径长度最短的二叉树。
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/04/27/Project-文件压缩/" title="文件压缩之HuffmanTree" itemprop="url">文件压缩之HuffmanTree</a>
+      <a href="/2016/05/03/QuickSort2/" title="QuickSort实现二" itemprop="url">QuickSort实现二</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-04-27T03:40:58.000Z" itemprop="datePublished">2016-04-27</time>
-    更新日期:<time datetime="2016-05-03T10:55:29.940Z" itemprop="dateModified">2016-05-03</time>
+    <time datetime="2016-05-03T11:18:53.000Z" itemprop="datePublished">2016-05-03</time>
+    更新日期:<time datetime="2016-05-03T11:46:54.348Z" itemprop="dateModified">2016-05-03</time>
     
   </p>
 </header>
@@ -91,136 +82,29 @@ huffman树，又称最优二叉树，是加权路径长度最短的二叉树。
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HuffmanTree"><span class="toc-number">1.</span> <span class="toc-text">HuffmanTree</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#特点："><span class="toc-number">1.1.</span> <span class="toc-text">特点：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建huffmanTree"><span class="toc-number">1.2.</span> <span class="toc-text">构建huffmanTree</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.3.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
+		
 		</div>
 		
-		<h1 id="HuffmanTree"><a href="#HuffmanTree" class="headerlink" title="HuffmanTree"></a>HuffmanTree</h1><h2 id="特点："><a href="#特点：" class="headerlink" title="特点："></a>特点：</h2><ol>
-<li><strong>huffman树</strong>，又称最优二叉树，是加权路径长度最短的二叉树。</li>
-</ol>
-<ol>
-<li>【贪心算法】：是指在求解问题是，当前的选择总是看起来是最好的选择，不考虑整体，所以算法所达成的目的是当前最优解，而不是整体最优。</li>
-</ol>
-<h2 id="构建huffmanTree"><a href="#构建huffmanTree" class="headerlink" title="构建huffmanTree"></a>构建huffmanTree</h2><ol>
-<li><p><strong>实现思路</strong><br>huffman树建立在堆的基础之上，在此之前必须先建好堆，我这里为建小堆，建好小堆之后，每次取到最小堆的两个最小的节点，将这两个最小节点的权值相加，当做parent节点，然后将parent入堆，在拿出最小的两个节点，new 出parent节点，依此步骤直到堆为空，这样构建出来的树则为huffmanTree，该树根节点的元素权值最大，因为拿元素出现的次数作为权值，所以出现次数最多的元素的huffman编码最短，依此原理对文件进行压缩，这里你肯定出现了一些疑问，不要紧，先掌握huffman树，后续有详细讲解。</p>
-</li>
-<li><p><strong>huffman编码：</strong><br>从根节点开始，遍历这棵树直到到达该节点，所走的路径。从根节点开始，向左子树走，为0，向右子树为1，假设最后生成的编码为：101101；那么这个编码就是该节点所对应的huffman编码。如图：<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/huffmanCode.png" alt=""></p>
-</li>
-<li><p><strong>huffman树的节点：</strong><br> template <class t=""><br> struct HuffmanTreeNode<br> {</class></p>
-<pre><code>HuffmanTreeNode&lt;T&gt;* _left;       //左孩子
-HuffmanTreeNode&lt;T&gt;* _right;      //右孩子
-HuffmanTreeNode&lt;T&gt;* _parent;     //指向父节点，方便解压回溯遍历
-T _weight;                       //权值
-
-HuffmanTreeNode(const T&amp; weight)
-    :_weight(weight)
-    , _left(NULL)
-    , _right(NULL)
-    , _parent(NULL)
-{}
-</code></pre><p> };</p>
-</li>
-</ol>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>//仿函数<br>//权值weight比较,传给Heap让小堆的形成要按照权值的大小进行比较得出<br>    template <class t=""><br>    struct NodeCompress<br>    {<br>        bool operator()(HuffmanTreeNode<t><em> a, const HuffmanTreeNode<t></t></em> b)<br>        {<br>            return a-&gt;_weight &lt; b-&gt;_weight;<br>        }<br>    };<br>//构建哈弗曼树<br>    template <class t=""><br>    //用class 编不过<br>    struct HuffmanTree<br>    {<br>        typedef HuffmanTreeNode<t> Node;</t></class></t></class></p>
-<pre><code>    HuffmanTree()
-        :_root(NULL)
-    {}
-
-    ~HuffmanTree()
-    {}
-
-    //先序遍历
-    void PrevHuffmanTree()
-    {
-        _PrevHuffmanTree(_root);
-    }
-
-public:
-    //建造HuffmanTree
-    //建大堆,由于以次数建树，所以权值大的，靠近堆顶，HuffmanCode短，
-    Node* CreateTree(const T* a, size_t size, int illegal)
-    {
-        assert(a);
-
-        MinHeap&lt;Node*, NodeCompress&lt;T&gt;&gt; minHeap;
-        for (int i = 0; i &lt; size; ++i)
-        {
-            if (a[i] != illegal)
-            {
-                Node* node = new Node(a[i]);
-                minHeap.Push(node);
-            }
-        }
-
-        //不能用empty判空
-        while (minHeap.Size() &gt; 1)
-        {
-            //拿出权值最小的两个数
-            Node* left = minHeap.Top();
-            minHeap.Pop();
-            Node*  right= minHeap.Top();
-            minHeap.Pop();
-
-            //权值之和建根节点
-            Node* parent = new Node(left-&gt;_weight + right-&gt;_weight);
-
-            //链接
-            parent-&gt;_left = left;
-            parent-&gt;_right = right;
-            left-&gt;_parent = parent;
-            right-&gt;_parent = parent;
-
-            _root = parent;
-
-            //将根节点push进堆
-            minHeap.Push(parent);
-        }
-        return _root;
-    }
-protected:
-    void _PrevHuffmanTree(Node* root)
-    {
-        Node* cur = root;
-        if (cur == NULL)
-        {
-            return;
-        }
-        cout &lt;&lt; cur-&gt;_weight &lt;&lt; &quot; &quot;;
-        _PrevHuffmanTree(cur-&gt;_left);
-        _PrevHuffmanTree(cur-&gt;_right);
-    }
-protected:
-    Node* _root;
-};
-
-//测试哈夫曼树的正确性
-void TestHuffmanTree()
-{
-    int array[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    HuffmanTree&lt;int&gt; hf;
-    hf.CreateTree(array, sizeof(array) / sizeof(int), -1);
-    hf.PrevHuffmanTree();
-    cout &lt;&lt; endl;
-}
-</code></pre>  
+		  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/文件压缩之HuffmanTree/">文件压缩之HuffmanTree</a>
+  <span></span> <a href="/tags/QuickSort实现二/">QuickSort实现二</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Project/">Project</a>
+  <a class="article-category-link" href="/categories/排序/">排序</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2016/04/27/Project-文件压缩/" data-title="文件压缩之HuffmanTree | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://yoursite.com/2016/05/03/QuickSort2/" data-title="QuickSort实现二 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -229,19 +113,11 @@ void TestHuffmanTree()
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/04/28/Project-文件压缩3/" title="文件压缩之压缩与解压">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  文件压缩之压缩与解压</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/04/27/Project-文件压缩1/"  title="文件压缩之Heap">
+<a href="/2016/05/03/QuickSort/"  title="QuickSort实现一">
  <strong>NEXT:</strong><br/> 
- <span>文件压缩之Heap
+ <span>QuickSort实现一
 </span>
 </a>
 </div>
@@ -258,7 +134,7 @@ void TestHuffmanTree()
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HuffmanTree"><span class="toc-number">1.</span> <span class="toc-text">HuffmanTree</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#特点："><span class="toc-number">1.1.</span> <span class="toc-text">特点：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构建huffmanTree"><span class="toc-number">1.2.</span> <span class="toc-text">构建huffmanTree</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.3.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
+  
   </div>
 
 <div id="asidepart">

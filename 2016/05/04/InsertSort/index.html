@@ -4,16 +4,17 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>快排非递归 | Panda&#39;s blog</title>
+    <title>直接插入排序 | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="快排非递归思想我所例举的情况比较特殊，恰巧，binary左边有序，有兴趣的可以试一下别的测试用例。
-代码实现int Partition(int* a, int left, int right)
+    <meta name="description" content="直接插入排序插入排序的基本方法是：每步将一个待排序的记录按其关键字的大小插到前面已经排序的序列中的适当位置，直到全部记录插入完毕为止。
+思想
+代码实现void DictInsertSort(int* a, int n)
 {
     assert(a);
-    //int mid = ThreeMid(a, left, ri">
+    for (int i = 1; i &amp;">
     
     
     
@@ -71,15 +72,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/03/QuickSortNR/" title="快排非递归" itemprop="url">快排非递归</a>
+      <a href="/2016/05/04/InsertSort/" title="直接插入排序" itemprop="url">直接插入排序</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-05-03T14:03:41.000Z" itemprop="datePublished">2016-05-03</time>
-    更新日期:<time datetime="2016-05-03T14:30:48.087Z" itemprop="dateModified">2016-05-03</time>
+    <time datetime="2016-05-04T04:16:17.000Z" itemprop="datePublished">2016-05-04</time>
+    更新日期:<time datetime="2016-05-04T04:36:11.784Z" itemprop="dateModified">2016-05-04</time>
     
   </p>
 </header>
@@ -88,72 +89,27 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#快排非递归"><span class="toc-number">1.</span> <span class="toc-text">快排非递归</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#直接插入排序"><span class="toc-number">1.</span> <span class="toc-text">直接插入排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
 		</div>
 		
-		<h1 id="快排非递归"><a href="#快排非递归" class="headerlink" title="快排非递归"></a>快排非递归</h1><h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p><strong>我所例举的情况比较特殊，恰巧，binary左边有序，有兴趣的可以试一下别的测试用例。</strong><br><img src="http://o6l9ml5eb.bkt.clouddn.com/QuickSortNR.png" alt=""></p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><pre><code>int Partition(int* a, int left, int right)
+		<h1 id="直接插入排序"><a href="#直接插入排序" class="headerlink" title="直接插入排序"></a>直接插入排序</h1><p>插入排序的基本方法是：每步将一个待排序的记录按其关键字的大小插到前面已经排序的序列中的适当位置，直到全部记录插入完毕为止。</p>
+<h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/InsertSort1.png" alt=""></p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><pre><code>void DictInsertSort(int* a, int n)
 {
     assert(a);
-    //int mid = ThreeMid(a, left, right); //遍历
-    //swap(a[mid], a[right]);
-    int key = a[right];
-    int cur = left;
-    int prev = left - 1;
-
-    while (cur &lt; right)
+    for (int i = 1; i &lt; n; ++i)
     {
-        if (a[cur] &lt; key &amp;&amp; ++prev != cur)
+        int tmp = a[i];
+        for (int j = i; j &gt;= 0; --j)
         {
-            swap(a[cur], a[prev]);
-        }
-        ++cur;
-    }
-    /*if (a[prev + 1], a[right])*/
-    swap(a[++prev], a[right]);
-    return prev;
-}
-void quickSortNonRecursive(int* a, int left, int right)
-{
-    assert(a);
-    stack&lt;int&gt; Stack;
-    if (left &gt;= right)
-    {
-        return;
-    }
-    if (left &lt; right)
-    {
-        int binary = Partition(a, left, right);
-
-        if (binary - 1 &gt;= left)
-        {
-            Stack.push(left);
-            Stack.push(binary - 1);
-        }
-        if (binary + 1 &lt;= right)
-        {
-            Stack.push(binary + 1);
-            Stack.push(right);
-        }
-
-        while (!Stack.empty())
-        {
-            int Right = Stack.top();
-            Stack.pop();
-            int Left = Stack.top();
-            Stack.pop();
-
-            binary = Partition(a, Left, Right);
-
-            if (binary - 1 &gt; Left)
+            if (tmp &lt; a[j - 1])
             {
-                Stack.push(Left);
-                Stack.push(binary - 1);
+                a[j] = a[j - 1];
             }
-            if (binary + 1 &lt; Right)
+            else
             {
-                Stack.push(binary + 1);
-                Stack.push(Right);
+                a[j] = tmp;
+                break;
             }
         }
     }
@@ -164,7 +120,7 @@ void quickSortNonRecursive(int* a, int left, int right)
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/快排非递归/">快排非递归</a>
+  <span></span> <a href="/tags/直接插入排序/">直接插入排序</a>
   </div>
 
 
@@ -177,7 +133,7 @@ void quickSortNonRecursive(int* a, int left, int right)
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2016/05/03/QuickSortNR/" data-title="快排非递归 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://yoursite.com/2016/05/04/InsertSort/" data-title="直接插入排序 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -186,19 +142,11 @@ void quickSortNonRecursive(int* a, int left, int right)
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/05/04/ShellSort/" title="希尔排序">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  希尔排序</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/05/03/QuickSort2/"  title="QuickSort实现二">
+<a href="/2016/05/04/ShellSort/"  title="希尔排序">
  <strong>NEXT:</strong><br/> 
- <span>QuickSort实现二
+ <span>希尔排序
 </span>
 </a>
 </div>
@@ -215,7 +163,7 @@ void quickSortNonRecursive(int* a, int left, int right)
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#快排非递归"><span class="toc-number">1.</span> <span class="toc-text">快排非递归</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#直接插入排序"><span class="toc-number">1.</span> <span class="toc-text">直接插入排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">

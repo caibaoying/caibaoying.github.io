@@ -4,18 +4,13 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>QuickSort实现一 | Panda&#39;s blog</title>
+    <title>希尔排序 | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="快速排序快速排序是对冒泡排序的一种改进。
-思想：
-如上图所示，一趟快排后的结果就是：key,左边的都比key小，右边的都比key大；接下来的步骤是如图：
-代码实现void QuickSort(int* a, int left,int right)
-{
-    assert(a);
-    int m">
+    <meta name="description" content="希尔排序思想希尔排序(ShellSort)是插入排序的一种。也称缩小增量排序，是直接插入排序算法的一种更高效的改进版本。希尔排序是非稳定排序算法。该方法因DL．Shell于1959年提出而得名。
+先取一个小于n的整数d1作为第一个增量，把文件的全部记录分组。所有距离为d1的倍数的记录放在同一个组中。">
     
     
     
@@ -73,15 +68,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/03/QuickSort/" title="QuickSort实现一" itemprop="url">QuickSort实现一</a>
+      <a href="/2016/05/04/ShellSort/" title="希尔排序" itemprop="url">希尔排序</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-05-03T08:07:42.000Z" itemprop="datePublished">2016-05-03</time>
-    更新日期:<time datetime="2016-05-03T15:44:50.800Z" itemprop="dateModified">2016-05-03</time>
+    <time datetime="2016-05-04T04:01:41.000Z" itemprop="datePublished">2016-05-04</time>
+    更新日期:<time datetime="2016-05-04T04:12:16.917Z" itemprop="dateModified">2016-05-04</time>
     
   </p>
 </header>
@@ -90,92 +85,43 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#快速排序"><span class="toc-number">1.</span> <span class="toc-text">快速排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想："><span class="toc-number">1.1.</span> <span class="toc-text">思想：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三数取中法："><span class="toc-number">1.3.</span> <span class="toc-text">三数取中法：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链接"><span class="toc-number">1.4.</span> <span class="toc-text">链接</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#希尔排序"><span class="toc-number">1.</span> <span class="toc-text">希尔排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#稳定性"><span class="toc-number">1.2.</span> <span class="toc-text">稳定性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#排序过程"><span class="toc-number">1.3.</span> <span class="toc-text">排序过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.4.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
 		</div>
 		
-		<h1 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h1><p>快速排序是对<a href="http://caibaoying.github.io/2016/05/03/BubbSort/" target="_blank" rel="external">冒泡排序</a>的一种改进。</p>
-<h2 id="思想："><a href="#思想：" class="headerlink" title="思想："></a>思想：</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/QuickSort1.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/QuickSort2.png" alt=""></p>
-<p>如上图所示，一趟快排后的结果就是：key,左边的都比key小，右边的都比key大；<br>接下来的步骤是如图：<br><img src="http://o6l9ml5eb.bkt.clouddn.com/QuickSort3.png" alt=""></p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><pre><code>void QuickSort(int* a, int left,int right)
+		<h1 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h1><h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p>希尔排序(ShellSort)是插入排序的一种。也称缩小增量排序，是直接插入排序算法的一种更高效的改进版本。希尔排序是非稳定排序算法。该方法因DL．Shell于1959年提出而得名。</p>
+<p>先取一个小于n的整数d1作为第一个增量，把文件的全部记录分组。所有距离为d1的倍数的记录放在同一个组中。先在各组内进行直接插入排序；然后，取第二个增量d2&lt;d1重复上述的分组和排序，直至所取的增量  =1(  &lt;  …&lt;d2&lt;d1)，即所有记录放在同一组中进行直接插入排序为止。</p>
+<p><strong>该方法实质上是一种分组插入方法</strong><br>比较相隔较远距离（称为增量）的数，使得数移动时能跨过多个元素，则进行一次比[2]  较就可能消除多个元素交换。D.L.shell于1959年在以他名字命名的排序算法中实现了这一思想。算法先将要排序的一组数按某个增量d分成若干组，每组中记录的下标相差d.对每组中全部元素进行排序，然后再用一个较小的增量对它进行，在每组中再进行排序。当增量减到1时，整个要排序的数被分成一组，排序完成。</p>
+<p><strong>一般的初次取序列的一半为增量，以后每次减半，直到增量为1。</strong></p>
+<h2 id="稳定性"><a href="#稳定性" class="headerlink" title="稳定性"></a>稳定性</h2><p>由于多次插入排序，我们知道一次插入排序是稳定的，不会改变相同元素的相对顺序，但在不同的插入排序过程中，相同的元素可能在各自的插入排序中移动，最后其稳定性就会被打乱，所以shell排序是不稳定的。</p>
+<h2 id="排序过程"><a href="#排序过程" class="headerlink" title="排序过程"></a>排序过程</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/ShellSort1.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/ShellSort2.png" alt=""></p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><pre><code>void ShellSort(int* a, size_t size)
 {
     assert(a);
-    int mid = ThreeMid(a, left, right);
-    swap(a[mid], a[right]);
-    int last = right;         //[0,9]
-    int key = a[right];
-    if (left &gt;= last)
+    int gap = size;
+    while (gap &gt; 1)
     {
-        return;
-    }
-    while (left &lt; last)
-    {
-        while (left &lt; last &amp;&amp; a[left] &lt;= key)
+        gap = gap / 3 + 1;
+        for (size_t i = gap; i &lt; size; ++i)
         {
-            ++left;
-        }
-        while (left &lt; last &amp;&amp; a[last] &gt;= key)
-        {
-            --last;
-        }
-        if (left &lt; last)
-        {
-            swap(a[left], a[last]);
+            int index = i;
+            int tmp = a[index];
+            int end = index - gap;
+            while (end &gt;= 0 &amp;&amp; tmp &lt; a[end])
+            {
+                a[end + gap] = a[end];
+                end -= gap;
+            }
+            a[end + gap] = tmp;
         }
     }
-    if (a[left] &gt;= key)
-    {
-        swap(a[left], a[right]);
-    }
-    if (left - 1 &gt;= 0)    //防止下标越界
-    {
-        QuickSort(a, 0, left - 1);
-    }
-    QuickSort(a, left + 1, right);
 }
-</code></pre><p><strong>有朋友要问了，ThreeMid是什么鬼？</strong><br>解释如下：<br>快排的复杂度是期望O(nlogn)的，也就是平均情况下每次选取的基准值能把序列分成大小相近的两份，但是如果输入数据已经是一有序数据，或者接近于有序，每次选的key是接近于Max/Min的数据，那么每次分治就分得极为不平均(每次分出1 和 n- 1两块)，递归的深度不是O(logn)而是O(n)所以总复杂度就囧了。一个办法就是<strong>三数取中法</strong>。</p>
-<p>一般快排最坏的情况时间复杂度为：O(N^2)</p>
-<h2 id="三数取中法："><a href="#三数取中法：" class="headerlink" title="三数取中法："></a>三数取中法：</h2><p>关于这一改进的最简单的描述大概是这样的：与一般的快速排序方法不同，它并不是选择待排数组的第一个数作为中轴，而是选用待排数组最左边、最右边和最中间的三个元素的中间值作为中轴。这一改进对于原来的快速排序算法来说，主要优势：它使得最坏情况发生的几率减小了。</p>
-<ul>
-<li><strong>三数取中代码</strong></li>
-<li>  int ThreeMid(int* a, int left, int right)<br>  {<pre><code>assert(a);
-int mid = left + (right - left) / 2;
-if (a[left] &gt; a[right])
-{
-    if (a[right] &gt; a[mid])
-    {
-        return right;
-    }
-    else if (a[mid] &gt; a[left])
-    {
-        return left;
-    }
-    else
-        return mid;
-}
-// (a[left] &lt; a[right])
-else
-{
-    if (a[right] &lt; a[mid])
-    {
-        return right;
-    }
-    else if (a[mid] &lt; a[left])
-    {
-        return left;
-    }
-    else
-        return mid;
-}
-</code></pre>  }</li>
-</ul>
-<h2 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h2><p>百度百科上对他的介绍很全面，有兴趣的朋友可以看看，<a href="http://baike.baidu.com/link?url=Zd92TwIYSEAjh21voyMlUwhL6SCgljeCfiW0Cd2_xgmvDS1FDmxGJfdG0sVj1DVLd2jS-WfA9d8gdqtIBQp3K_" target="_blank" rel="external">快速排序算法链接</a></p>
-  
+</code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/QuickSort实现一/">QuickSort实现一</a>
+  <span></span> <a href="/tags/希尔排序/">希尔排序</a>
   </div>
 
 
@@ -188,7 +134,7 @@ else
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2016/05/03/QuickSort/" data-title="QuickSort实现一 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://yoursite.com/2016/05/04/ShellSort/" data-title="希尔排序 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -197,19 +143,11 @@ else
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/05/03/QuickSort2/" title="QuickSort实现二">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  QuickSort实现二</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/05/03/BubbSort/"  title="BubbSort">
+<a href="/2016/05/03/QuickSortNR/"  title="快排非递归">
  <strong>NEXT:</strong><br/> 
- <span>BubbSort
+ <span>快排非递归
 </span>
 </a>
 </div>
@@ -226,7 +164,7 @@ else
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#快速排序"><span class="toc-number">1.</span> <span class="toc-text">快速排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想："><span class="toc-number">1.1.</span> <span class="toc-text">思想：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三数取中法："><span class="toc-number">1.3.</span> <span class="toc-text">三数取中法：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链接"><span class="toc-number">1.4.</span> <span class="toc-text">链接</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#希尔排序"><span class="toc-number">1.</span> <span class="toc-text">希尔排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#稳定性"><span class="toc-number">1.2.</span> <span class="toc-text">稳定性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#排序过程"><span class="toc-number">1.3.</span> <span class="toc-text">排序过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.4.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">

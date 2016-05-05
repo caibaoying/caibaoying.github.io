@@ -4,20 +4,10 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>两个栈实现一个队列 | Panda&#39;s blog</title>
+    <title>求二叉树中节点的最大距离 | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
-    
-    <meta name="description" content="题目描述： 使用两个栈实现一个队列
-数据结构： 栈
-
-思    路： 队列的特点是先进先出，所以两个栈，Stack1主要负责入栈，也就是队列中的元素，Stack2负责出栈，也就是出队列中的元素。
-
-
-
-对于进队列：1》如果Stack1为空，则直接进栈，相当于进队列;
-2》如果Stack1不为空，则入">
     
     
     
@@ -75,15 +65,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/04/21/两个栈实现一个队列/" title="两个栈实现一个队列" itemprop="url">两个栈实现一个队列</a>
+      <a href="/2016/05/05/BinaryNodeMaxDistance/" title="求二叉树中节点的最大距离" itemprop="url">求二叉树中节点的最大距离</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-04-21T08:06:40.000Z" itemprop="datePublished">2016-04-21</time>
-    更新日期:<time datetime="2016-05-05T04:46:56.554Z" itemprop="dateModified">2016-05-05</time>
+    <time datetime="2016-05-05T04:36:20.000Z" itemprop="datePublished">2016-05-05</time>
+    更新日期:<time datetime="2016-05-05T04:54:24.152Z" itemprop="dateModified">2016-05-05</time>
     
   </p>
 </header>
@@ -95,233 +85,16 @@
 		
 		</div>
 		
-		<p>题目描述： 使用两个栈实现一个队列</p>
-<p>数据结构： 栈</p>
-<ul>
-<li>思    路： 队列的特点是先进先出，所以两个栈，Stack1主要负责入栈，也就是队列中的元素，<pre><code>Stack2负责出栈，也就是出队列中的元素。
-</code></pre></li>
-</ul>
-<ol>
-<li>对于进队列：<pre><code>1》如果Stack1为空，则直接进栈，相当于进队列;
-2》如果Stack1不为空，则入队列元素也是直接入栈;
-  入队列其实是元素的直接Push,主要是要满足先进的先出即可。
-</code></pre></li>
-</ol>
-<ol>
-<li>对于出队列：<pre><code>1》如果Stack2为空，则将Stack1中的元素全部倒入Stack2中（stack1的元素全部pop
-到stack2中），如果Stack2不为空，则直接出栈，相当于出队列;
-</code></pre></li>
-</ol>
-<ul>
-<li><p>问题小结： 对于Stack1到Stack2的倒入，每执行一次push都可以Pop到stack2中，但是思考到算法的效率，所以描述如上。</p>
-<p> template <class t=""><br> class Stack<br> {<br> public:</class></p>
-<pre><code>Stack()
-    :_array(NULL)
-    , _size(0)
-    , _capacity(0)
-{}
-Stack(const Stack&lt;T&gt;&amp; s)
-{
-    _array = new T[s._size];
-    //memcpy(_array, array, sizeof(T)*s._size);
-    for (size_t i = 0; i &lt; s._size; ++i)
-    {
-        _array[i] = s._array[i];
-    }
-    _size = s._size;
-    _capacity = s._size;
-}
-
-~Stack()
-{
-    if (_array)
-    {
-        delete[] _array;
-    }
-}
-</code></pre><p> public:</p>
-<pre><code>void Push(const T&amp; x)      // Push an element in stack;
-{
-    _CheckCapacity();
-    _array[_size++] = x;
-}
-T&amp; Pop()             // Pop an element out of stack;
-{
-    if (_array)
-    {
-        return _array[--_size];
-    }
-    else
-    {
-        delete[] _array;
-        _array = NULL;
-    }
-}
-void Print()
-{
-    if (_array)
-    {
-        cout &lt;&lt; &quot;依照进顺序:&quot;;
-        for (size_t i = 0; i &lt; _size; ++i)
-        {
-            cout &lt;&lt; &quot; &quot; &lt;&lt; _array[i];
-        }
-    }
-}
-
-size_t Size()
-{
-    return _size;
-}
-
-size_t Capacity()
-{
-    return _capacity;
-}
-
-bool Empty()
-{
-    return _size == 0;
-}
-</code></pre><p> protected:</p>
-<pre><code>void _CheckCapacity()
-{
-    if (_size &gt;= _capacity)
-    {
-        _capacity = _capacity * 2 + 3;
-        T* tmp = new T[_capacity];
-        if (_array)
-        {
-            for (size_t i = 0; i &lt; _size; ++i)
-            {
-                tmp[i] = _array[i];
-            }
-            delete[] _array;
-        }
-        _array = tmp;
-    }
-}
-</code></pre><p> private:</p>
-<pre><code>T* _array;
-size_t _size;
-size_t _capacity;
-</code></pre><p> };</p>
-<p> template <class t=""><br> class Queue<br> {<br> public:</class></p>
-<pre><code>Queue()      //不能省
-{}
-Queue(const Stack&lt;T&gt;&amp; S1,const Stack&lt;int&gt;&amp; S2)
-    :s1(S1)
-    , s2(S2)
-{}
-~Queue()
-{}
-</code></pre><p> public:</p>
-<pre><code>void Inqueue(const T&amp; x)
-{
-    s1.Push(x);
-    ////1m 2k; 1k 2k
-    //if (s2.Empty())
-    //{
-    //    s1.Push(x);
-    //}
-    ////1kong 2 man
-    ////1,2 man
-    //if (!s2.Empty())
-    //{
-    //    for (size_t i = 0; i &lt; s2.Size(); ++i)
-    //    {
-    //        s1.Push(s2.Pop());
-    //    }
-    //    s1.Push(x);
-    //}
-}
-T&amp; Outqueue()
-{
-    if (s1.Empty() &amp;&amp; s2.Empty())
-    {
-        cout &lt;&lt; &quot;没有元素&quot; &lt;&lt; endl;
-    }
-    if (!s2.Empty())
-    {
-        return s2.Pop();
-    }
-    if (s2.Empty())
-    {
-        for (size_t i = s1.Size() - 1 ; i &gt;= 1; --i)
-        {
-            s2.Push(s1.Pop());
-        }
-        return s1.Pop();
-    }    
-}
-void Print()
-{
-    s1.Print();
-    s2.Print();
-    cout &lt;&lt; endl;
-}
-</code></pre><p> private:</p>
-<pre><code>Stack&lt;T&gt; s1;
-Stack&lt;T&gt; s2;
-</code></pre><p> };</p>
-<p> //测试用例<br> void test1()<br> {</p>
-<pre><code>Queue&lt;int&gt; q;
-q.Inqueue(1);
-q.Inqueue(2);
-q.Inqueue(3);
-q.Inqueue(4);
-q.Inqueue(5);
-q.Inqueue(6);
-q.Print();
-
-cout &lt;&lt; q.Outqueue() &lt;&lt; endl;
-cout &lt;&lt; q.Outqueue() &lt;&lt; endl;
-cout &lt;&lt; q.Outqueue() &lt;&lt; endl;
-q.Inqueue(7);
-q.Inqueue(8);
-q.Inqueue(9);
-q.Print();
-q.Inqueue(10);
-q.Print();
-cout &lt;&lt; q.Outqueue() &lt;&lt; endl;
-q.Print();
-</code></pre><p> }</p>
-<p> void test2()<br> {</p>
-<pre><code>Queue&lt;string&gt; q;
-q.Inqueue(&quot;x1&quot;);
-q.Inqueue(&quot;x2&quot;);
-q.Inqueue(&quot;x333333333333333333333333333&quot;);
-q.Inqueue(&quot;x4&quot;);
-q.Inqueue(&quot;x5&quot;);
-q.Inqueue(&quot;x7&quot;);
-q.Inqueue(&quot;x8&quot;);
-q.Inqueue(&quot;x9&quot;);
-q.Inqueue(&quot;x10&quot;);
-q.Inqueue(&quot;x11&quot;);
-q.Print();
-</code></pre><p> }</p>
-</li>
-</ul>
-  
+		  
 	</div>
 		<footer class="article-footer clearfix">
 
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/面试题/">面试题</a>
-  </div>
-
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/数据结构/">数据结构</a>
-</div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2016/04/21/两个栈实现一个队列/" data-title="两个栈实现一个队列 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://yoursite.com/2016/05/05/BinaryNodeMaxDistance/" data-title="求二叉树中节点的最大距离 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -330,19 +103,11 @@ q.Print();
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/04/27/Project-文件压缩1/" title="文件压缩之Heap">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  文件压缩之Heap</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/04/05/hello-world/"  title="Hello World">
+<a href="/2016/05/04/MergeSort/"  title="归并排序">
  <strong>NEXT:</strong><br/> 
- <span>Hello World
+ <span>归并排序
 </span>
 </a>
 </div>

@@ -71,8 +71,14 @@
     <h1 itemprop="name">求二叉树中节点的最大距离</h1>
     
      
-           <p itemprop="description" >求二叉树中节点的最大距离思想
-算法描述// 数据结构定义struct NODE{    NODE pLeft;        // 左子树    NODE pRight;       // 右子树    int nMaxLeft;       // 左子树中的最长距离    in</p>
+           <p itemprop="description" >求二叉树中节点的最大距离思想计算一个二叉树的最大距离有两个情况:
+
+情况A: 路径经过左子树的最深节点，通过根节点，再到右子树的最深节点。
+
+
+情况B: 路径不穿过根节点，而是左子树或右子树的最大距离路径，取其大者。
+
+首先算出经过根节点的最大路径的距离，其实就是左右子树的深度和</p>
         
     
     <time datetime="2016-05-05T04:36:20.000Z" itemprop="datePublished">2016-05-05</time>

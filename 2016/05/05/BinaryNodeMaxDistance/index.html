@@ -9,8 +9,14 @@
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="求二叉树中节点的最大距离思想
-算法描述// 数据结构定义struct NODE{    NODE pLeft;        // 左子树    NODE pRight;       // 右子树    int nMaxLeft;       // 左子树中的最长距离    int nMaxRigh">
+    <meta name="description" content="求二叉树中节点的最大距离思想计算一个二叉树的最大距离有两个情况:
+
+情况A: 路径经过左子树的最深节点，通过根节点，再到右子树的最深节点。
+
+
+情况B: 路径不穿过根节点，而是左子树或右子树的最大距离路径，取其大者。
+
+首先算出经过根节点的最大路径的距离，其实就是左右子树的深度和；然后分别算出左子树">
     
     
     
@@ -76,7 +82,7 @@
     </p>
   <p class="article-time">
     <time datetime="2016-05-05T04:36:20.000Z" itemprop="datePublished">2016-05-05</time>
-    更新日期:<time datetime="2016-05-05T07:29:26.717Z" itemprop="dateModified">2016-05-05</time>
+    更新日期:<time datetime="2016-05-05T09:03:08.572Z" itemprop="dateModified">2016-05-05</time>
     
   </p>
 </header>
@@ -88,8 +94,18 @@
 		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#求二叉树中节点的最大距离"><span class="toc-number">1.</span> <span class="toc-text">求二叉树中节点的最大距离</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法描述"><span class="toc-number">1.2.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链接"><span class="toc-number">1.3.</span> <span class="toc-text">链接</span></a></li></ol></li></ol>
 		</div>
 		
-		<h1 id="求二叉树中节点的最大距离"><a href="#求二叉树中节点的最大距离" class="headerlink" title="求二叉树中节点的最大距离"></a>求二叉树中节点的最大距离</h1><h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/MaxDistance1.png" alt=""></p>
-<h2 id="算法描述"><a href="#算法描述" class="headerlink" title="算法描述"></a>算法描述</h2><p>// 数据结构定义<br>struct NODE<br>{<br>    NODE<em> pLeft;        // 左子树<br>    NODE</em> pRight;       // 右子树<br>    int nMaxLeft;       // 左子树中的最长距离<br>    int nMaxRight;      // 右子树中的最长距离<br>    char chValue;       // 该节点的值<br>};</p>
+		<h1 id="求二叉树中节点的最大距离"><a href="#求二叉树中节点的最大距离" class="headerlink" title="求二叉树中节点的最大距离"></a>求二叉树中节点的最大距离</h1><h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p>计算一个二叉树的最大距离有两个情况:</p>
+<ul>
+<li>情况A: 路径经过左子树的最深节点，通过根节点，再到右子树的最深节点。</li>
+</ul>
+<ul>
+<li>情况B: 路径不穿过根节点，而是左子树或右子树的最大距离路径，取其大者。</li>
+</ul>
+<p>首先算出经过根节点的最大路径的距离，其实就是左右子树的深度和；然后分别算出左子树和右子树的最大距离，三者比较，最大值就是当前二叉树的最大距离了。</p>
+<p><img src="http://o6l9ml5eb.bkt.clouddn.com/MaxDistance.png" alt=""></p>
+<h2 id="算法描述"><a href="#算法描述" class="headerlink" title="算法描述"></a>算法描述</h2><ul>
+<li><strong>实现一</strong><br>// 数据结构定义<br>struct NODE<br>{<br>  NODE<em> pLeft;        // 左子树<br>  NODE</em> pRight;       // 右子树<br>  int nMaxLeft;       // 左子树中的最长距离<br>  int nMaxRight;      // 右子树中的最长距离<br>  char chValue;       // 该节点的值<br>};</li>
+</ul>
 <p>int nMaxLen = 0;</p>
 <p>// 寻找树中最长的两段距离<br>    void FindMaxLen(NODE* pRoot)<br>    {<br>        // 遍历到叶子节点，返回<br>        if(pRoot == NULL)<br>        {<br>            return;<br>        }</p>
 <pre><code>    // 如果左子树为空，那么该节点的左边最长距离为0
@@ -152,40 +168,35 @@
         nMaxLen = pRoot -&gt; nMaxLeft + pRoot -&gt; nMaxRight;
     }
 }
-</code></pre><p>我认为这个问题的核心是，情况A 及 B 需要不同的信息: A 需要子树的最大深度，B 需要子树的最大距离。只要函数能在一个节点同时计算及传回这两个信息，代码就可以很简单:</p>
-<pre><code>#include &lt;iostream&gt;
-
-using namespace std;
-
-struct NODE
+</code></pre><ul>
+<li><p><strong>实现二</strong><br>这个问题的核心是，情况A 及 B 需要不同的信息: A 需要子树的最大深度，B 需要子树的最大距离。只要函数能在一个节点同时计算及传回这两个信息，代码就可以很简单:</p>
+<p>  /#include /<iostream></iostream></p>
+<p>  using namespace std;</p>
+<p>  struct NODE<br>  {</p>
+<pre><code>NODE *pLeft;
+NODE *pRight;
+</code></pre><p>  };</p>
+<p>  struct RESULT<br>  {</p>
+<pre><code>int nMaxDistance;
+int nMaxDepth;
+</code></pre><p>  };</p>
+<p>  RESULT GetMaximumDistance(NODE* root)<br>  {</p>
+<pre><code>if (!root)
 {
-    NODE *pLeft;
-    NODE *pRight;
-};
-
-struct RESULT
-{
-    int nMaxDistance;
-    int nMaxDepth;
-};
-
-RESULT GetMaximumDistance(NODE* root)
-{
-    if (!root)
-    {
-        RESULT empty = { 0, -1 };   // trick: nMaxDepth is -1 and then caller will plus 1 to balance it as zero.
-        return empty;
-    }
-
-    RESULT lhs = GetMaximumDistance(root-&gt;pLeft);
-    RESULT rhs = GetMaximumDistance(root-&gt;pRight);
-
-    RESULT result;
-    result.nMaxDepth = max(lhs.nMaxDepth + 1, rhs.nMaxDepth + 1);
-    result.nMaxDistance = max(max(lhs.nMaxDistance, rhs.nMaxDistance), lhs.nMaxDepth + rhs.nMaxDepth + 2);
-    return result;
+    RESULT empty = { 0, -1 };   // trick: nMaxDepth is -1 and then caller will plus 1 to balance it as zero.
+    return empty;
 }
-</code></pre><p>计算 result 的代码很清楚；nMaxDepth 就是左子树和右子树的深度加1；nMaxDistance 则取 A 和 B 情况的最大值。</p>
+
+RESULT lhs = GetMaximumDistance(root-&gt;pLeft);
+RESULT rhs = GetMaximumDistance(root-&gt;pRight);
+
+RESULT result;
+result.nMaxDepth = max(lhs.nMaxDepth + 1, rhs.nMaxDepth + 1);
+result.nMaxDistance = max(max(lhs.nMaxDistance, rhs.nMaxDistance), lhs.nMaxDepth + rhs.nMaxDepth + 2);
+return result;
+</code></pre><p>  }<br>计算 result 的代码很清楚；nMaxDepth 就是左子树和右子树的深度加1；nMaxDistance 则取 A 和 B 情况的最大值。</p>
+</li>
+</ul>
 <p>为了减少 NULL 的条件测试，进入函数时，如果节点为 NULL，会传回一个 empty 变量。比较奇怪的是 empty.nMaxDepth = -1，目的是让调用方 +1 后，把当前的不存在的 (NULL) 子树当成最大深度为 0。</p>
 <p>除了提高了可读性，这个解法的另一个优点是减少了 O(节点数目) 大小的侵入式资料，而改为使用 O(树的最大深度) 大小的栈空间。这个设计使函数完全没有副作用(side effect)。</p>
 <h2 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h2><p><a href="http://www.cnblogs.com/miloyip/archive/2010/02/25/binary_tree_distance.html" title="链接" target="_blank" rel="external">http://www.cnblogs.com/miloyip/archive/2010/02/25/binary_tree_distance.html</a></p>

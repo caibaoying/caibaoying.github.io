@@ -1,0 +1,348 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Linux的find命令 | Panda&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Caibaoying">
+    
+    <meta name="description" content="前言：关于find命令由于find具有强大的功能，所以它的选项也很多，其中大部分选项都值得我们花时间来了解一下。即使系统中含有网络文件系统( NFS)，find命令在该文件系统中同样有效，只你具有相应的权限。在运行一个非常消耗资源的find命令时，很多人都倾向于把它放在后台执行，因为遍历一个大的文件">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml## RSS address." title="Panda&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Panda&#39;s blog" title="Panda&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Panda&#39;s blog">Panda&#39;s blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:github.com/caibaoying/caibaoying.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/05/20/LinuxFind/" title="Linux的find命令" itemprop="url">Linux的find命令</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-05-20T08:29:31.000Z" itemprop="datePublished">2016-05-20</time>
+    更新日期:<time datetime="2016-05-20T14:47:15.400Z" itemprop="dateModified">2016-05-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言：关于find命令"><span class="toc-number">1.</span> <span class="toc-text">前言：关于find命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一、find命令格式"><span class="toc-number">2.</span> <span class="toc-text">一、find命令格式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、find命令的一般形式为；"><span class="toc-number">2.1.</span> <span class="toc-text">1、find命令的一般形式为；</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、find命令的参数；"><span class="toc-number">2.2.</span> <span class="toc-text">2、find命令的参数；</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、find命令选项"><span class="toc-number">2.3.</span> <span class="toc-text">3、find命令选项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、使用exec或ok来执行shell命令"><span class="toc-number">2.4.</span> <span class="toc-text">4、使用exec或ok来执行shell命令</span></a></li></ol></li></ol>
+		</div>
+		
+		<h2 id="前言：关于find命令"><a href="#前言：关于find命令" class="headerlink" title="前言：关于find命令"></a><font color="purple">前言：关于find命令</font></h2><font color="black"><br>由于find具有强大的功能，所以它的选项也很多，其中大部分选项都值得我们花时间来了解一下。即使系统中含有网络文件系统( NFS)，find命令在该文件系统中同样有效，只你具有相应的权限。<br><br>在运行一个非常消耗资源的find命令时，很多人都倾向于把它放在后台执行，因为遍历一个大的文件系统可能会花费很长的时间(这里是指30G字节以上的文件系统)。<br></font>
+
+<h2 id="一、find命令格式"><a href="#一、find命令格式" class="headerlink" title="一、find命令格式"></a><font color="brown">一、find命令格式</font></h2><h3 id="1、find命令的一般形式为；"><a href="#1、find命令的一般形式为；" class="headerlink" title="1、find命令的一般形式为；"></a><font color="purple">1、find命令的一般形式为；</font></h3><p><strong><font color="#0099ff">find pathname -options [-print -exec -ok …]</font></strong></p>
+<h3 id="2、find命令的参数；"><a href="#2、find命令的参数；" class="headerlink" title="2、find命令的参数；"></a><font color="purple">2、find命令的参数；</font></h3><font color="black"><br><strong>pathname:</strong> find命令所查找的目录路径。例如用.来表示当前目录，用/来表示系统根目录。<br><br><strong>-print：</strong> find命令将匹配的文件输出到标准输出。<br><br><strong>-exec：</strong> find命令对匹配的文件执行该参数所给出的shell命令。相应命令的形式为’command’ {} \;，注意{}和\；之间的空格。<br><br><strong>-ok：</strong> 和-exec的作用相同，只不过以一种更为安全的模式来执行该参数所给出的shell命令，在执行每一个命令之前，都会给出提示，让用户来确定是否执行。<br></font>
+
+<h3 id="3、find命令选项"><a href="#3、find命令选项" class="headerlink" title="3、find命令选项"></a><font color="purple">3、find命令选项</font></h3><font color="black"><br><strong>-name</strong><br>按照文件名查找文件。<br><br><strong>-perm</strong><br>按照文件权限来查找文件。<br><br><strong>-user</strong><br>按照文件属主来查找文件。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find1.png" alt=""><br><strong>-prune</strong><br>使用这一选项可以使find命令不在当前指定的目录中查找，如果同时使用-depth选项，那么-prune将被find命令忽略。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find7.png" alt=""><br><br><strong>-group</strong><br>按照文件所属的组来查找文件。<br><strong>-mtime -n +n</strong><br>按照文件的更改时间来查找文件， - n表示文件更改时间距现在n天以内，+ n表示文件更改时间距现在n天以前。find命令还有-atime和-ctime 选项，但它们都和-m time选项。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find2.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find3.png" alt=""><br><strong>-nogroup</strong><br>查找无有效所属组的文件，即该文件所属的组在/etc/groups中不存在。<br><br><strong>-nouser</strong><br>查找无有效属主的文件，即该文件的属主在/etc/passwd中不存在。<br><br><strong>-newer file1 ! file2</strong><br>查找更改时间比文件file1新但比文件file2旧的文件。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find9.png" alt=""><br><br><strong>-type</strong><br>查找某一类型的文件，诸如：<br><br>b - 块设备文件。<br>d - 目录。<br>c - 字符设备文件。<br>p - 管道文件。<br>l - 符号链接文件。<br>f - 普通文件。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find5.png" alt=""><br><strong>-size n[c]：</strong><br>查找文件长度为n块的文件，带有c时表示文件长度以字节计。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find6.png" alt=""><br><strong>-depth：</strong><br>在查找文件时，首先查找当前目录中的文件，然后再在其子目录中查找。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find8.png" alt=""><br><br><strong>-fstype：</strong><br>查找位于某一类型文件系统中的文件，这些文件系统类型通常可以在配置文件/etc/fstab中找到，该配置文件中包含了本系统中有关文件系统的信息。<br><br><strong>-mount：</strong><br>在查找文件时不跨越文件系统mount点。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find10.png" alt=""><br><br><strong>-follow：</strong><br>如果find命令遇到符号链接文件，就跟踪至链接所指向的文件。<br><br><strong>-cpio：</strong><br>对匹配的文件使用cpio命令，将这些文件备份到磁带设备中。<br><br>另外,下面三个的区别:<br><strong>-amin n</strong>　<br>查找系统中最后N分钟访问的文件<br><br><strong>-atime n</strong><br>查找系统中最后n<em>24小时访问的文件<br><br><strong>-cmin n</strong><br>查找系统中最后N分钟被改变文件状态的文件<br><br><strong>-ctime n</strong><br>查找系统中最后n</em>24小时被改变文件状态的文件<br><br><strong>-mmin n</strong><br>查找系统中最后N分钟被改变文件数据的文件<br><br><strong>-mtime n</strong><br>查找系统中最后n*24小时被改变文件数据的文件<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find4.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find11.png" alt=""><br></font>
+
+<h3 id="4、使用exec或ok来执行shell命令"><a href="#4、使用exec或ok来执行shell命令" class="headerlink" title="4、使用exec或ok来执行shell命令"></a><font color="purple">4、使用exec或ok来执行shell命令</font></h3><p><strong>find 和 -exec 的使用</strong></p>
+<font color="black"><br>使用find时，只要把想要的操作写在一个文件里，就可以用<strong>exec</strong>来配合find查找，很方便的<br><br>在有些操作系统中只允许-exec选项执行诸如l s或ls -l这样的命令。大多数用户使用这一选项是为了查找旧文件并删除它们。建议在真正执行rm命令删除文件之前，最好先用ls命令看一下，确认它们是所要删除的文件。<br><br>exec选项后面跟随着所要执行的命令或脚本，然后是一对儿{}，一个空格和一个\，最后是一个分号。为了使用exec选项，必须要同时使用print选项。如果验证一下find命令，会发现该命令只输出从当前路径起的相对路径及文件名。<br><br>例如：为了用ls -l命令列出所匹配到的文件，可以把ls -l命令放在find命令的-exec选项中<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find12.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find13.png" alt=""><br>记住：在shell中用任何方式删除文件之前，应当先查看相应的文件，一定要小心！当使用诸如mv或rm命令时，可以使用-exec选项的安全模式。它将在对每个匹配到的文件进行操作之前提示你。<br><br><strong>find 和 -ok 的使用</strong><br>-ok在删除之前会给出提醒 y 删除， n 不删除<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find14.png" alt=""><br><br><strong>find 和 -xargs 的使用</strong><br>find命令把匹配到的文件传递给xargs命令，而xargs命令每次只获取一部分文件而不是全部，不像-exec选项那样。这样它可以先处理最先获取的一部分文件，然后是下一批，并如此继续下去。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/find15.png" alt=""><br></font>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux命令/">Linux命令</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/05/20/LinuxFind/" data-title="Linux的find命令 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/05/20/LiunxInstall/"  title="CentOs下安装Linux虚拟机常见的错误">
+ <strong>NEXT:</strong><br/> 
+ <span>CentOs下安装Linux虚拟机常见的错误
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言：关于find命令"><span class="toc-number">1.</span> <span class="toc-text">前言：关于find命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一、find命令格式"><span class="toc-number">2.</span> <span class="toc-text">一、find命令格式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、find命令的一般形式为；"><span class="toc-number">2.1.</span> <span class="toc-text">1、find命令的一般形式为；</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、find命令的参数；"><span class="toc-number">2.2.</span> <span class="toc-text">2、find命令的参数；</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、find命令选项"><span class="toc-number">2.3.</span> <span class="toc-text">3、find命令选项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、使用exec或ok来执行shell命令"><span class="toc-number">2.4.</span> <span class="toc-text">4、使用exec或ok来执行shell命令</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>2</sup></a></li>
+		
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>14</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="" title="Linux命令">Linux命令<sup>1</sup></a></li>
+		
+			<li><a href="" title="Linux错误">Linux错误<sup>1</sup></a></li>
+		
+			<li><a href="" title="Project">Project<sup>3</sup></a></li>
+		
+			<li><a href="" title="排序">排序<sup>9</sup></a></li>
+		
+			<li><a href="" title="面试题">面试题<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml## RSS address." target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="widget tag">
+<h3 class="title">我的Github</h3>
+<ul>
+   <li>
+   <a href="https://github.com/caibaoying" title="Baoying Cai's Github">
+       <font color="purple">GitHub</font>
+   </li>
+</ul>
+
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://github.com/caibaoying/caibaoying.github.io" target="_blank" title="Caibaoying">Caibaoying</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"Panda2016"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

@@ -4,18 +4,14 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>选择排序 | Panda&#39;s blog</title>
+    <title>CentOs下安装Linux虚拟机常见的错误 | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="选择排序思想
-算法描述void SelectionSort(int* a, size_t size)
-{
-    for (int i = 0; i &amp;lt; size; ++i)
-    {
-        int MinIndex = i;
-        for (int j = i + 1;">
+    <meta name="description" content="前言：   我自己安装时遇到了几个问题，当时初次接触觉得不知所措，刚好今天又遇到了连不上网的问题，所以今天整理一下
+安装时可能遇到的问题   问题描述：安装到某一阶段界面一片黑，没有任何反应，而且安装也随即停止
+   解决方法：进入bios里找到虚拟技术一栏开启并保存结果，再次安装即可避免这个问题。">
     
     
     
@@ -73,15 +69,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/04/SelectSort/" title="选择排序" itemprop="url">选择排序</a>
+      <a href="/2016/05/20/LiunxInstall/" title="CentOs下安装Linux虚拟机常见的错误" itemprop="url">CentOs下安装Linux虚拟机常见的错误</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-05-04T04:52:15.000Z" itemprop="datePublished">2016-05-04</time>
-    更新日期:<time datetime="2016-05-05T04:48:04.903Z" itemprop="dateModified">2016-05-05</time>
+    <time datetime="2016-05-20T07:34:46.000Z" itemprop="datePublished">2016-05-20</time>
+    更新日期:<time datetime="2016-05-20T08:07:13.793Z" itemprop="dateModified">2016-05-20</time>
     
   </p>
 </header>
@@ -90,101 +86,38 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#选择排序"><span class="toc-number">1.</span> <span class="toc-text">选择排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法描述"><span class="toc-number">1.2.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化"><span class="toc-number">1.3.</span> <span class="toc-text">优化</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言："><span class="toc-number">1.</span> <span class="toc-text">前言：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装时可能遇到的问题"><span class="toc-number">1.1.</span> <span class="toc-text">安装时可能遇到的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连不上网"><span class="toc-number">1.2.</span> <span class="toc-text">连不上网</span></a></li></ol></li></ol>
 		</div>
 		
-		<h1 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h1><h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/SelectSort1.png" alt=""></p>
-<h2 id="算法描述"><a href="#算法描述" class="headerlink" title="算法描述"></a>算法描述</h2><pre><code>void SelectionSort(int* a, size_t size)
-{
-    for (int i = 0; i &lt; size; ++i)
-    {
-        int MinIndex = i;
-        for (int j = i + 1; j &lt; size; ++j)
-        {
-            if (a[j] &lt; a[MinIndex])
-            {
-                MinIndex = j;
-            }
-        }
-        swap(a[i], a[MinIndex]);
-    }
-}
-</code></pre><h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><p>从两头开始比较，每次选出一个最大，同时也选出一个最小，这样效率会更高一些。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/SelectSort2.png" alt=""></p>
-<pre><code>void SelectSort(int* a, size_t size, int left, int right)
-{
-    assert(a);
-    int Left = left, Right = right;
-    if (left &gt;= right)
-    {
-        return;
-    }
-    if (a[left] &gt; a[right])
-    {
-        swap(a[left], a[right]);
-    }
-    while (Left &lt; Right)
-    {
-        if (a[Left + 1] &gt;= a[Right - 1])
-        {
-            if (a[right] &lt; a[Left + 1])
-            {
-                swap(a[right], a[Left + 1]);
-            }
-            else
-            {
-                --Right;
-            }
-            if (a[left] &gt; a[Right - 1])
-            {
-                swap(a[left], a[Right - 1]);
-            }
-            else
-            {
-                ++Left;
-            }
-        }
-        if (a[Left + 1] &lt; a[Right - 1])
-        {
-            if (a[right] &lt; a[Right - 1])
-            {
-                swap(a[right], a[Right - 1]);
-            }
-            else
-            {
-                --Right;
-            }
-            if (a[left] &gt; a[Left + 1])
-            {
-                swap(a[left], a[Left + 1]);
-            }
-            else
-            {
-                ++Left;
-            }
-        }
-    }
-    SelectSort(a, size, ++left, --right);
-}
-</code></pre>  
+		<h1 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h1><p>   我自己安装时遇到了几个问题，当时初次接触觉得不知所措，刚好今天又遇到了连不上网的问题，所以今天整理一下</p>
+<h2 id="安装时可能遇到的问题"><a href="#安装时可能遇到的问题" class="headerlink" title="安装时可能遇到的问题"></a>安装时可能遇到的问题</h2><p>   问题描述：安装到某一阶段界面一片黑，没有任何反应，而且安装也随即停止</p>
+<p>   解决方法：进入bios里找到虚拟技术一栏开启并保存结果，再次安装即可避免这个问题。</p>
+<h2 id="连不上网"><a href="#连不上网" class="headerlink" title="连不上网"></a>连不上网</h2><p>先在终端输入su,进入root后再进行一下操作<br>图一：<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxerror1.png" alt=""></p>
+<p>vi 或 vim进入 图一所示的ifcfg-eno16777736<br>将no改为yes wq保存并退出；然后重启下虚拟机即可联网了<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxerror2.png" alt=""></p>
+<p>最后结果：</p>
+<p><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxerror3.png" alt=""></p>
+<p>安装g++,vim,gdb,ctags<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxg++.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxvim.png" alt=""></p>
+<p>先用rpm -qa | grep gdb 查询是否已安装gdb,有则如图所示，没有则<br>输入  rpm -ivh gdb-6.8-37.el5.rpm<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxgdb.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxctags.png" alt=""></p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/排序/">排序</a>
+  <span></span> <a href="/tags/Linux错误/">Linux错误</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/数据结构/">数据结构</a>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/05/04/SelectSort/" data-title="选择排序 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/05/20/LiunxInstall/" data-title="CentOs下安装Linux虚拟机常见的错误 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -193,19 +126,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/05/04/HeapSort/" title="堆排序">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  堆排序</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/05/04/InsertSort/"  title="直接插入排序">
+<a href="/2016/05/05/BinaryNodeMaxDistance/"  title="求二叉树中节点的最大距离">
  <strong>NEXT:</strong><br/> 
- <span>直接插入排序
+ <span>求二叉树中节点的最大距离
 </span>
 </a>
 </div>
@@ -222,7 +147,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#选择排序"><span class="toc-number">1.</span> <span class="toc-text">选择排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法描述"><span class="toc-number">1.2.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化"><span class="toc-number">1.3.</span> <span class="toc-text">优化</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言："><span class="toc-number">1.</span> <span class="toc-text">前言：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装时可能遇到的问题"><span class="toc-number">1.1.</span> <span class="toc-text">安装时可能遇到的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连不上网"><span class="toc-number">1.2.</span> <span class="toc-text">连不上网</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">

@@ -1,0 +1,353 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>vim配置（taglist, NERDTree插件的安装） | Panda&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Caibaoying">
+    
+    <meta name="description" content="先来张效果图
+我的.vimrc我这里的配置只在普通用户下进行了配置（针对某个用户的配置），还有一种配置是对所有用户的vim 进行配置，不过由于各种问题我没能成功，有兴趣的可以自己在查阅。vim所有的设置内容都写在.vimrc中，这样可以达到配置vim的目的，那么如何找到该文件，并配置该文件呢？1、首">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml## RSS address." title="Panda&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Panda&#39;s blog" title="Panda&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Panda&#39;s blog">Panda&#39;s blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:github.com/caibaoying/caibaoying.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/06/01/vim配置/" title="vim配置（taglist, NERDTree插件的安装）" itemprop="url">vim配置（taglist, NERDTree插件的安装）</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-06-01T02:43:11.000Z" itemprop="datePublished">2016-06-01</time>
+    更新日期:<time datetime="2016-06-01T04:23:32.331Z" itemprop="dateModified">2016-06-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#我的-vimrc"><span class="toc-number">1.</span> <span class="toc-text">我的.vimrc</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#用到的插件：taglist-NERDTree"><span class="toc-number">1.1.</span> <span class="toc-text">用到的插件：taglist,NERDTree</span></a></li></ol></li></ol>
+		</div>
+		
+		<p>先来张效果图<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/vim%E9%85%8D%E7%BD%AEmain.png" alt=""></p>
+<h1 id="我的-vimrc"><a href="#我的-vimrc" class="headerlink" title="我的.vimrc"></a>我的.vimrc</h1><font color="purple"><br><br>我这里的配置只在普通用户下进行了配置（针对某个用户的配置），还有一种配置是对所有用户的vim 进行配置，不过由于各种问题我没能成功，有兴趣的可以自己在查阅。<br>vim所有的设置内容都写在.vimrc中，这样可以达到配置vim的目的，那么如何找到该文件，并配置该文件呢？<br>1、首先在用户的祝工作目录下查看是否有 .vimrc （注意点不能少）<br>ls -al<br><br>如果没有就新建一个.vimrc （注意点不能少）<br>以下是我的.vimrc的配置，以下所有的设置粘贴进你的.vimrc内<br><br>“<strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><em>**</em></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong><br>“                        一般性配置<br>“<strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><em>**</em></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong><br><br>“关闭vim一致性原则<br>set nocompatible<br><br>“color torte slate koehler torte”<br>colorscheme koehler<br><br>“显示行号<br>set number<br><br>“设置在编辑过程中右下角显示光标的行列信息<br>set ruler<br><br>“在状态栏显示正在输入的命令<br>set showcmd<br><br>“设置历史记录条数<br>set history=1000<br><br>“设置取消备份 禁止临时文件的生成<br>set nobackup<br>set noswapfile<br><br>“设置匹配模式<br>set showmatch<br><br>“设置C/C++方式自动对齐<br>set autoindent<br>set cindent<br><br>“开启语法高亮功能<br>syntax enable<br>syntax on<br><br>“指定配色方案为256色<br>set t_Co=256<br><br>“设置搜索时忽略大小写<br>set ignorecase<br><br>“配置backspace的工作方式<br>set backspace=indent,eol,start<br><br>“设置在vim中可以使用鼠标<br>set mouse=a<br><br>“设置tab宽度<br>set tabstop=4<br><br>“设置自动对齐空格数<br>set shiftwidth=4<br><br>“设置退格键时可以删除4个空格<br>set smarttab<br>set softtabstop=4<br><br>“将tab键自动转换为空格<br>set expandtab<br><br>“设置编码方式<br>set encoding=utf-8<br><br>“自动判断编码时 依次尝试以下编码<br>set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1<br><br>“检测文件类型<br>filetype on<br><br>“针对不同的文件采取不同的缩进方式<br>filetype indent on<br><br>“允许插件<br>filetype plugin on<br><br>“启动智能补全<br>filetype plugin indent on<br><br><br>“<strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong>*</strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong><br>“                   taglist配置                      <em><br>“<strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><em>**</em></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></em><br><br>“不显示”press F1 to display help”<br>let Tlist_Compact_Format=1<br><br>“窗口在左侧显示<br>let Tlist_Use_Right_Window=1<br><br>“只显示当前文件的tags<br>let Tlist_Show_One_File=1<br><br>“高亮显示<br>let Tlist_Auto_Highlight_tag=1<br><br>“随文件自动更新<br>let Tlist_Auto_Update=1<br><br>“设置宽度<br>let Tlist_WinWidth=30<br><br>“taglist窗口是最后一个窗口，则退出vim<br>let Tlist_Exit_OnlyWindow=1<br><br>“单击跳转<br>let Tlist_Use_SingClick=1<br><br>“打开关闭快捷键<br>nnoremap <silent> <f8> :TlistToggle<cr><br><br><br><br>“<strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><em>**</em></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong><br>“                      NERD_Tree 配置                    <em><br>“<strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><em>*</em></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></em><br><br>“显示增强<br>let NERDChristmasTree=1<br><br>“自动调整焦点<br>let NERDTreeAutoCenter=1<br><br>“鼠标模式:目录单击,文件双击<br>let NERDTreeMouseMode=2<br><br>“打开文件后自动关闭<br>let NERDTreeQuitOnOpen=1<br><br>“显示文件<br>let NERDTreeShowFiles=1<br><br>“显示隐藏文件<br>let NERDTreeShowHidden=1<br><br>“高亮显示当前文件或目录<br>let NERDTreeHightCursorline=1<br><br>“显示行号<br>let NERDTreeShowLineNumbers=1<br><br>“窗口位置<br>let NERDTreeWinPos=’left’<br><br>“窗口宽度<br>let NERDTreeWinSize=31<br><br>“不显示’Bookmarks’ label ‘Press ? for help’<br>let NERDTreeMinimalUI=1<br><br>“快捷键<br>nnoremap <silent> <f4> :NERDTreeToggle<cr><br><br><br>“C，C++ 按F5编译运行<br>map <f5> :call CompileRunGcc()<cr><br>func! CompileRunGcc()<br>    exec “w”<br>    if &amp;filetype == ‘c’<br>        exec “!g++ % -o %&lt;”<br>        exec “! ./%&lt;”<br>    elseif &amp;filetype == ‘cpp’<br>        exec “!g++ % -o %&lt;”<br>        exec “! ./%&lt;”<br>    elseif &amp;filetype == ‘java’<br>        exec “!javac %”<br>        exec “!java %&lt;”<br>    elseif &amp;filetype == ‘sh’<br>        :!./%<br>    endif<br>endfunc<br><br><br>“C,C++的调试<br>map <f3> :call Rungdb()<cr><br>func! Rungdb()<br>    exec “w”<br>    exec “!g++ % -g -o %&lt;”<br>    exec “!gdb ./%&lt;”<br>endfunc<br>“编码设置<br>set enc=utf-8<br>set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936<br>“语言设置<br>set langmenu=zh_CN.UTF-8<br>set helplang=cn<br></cr></f3></cr></f5></cr></f4></silent></cr></f8></silent></font>
+
+<h2 id="用到的插件：taglist-NERDTree"><a href="#用到的插件：taglist-NERDTree" class="headerlink" title="用到的插件：taglist,NERDTree"></a>用到的插件：taglist,NERDTree</h2><font color="black"><br><strong>taglist</strong><br>【功能】<br>a source code browser(supports C/C++, Java, perl, Python, tcl, sql, php, etc): 提供了源码的结构化浏览功能，可将源码中定义的类、函数、变量等以树结构显示，层次关系可一目了然，而且于快速定位并查看。<br><br>taglist插件是以vim脚本的形式存在，因此只需要将其下载下来放到相应的目录即可。taglist基于ctags才能发挥作用，因此在使用taglist之前，确保已经安装了ctags。具体安装方法如下：<br><br><strong>安装步骤：</strong><br>1、下载地址(两个可选择任意一个)：<br>Official site  <a href="http://vim-taglist.sourceforge.net/" target="_blank" rel="external">http://vim-taglist.sourceforge.net/</a><br>VIM online  <a href="http://www.vim.org/scripts/script.php?script_id=273" target="_blank" rel="external">http://www.vim.org/scripts/script.php?script_id=273</a><br><br>2、下载完成后，解压，你会发现里面有taglist.vim 和taglist.txt;<br><br>3、然后在主工作目录下输入 ls -al<br>查看是否有.vim 这个文件，没有的话，新建一个<br>在他底下有一个 doc 文件和一个plugin文件，没有的话，新建一个，然后将taglist.txt复制到doc中，将taglist.vim复制到plugin中；<br><br>4、在vim中输入命令：Tlist：即可看到效果<br><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/vim%E9%85%8D%E7%BD%AEtaglist.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/vim%E9%85%8D%E7%BD%AEtaglist1.png" alt=""><br><br><strong>NERDTree</strong><br>显示树形目录，这样你的文件夹有什么文件一目了然<br><br><strong>安装步骤</strong><br>1、下载地址<br>免费下载地址在 <a href="http://linux.linuxidc.com/" target="_blank" rel="external">http://linux.linuxidc.com/</a><br><br>用户名与密码都是www.linuxidc.com<br><br>具体下载目录在 /2013年资料/6月/15日/Vim升华之树形目录插NERDTree安装图解<br><br>2、解压插件<br>下载完成后，解压，你会发现里面有NERDTree.vim 和NERDTree.txt;<br><br>3、复制文件<br>将NERDTree.vim 和NERDTree.txt 分别复制到.vim/doc/ 和./vim/plugin/<br><br>4、初次使用<br>用vim打开一个文件，输入命令：NERDTree，回车就看到结果了<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/vim%E9%85%8D%E7%BD%AENERDTree.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/vim%E9%85%8D%E7%BD%AENERDTree1.png" alt=""><br></font>
+
+
+
+
+
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/vim配置/">vim配置</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/06/01/vim配置/" data-title="vim配置（taglist, NERDTree插件的安装） | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/05/20/LinuxFind/"  title="Linux的find命令">
+ <strong>NEXT:</strong><br/> 
+ <span>Linux的find命令
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#我的-vimrc"><span class="toc-number">1.</span> <span class="toc-text">我的.vimrc</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#用到的插件：taglist-NERDTree"><span class="toc-number">1.1.</span> <span class="toc-text">用到的插件：taglist,NERDTree</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>14</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="" title="Linux命令">Linux命令<sup>1</sup></a></li>
+		
+			<li><a href="" title="Linux错误">Linux错误<sup>1</sup></a></li>
+		
+			<li><a href="" title="Project">Project<sup>3</sup></a></li>
+		
+			<li><a href="" title="vim配置">vim配置<sup>1</sup></a></li>
+		
+			<li><a href="" title="排序">排序<sup>9</sup></a></li>
+		
+			<li><a href="" title="面试题">面试题<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml## RSS address." target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="widget tag">
+<h3 class="title">我的Github</h3>
+<ul>
+   <li>
+   <a href="https://github.com/caibaoying" title="Baoying Cai's Github">
+       <font color="purple">GitHub</font>
+   </li>
+</ul>
+
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://github.com/caibaoying/caibaoying.github.io" target="_blank" title="Caibaoying">Caibaoying</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"Panda2016"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

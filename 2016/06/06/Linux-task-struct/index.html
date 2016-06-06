@@ -1,0 +1,463 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Linux task_struct | Panda&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Caibaoying">
+    
+    <meta name="description" content="进程：程序的执行过程；即把二进制文件（程序）从磁盘加载到内存之后的操作；同时操作系统给这个文件创建了一个描述它的结构体，称为PCB。每个进程都有一个PCB。Linux下的PCB结构：task_structstruct task_struct 
+{
+    volatile long state;  ">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml## RSS address." title="Panda&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Panda&#39;s blog" title="Panda&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Panda&#39;s blog">Panda&#39;s blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:github.com/caibaoying/caibaoying.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/06/06/Linux-task-struct/" title="Linux task_struct" itemprop="url">Linux task_struct</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-06-06T04:39:22.000Z" itemprop="datePublished">2016-06-06</time>
+    更新日期:<time datetime="2016-06-06T04:42:23.764Z" itemprop="dateModified">2016-06-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#进程：程序的执行过程；即把二进制文件（程序）从磁盘加载到内存之后的操作；"><span class="toc-number">1.</span> <span class="toc-text">进程：程序的执行过程；即把二进制文件（程序）从磁盘加载到内存之后的操作；</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#同时操作系统给这个文件创建了一个描述它的结构体，称为PCB。"><span class="toc-number">2.</span> <span class="toc-text">同时操作系统给这个文件创建了一个描述它的结构体，称为PCB。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#每个进程都有一个PCB。"><span class="toc-number">3.</span> <span class="toc-text">每个进程都有一个PCB。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux下的PCB结构：task-struct"><span class="toc-number">4.</span> <span class="toc-text">Linux下的PCB结构：task_struct</span></a></li></ol>
+		</div>
+		
+		<h2 id="进程：程序的执行过程；即把二进制文件（程序）从磁盘加载到内存之后的操作；"><a href="#进程：程序的执行过程；即把二进制文件（程序）从磁盘加载到内存之后的操作；" class="headerlink" title="进程：程序的执行过程；即把二进制文件（程序）从磁盘加载到内存之后的操作；"></a>进程：程序的执行过程；即把二进制文件（程序）从磁盘加载到内存之后的操作；</h2><h2 id="同时操作系统给这个文件创建了一个描述它的结构体，称为PCB。"><a href="#同时操作系统给这个文件创建了一个描述它的结构体，称为PCB。" class="headerlink" title="同时操作系统给这个文件创建了一个描述它的结构体，称为PCB。"></a>同时操作系统给这个文件创建了一个描述它的结构体，称为PCB。</h2><h2 id="每个进程都有一个PCB。"><a href="#每个进程都有一个PCB。" class="headerlink" title="每个进程都有一个PCB。"></a>每个进程都有一个PCB。</h2><h2 id="Linux下的PCB结构：task-struct"><a href="#Linux下的PCB结构：task-struct" class="headerlink" title="Linux下的PCB结构：task_struct"></a>Linux下的PCB结构：task_struct</h2><pre><code>struct task_struct 
+{
+    volatile long state;  //进程状态（可执行、可中断等） #1
+    unsigned long flags;  //Flage 是进程号,在调用fork()时给出
+    int sigpending;    //进程上是否有待处理的信号
+    mm_segment_t addr_limit; //进程地址空间,区分内核进程与普通进程在内存存放的位置不同
+                            //0-0xBFFFFFFF for user
+                            //0-0xFFFFFFFF for kernel
+    volatile long need_resched;//调度标志,表示该进程是否需要重新调度,若非0,则当从内核态返回到用户态,会发生调度   #2
+    int lock_depth;  //锁深度
+    long nice;       //进程的基本时间片
+    //进程的调度策略,有三种,实时进程:SCHED_FIFO,SCHED_RR, 分时进程:SCHED_OTHER
+    unsigned long policy;
+    struct mm_struct *mm; //进程内存管理信息
+    int processor;
+    //若进程不在任何CPU上运行, cpus_runnable 的值是0，否则是1 这个值在运行队列被锁时更新
+    unsigned long cpus_runnable, cpus_allowed;
+    struct list_head run_list; //指向运行队列的指针
+    unsigned long sleep_time;  //进程的睡眠时间
+    //用于将系统中所有的进程连成一个双向循环链表, 其根是init_task
+    struct task_struct *next_task, *prev_task;
+    struct mm_struct *active_mm;
+    struct list_head local_pages;       //指向本地页面      
+    unsigned int allocation_order, nr_local_pages;
+    struct linux_binfmt *binfmt;  //进程所运行的可执行文件的格式
+    int exit_code, exit_signal;
+    int pdeath_signal;     //父进程终止时向子进程发送的信号
+    unsigned long personality;
+    //Linux可以运行由其他UNIX操作系统生成的符合iBCS2标准的程序
+    int did_exec:1; 
+    pid_t pid;    //进程标识符,用来代表一个进程
+    pid_t pgrp;   //进程组标识,表示进程所属的进程组
+    pid_t tty_old_pgrp;  //进程控制终端所在的组标识
+    pid_t session;  //进程的会话标识
+    pid_t tgid;
+    int leader;     //表示进程是否为会话主管
+    struct task_struct *p_opptr,*p_pptr,*p_cptr,*p_ysptr,*p_osptr;
+    struct list_head thread_group;   //线程链表
+    struct task_struct *pidhash_next; //用于将进程链入HASH表
+    struct task_struct **pidhash_pprev;
+    wait_queue_head_t wait_chldexit;  //供wait4()使用
+    struct completion *vfork_done;  //供vfork() 使用
+    unsigned long rt_priority; //实时优先级，用它计算实时进程调度时的weight值
+
+    //it_real_value，it_real_incr用于REAL定时器，单位为jiffies, 系统根据it_real_value
+    //设置定时器的第一个终止时间. 在定时器到期时，向进程发送SIGALRM信号，同时根据
+    //it_real_incr重置终止时间，it_prof_value，it_prof_incr用于Profile定时器，单位为jiffies。
+    //当进程运行时，不管在何种状态下，每个tick都使it_prof_value值减一，当减到0时，向进程发送
+    //信号SIGPROF，并根据it_prof_incr重置时间.
+    //it_virt_value，it_virt_value用于Virtual定时器，单位为jiffies。当进程运行时，不管在何种
+    //状态下，每个tick都使it_virt_value值减一当减到0时，向进程发送信号SIGVTALRM，根据
+    //it_virt_incr重置初值。
+    unsigned long it_real_value, it_prof_value, it_virt_value;
+    unsigned long it_real_incr, it_prof_incr, it_virt_value;
+    struct timer_list real_timer;   //指向实时定时器的指针
+    struct tms times;      //记录进程消耗的时间
+    unsigned long start_time;  //进程创建的时间
+    //记录进程在每个CPU上所消耗的用户态时间和核心态时间
+    long per_cpu_utime[NR_CPUS], per_cpu_stime[NR_CPUS]; 
+    //内存缺页和交换信息:
+    //min_flt, maj_flt累计进程的次缺页数（Copy on　Write页和匿名页）和主缺页数（从映射文件或交换
+    //设备读入的页面数）； nswap记录进程累计换出的页面数，即写到交换设备上的页面数。
+    //cmin_flt, cmaj_flt, cnswap记录本进程为祖先的所有子孙进程的累计次缺页数，主缺页数和换出页面数。
+    //在父进程回收终止的子进程时，父进程会将子进程的这些信息累计到自己结构的这些域中
+    unsigned long min_flt, maj_flt, nswap, cmin_flt, cmaj_flt, cnswap;
+    int swappable:1; //表示进程的虚拟地址空间是否允许换出
+    //进程认证信息
+    //uid,gid为运行该进程的用户的用户标识符和组标识符，通常是进程创建者的uid，gid
+    //euid，egid为有效uid,gid
+    //fsuid，fsgid为文件系统uid,gid，这两个ID号通常与有效uid,gid相等，在检查对于文件
+    //系统的访问权限时使用他们。
+    //suid，sgid为备份uid,gid
+    uid_t uid,euid,suid,fsuid;
+    gid_t gid,egid,sgid,fsgid;
+    int ngroups; //记录进程在多少个用户组中
+    gid_t groups[NGROUPS]; //记录进程所在的组
+    //进程的权能，分别是有效位集合，继承位集合，允许位集合
+    kernel_cap_t cap_effective, cap_inheritable, cap_permitted;
+    int keep_capabilities:1;
+    struct user_struct *user;
+    struct rlimit rlim[RLIM_NLIMITS];  //与进程相关的资源限制信息
+    unsigned short used_math;   //是否使用FPU
+    char comm[16];   //进程正在运行的可执行文件名
+     //文件系统信息
+    int link_count, total_link_count;
+    //NULL if no tty 进程所在的控制终端，如果不需要控制终端，则该指针为空
+    struct tty_struct *tty;
+    unsigned int locks;
+    //进程间通信信息
+    struct sem_undo *semundo;  //进程在信号灯上的所有undo操作
+    struct sem_queue *semsleeping; //当进程因为信号灯操作而挂起时，他在该队列中记录等待的操作
+    //进程的CPU状态，切换时，要保存到停止进程的task_struct中
+    struct thread_struct thread;
+      //文件系统信息
+    struct fs_struct *fs;
+      //打开文件信息
+    struct files_struct *files;
+      //信号处理函数
+    spinlock_t sigmask_lock;
+    struct signal_struct *sig; //信号处理函数
+    sigset_t blocked;  //进程当前要阻塞的信号，每个信号对应一位
+    struct sigpending pending;  //进程上是否有待处理的信号
+    unsigned long sas_ss_sp;
+    size_t sas_ss_size;
+    int (*notifier)(void *priv);
+    void *notifier_data;
+    sigset_t *notifier_mask;
+    u32 parent_exec_id;
+    u32 self_exec_id;
+
+    spinlock_t alloc_lock;
+    void *journal_info;
+};
+</code></pre><p>来自：<a href="http://blog.csdn.net/jurrah/archive/2009/03/07/3965437.aspx" target="_blank" rel="external">http://blog.csdn.net/jurrah/archive/2009/03/07/3965437.aspx</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/task-struct/">task_struct</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/06/06/Linux-task-struct/" data-title="Linux task_struct | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/06/06/LinuxProgressBar/"  title="Linux下实现进度条">
+ <strong>NEXT:</strong><br/> 
+ <span>Linux下实现进度条
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#进程：程序的执行过程；即把二进制文件（程序）从磁盘加载到内存之后的操作；"><span class="toc-number">1.</span> <span class="toc-text">进程：程序的执行过程；即把二进制文件（程序）从磁盘加载到内存之后的操作；</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#同时操作系统给这个文件创建了一个描述它的结构体，称为PCB。"><span class="toc-number">2.</span> <span class="toc-text">同时操作系统给这个文件创建了一个描述它的结构体，称为PCB。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#每个进程都有一个PCB。"><span class="toc-number">3.</span> <span class="toc-text">每个进程都有一个PCB。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux下的PCB结构：task-struct"><span class="toc-number">4.</span> <span class="toc-text">Linux下的PCB结构：task_struct</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>6</sup></a></li>
+		
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>14</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="" title="Linux命令">Linux命令<sup>1</sup></a></li>
+		
+			<li><a href="" title="Linux错误">Linux错误<sup>1</sup></a></li>
+		
+			<li><a href="" title="Makefile">Makefile<sup>1</sup></a></li>
+		
+			<li><a href="" title="Project">Project<sup>3</sup></a></li>
+		
+			<li><a href="" title="linux-C编程">linux-C编程<sup>1</sup></a></li>
+		
+			<li><a href="" title="task_struct">task_struct<sup>1</sup></a></li>
+		
+			<li><a href="" title="vim配置">vim配置<sup>1</sup></a></li>
+		
+			<li><a href="" title="排序">排序<sup>9</sup></a></li>
+		
+			<li><a href="" title="面试题">面试题<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml## RSS address." target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="widget tag">
+<h3 class="title">我的Github</h3>
+<ul>
+   <li>
+   <a href="https://github.com/caibaoying" title="Baoying Cai's Github">
+       <font color="purple">GitHub</font>
+   </li>
+</ul>
+
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://github.com/caibaoying/caibaoying.github.io" target="_blank" title="Caibaoying">Caibaoying</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"Panda2016"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

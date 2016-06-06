@@ -1,0 +1,347 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Linux Makefile 初级篇 | Panda&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Caibaoying">
+    
+    <meta name="description" content="前言这几天一直在看makefile,越看越觉得复杂，找了很多教程，讲的很乱，昨晚找到一篇特别详细而且很有条理的博文，但是他是将所有的东西都写在了一篇上，很庞大，我是刚接触makefile不久，所以将一些目前我感觉能用到的常见用法整理出来。方便大家学习，也方便自己学习。后面有用到其他方法，我会更新博文">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml## RSS address." title="Panda&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Panda&#39;s blog" title="Panda&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Panda&#39;s blog">Panda&#39;s blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:github.com/caibaoying/caibaoying.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/06/06/LinuxMakefile/" title="Linux Makefile 初级篇" itemprop="url">Linux Makefile 初级篇</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-06-06T00:26:43.000Z" itemprop="datePublished">2016-06-06</time>
+    更新日期:<time datetime="2016-06-06T01:16:54.954Z" itemprop="dateModified">2016-06-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li></ol>
+		</div>
+		
+		<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><font color="black"><br>这几天一直在看makefile,越看越觉得复杂，找了很多教程，讲的很乱，昨晚找到一篇特别详细而且很有条理的博文，但是他是将所有的东西都写在了一篇上，很庞大，我是刚接触makefile不久，所以将一些目前我感觉能用到的常见用法整理出来。方便大家学习，也方便自己学习。后面有用到其他方法，我会更新博文。<br><br>什么是makefile？或许很多Winodws的程序员都不知道这个东西，因为那些Windows的IDE都为你做了这个工作，但我觉得要作一个好的和professional的程序员，makefile还是要懂。这就好像现在有这么多的HTML的编辑器，但如果你想成为一个专业人士，你还是要了解HTML的标识的含义。特别在Unix下的软件编译，你就不能不自己写makefile了，会不会写makefile，从一个侧面说明了一个人是否具备完成大型工程的能力。<br><br>因为，makefile关系到了整个工程的编译规则。一个工程中的源文件不计数，其按类型、功能、模块分别放在若干个目录中，makefile定义了一系列的规则来指定，哪些文件需要先编译，哪些文件需要后编译，哪些文件需要重新编译，甚至于进行更复杂的功能操作，因为makefile就像一个Shell脚本一样，其中也可以执行操作系统的命令。<br><br>makefile带来的好处就是——“自动化编译”，一旦写好，只需要一个make命令，整个工程完全自动编译，极大的提高了软件开发的效率。make是一个命令工具，是一个解释makefile中指令的命令工具，一般来说，大多数的IDE都有这个命令，比如：Delphi的make，Visual C++的nmake，Linux下GNU的make。可见，makefile都成为了一种在工程方面的编译方法。<br><br># 一、一个示例 #<br>如果一个工程有3个头文件，和8个C文件，我们为了完成前面所述的那三个规则，我们的Makefile应该是下面的这个样子的。<br><br>edit : main.o kbd.o command.o display.o /<br>insert.o search.o files.o utils.o<br>cc -o edit main.o kbd.o command.o display.o /<br>insert.o search.o files.o utils.o<br><br>main.o : main.c defs.h<br>cc -c main.c<br>kbd.o : kbd.c defs.h command.h<br>cc -c kbd.c<br>command.o : command.c defs.h command.h<br>cc -c command.c<br>display.o : display.c defs.h buffer.h<br>cc -c display.c<br>insert.o : insert.c defs.h buffer.h<br>cc -c insert.c<br>search.o : search.c defs.h buffer.h<br>cc -c search.c<br>files.o : files.c defs.h buffer.h command.h<br>cc -c files.c<br>utils.o : utils.c defs.h<br>cc -c utils.c<br>clean :<br>rm edit main.o kbd.o command.o display.o /<br>insert.o search.o files.o utils.o<br><br>## <font color="purple">关于make和makefile使用的讲解</font> ##<br>反斜杠（\）是换行符的意思。这样比较便于Makefile的易读。我们可以把这个内容保存在文件为“Makefile”或“makefile”的文件中，然后在该目录下直接输入命令“make”就可以生成执行文件edit。如果要删除执行文件和所有的中间目标文件，那么，只要简单地执行一下“make clean”就可以了。<br><br>在这个makefile中，目标文件（target）包含：执行文件edit和中间目标文件（<em>.o），依赖文件（prerequisites）就是冒号后面的那些 .c 文件和 .h文件。每一个 .o 文件都有一组依赖文件，而这些 .o 文件又是执行文件 edit 的依赖文件。依赖关系的实质上就是说明了目标文件是由哪些文件生成的，换言之，目标文件是哪些文件更新的。<br><br>在定义好依赖关系后，后续的那一行定义了如何生成目标文件的操作系统命令，一定要以一个Tab键作为开头。记住，make并不管命令是怎么工作的，他只管执行所定义的命令。make会比较targets文件和prerequisites文件的修改日期，如果prerequisites文件的日期要比targets文件的日期要新，或者target不存在的话，那么，make就会执行后续定义的命令。<br><br># <font color="purple">clean是一个动作名字</font> #<br>这里要说明一点的是：clean不是一个文件，它只不过是一个动作名字，有点像C语言中的lable一样，其冒号后什么也没有，那么，make就不会自动去找文件的依赖性，也就不会自动执行其后所定义的命令。要执行其后的命令，就要在make命令后明显得指出这个lable的名字。这样的方法非常有用，我们可以在一个makefile中定义不用的编译或是和编译无关的命令，比如程序的打包，程序的备份，等等。<br><br># 二、make是如何工作的 #<br><br>在默认的方式下，也就是我们只输入make命令。那么，<br>1、make会在当前目录下找名字叫“Makefile”或“makefile”的文件。<br>2、如果找到，它会找文件中的第一个目标文件（target），在上面的例子中，他会找到“edit”这个文件，并把这个文件作为最终的目标文件。<br>3、如果edit文件不存在，或是edit所依赖的后面的 .o 文件的文件修改时间要比edit这个文件新，那么，他就会执行后面所定义的命令来生成edit这个文件。<br>4、如果edit所依赖的.o文件也不存在，那么make会在当前文件中找目标为.o文件的依赖性，如果找到则再根据那一个规则生成.o文件。（这有点像一个堆栈的过程）<br>5、当然，你的C文件和H文件是存在的啦，于是make会生成 .o 文件，然后再用 .o 文件生命make的终极任务，也就是执行文件edit了。<br><br>## <font color="purple">make命令的执行原则</font> ##<br>这就是整个make的依赖性，make会一层又一层地去找文件的依赖关系，直到最终编译出第一个目标文件。在找寻的过程中，如果出现错误，比如最后被依赖的文件找不到，那么make就会直接退出，并报错，而对于所定义的命令的错误，或是编译不成功，make根本不理。make只管文件的依赖性，即，如果在我找了依赖关系之后，冒号后面的文件还是不在，那么对不起，我就不工作啦。<br><br>## <font color="purple">make clean的执行</font> ##<br>通过上述分析，我们知道，像clean这种，没有被第一个目标文件直接或间接关联，那么它后面所定义的命令将不会被自动执行，不过，我们可以显示要make执行。即命令——“make clean”，以此来清除所有的目标文件，以便重编译。<br><br><br>## <font color="purple">某文件被修改后，或者添加新文件后，依赖关系的更新</font> ##<br>于是在我们编程中，如果这个工程已被编译过了，当我们修改了其中一个源文件，比如file.c，那么根据我们的依赖性，我们的目标file.o会被重编译（也就是在这个依性关系后面所定义的命令），于是file.o的文件也是最新的啦，于是file.o的文件修改时间要比edit要新，所以edit也会被重新链接了（详见edit目标文件后定义的命令）。<br><br>而如果我们改变了“command.h”，那么，kdb.o、command.o和files.o都会被重编译，并且，edit会被重链接。<br><br><br># 三、makefile中使用变量 #<br><br>在上面的例子中，先让我们看看edit的规则：<br><br>edit : main.o kbd.o command.o display.o /<br>insert.o search.o files.o utils.o<br>cc -o edit main.o kbd.o command.o display.o /<br>insert.o search.o files.o utils.o<br><br>## <font color="purple">使用变量的原因：方便维护</font> ##<br>我们可以看到[.o]文件的字符串被重复了两次，如果我们的工程需要加入一个新的[.o]文件，那么我们需要在两个地方加（应该是三个地方，还有一个地方在clean中）。当然，我们的makefile并不复杂，所以在两个地方加也不累，但如果makefile变得复杂，那么我们就有可能会忘掉一个需要加入的地方，而导致编译失败。所以，为了makefile的易维护，在makefile中我们可以使用变量。makefile的变量也就是一个字符串，理解成C语言中的宏可能会更好。<br><br><br>## <font color="purple">使用变量的方法</font> ##<br>比如，我们声明一个变量，叫objects, OBJECTS, objs, OBJS, obj, 或是 OBJ，反正不管什么啦，只要能够表示obj文件就行了。我们在makefile一开始就这样定义：<br><br>objects = main.o kbd.o command.o display.o /<br>insert.o search.o files.o utils.o<br><br>于是，我们就可以很方便地在我们的makefile中以“$(objects)”的方式来使用这个变量了，于是我们的改良版makefile就变成下面这个样子：<br><br>objects = main.o kbd.o command.o display.o /<br>insert.o search.o files.o utils.o<br><br>edit : $(objects)<br>cc -o edit $(objects)<br>main.o : main.c defs.h<br>cc -c main.c<br>kbd.o : kbd.c defs.h command.h<br>cc -c kbd.c<br>command.o : command.c defs.h command.h<br>cc -c command.c<br>display.o : display.c defs.h buffer.h<br>cc -c display.c<br>insert.o : insert.c defs.h buffer.h<br>cc -c insert.c<br>search.o : search.c defs.h buffer.h<br>cc -c search.c<br>files.o : files.c defs.h buffer.h command.h<br>cc -c files.c<br>utils.o : utils.c defs.h<br>cc -c utils.c<br>clean :<br>rm edit $(objects)<br><br>于是如果有新的 .o 文件加入，我们只需简单地修改一下 objects 变量就可以了。<br>关于变量更多的话题，我会在后续给你一一道来。<br><br># 四、让make自动推导 #<br><br>GNU的make很强大，它可以自动推导文件以及文件依赖关系后面的命令，于是我们就没必要去在每一个[.o]文件后都写上类似的命令，因为，我们的make会自动识别，并自己推导命令。<br><br>## <font color="purple">自动推导的特点</font> ##<br>只要make看到一个[.o]文件，它就会自动的把[.c]文件加在依赖关系中，如果make找到一个whatever.o，那么whatever.c，就会是whatever.o的依赖文件。并且 cc -c whatever.c 也会被推导出来，于是，我们的makefile再也不用写得这么复杂。我们的是新的makefile又出炉了。<br><br><br>objects = main.o kbd.o command.o display.o /<br>insert.o search.o files.o utils.o<br><br>edit : $(objects)<br>cc -o edit $(objects)<br><br>main.o : defs.h<br>kbd.o : defs.h command.h<br>command.o : defs.h command.h<br>display.o : defs.h buffer.h<br>insert.o : defs.h buffer.h<br>search.o : defs.h buffer.h<br>files.o : defs.h buffer.h command.h<br>utils.o : defs.h<br><br>.PHONY : clean<br>clean :<br>rm edit $(objects)<br><br>这种方法，也就是make的“隐晦规则”。上面文件内容中，“.PHONY”表示，clean是个伪目标文件。<br><br>关于更为详细的“隐晦规则”和“伪目标文件”，我会在后续给你一一道来。<br><br>## 五、另类风格的makefile（不推荐） ##<br>即然我们的make可以自动推导命令，那么我看到那堆[.o]和[.h]的依赖就有点不爽，那么多的重复的[.h]，能不能把其收拢起来，好吧，没有问题，这个对于make来说很容易，谁叫它提供了自动推导命令和文件的功能呢？来看看最新风格的makefile吧。<br><br>objects = main.o kbd.o command.o display.o /<br>insert.o search.o files.o utils.o<br><br>edit : $(objects)<br>cc -o edit $(objects)<br><br>$(objects) : defs.h<br>kbd.o command.o files.o : command.h<br>display.o insert.o search.o files.o : buffer.h<br><br>.PHONY : clean<br>clean :<br>rm edit $(objects)<br><br>这种风格，让我们的makefile变得很简单，但我们的文件依赖关系就显得有点凌乱了。鱼和熊掌不可兼得。还看你的喜好了。我是不喜欢这种风格的，一是文件的依赖关系看不清楚，二是如果文件一多，要加入几个新的.o文件，那就理不清楚了。<br><br># 七、清空目标文件的规则 #<br><br>每个Makefile中都应该写一个清空目标文件（.o和执行文件）的规则，这不仅便于重编译，也很利于保持文件的清洁。这是一个“修养”（哈哈，还记得我的《编程修养》吗）。一般的风格都是：<br><br>clean:<br>rm edit $(objects)<br><br>更为稳健的做法是：<br><br>.PHONY : clean<br>clean :<br>-rm edit $(objects)<br><br>前面说过，.PHONY意思表示clean是一个“伪目标”，。而在rm命令前面加了一个小减号的意思就是，也许某些文件出现问题，但不要管，继续做后面的事。当然，clean的规则不要放在文件的开头，不然，这就会变成make的默认目标，相信谁也不愿意这样。不成文的规矩是——“clean从来都是放在文件的最后”。<br><br># Makefile 总述 #<br><br># 一、Makefile里有什么？ #<br><br>Makefile里主要包含了五个东西：显式规则、隐晦规则、变量定义、文件指示和注释。<br><br>1、显式规则。显式规则说明了，如何生成一个或多的的目标文件。这是由Makefile的书写者明显指出，要生成的文件，文件的依赖文件，生成的命令。<br><br>2、隐晦规则。由于我们的make有自动推导的功能，所以隐晦的规则可以让我们比较粗糙地简略地书写Makefile，这是由make所支持的。<br><br>3、变量的定义。在Makefile中我们要定义一系列的变量，变量一般都是字符串，这个有点你C语言中的宏，当Makefile被执行时，其中的变量都会被扩展到相应的引用位置上。<br><br>4、文件指示。其包括了三个部分，一个是在一个Makefile中引用另一个Makefile，就像C语言中的include一样；另一个是指根据某些情况指定Makefile中的有效部分，就像C语言中的预编译#if一样；还有就是定义一个多行的命令。有关这一部分的内容，我会在后续的部分中讲述。<br><br>5、注释。Makefile中只有行注释，和UNIX的Shell脚本一样，其注释是用“#”字符，这个就像C/C++中的“//”一样。如果你要在你的Makefile中使用“#”字符，可以用反斜框进行转义，如：“/#”。<br><br>最后，还值得一提的是，在Makefile中的命令，必须要以[Tab]键开始。<br><br># 二、makefile的文件名 #<br>默认的情况下，make命令会在当前目录下按顺序找寻文件名为“GNUmakefile”、“makefile”、“Makefile”的文件，找到了解释这个文件。在这三个文件名中，最好使用“Makefile”这个文件名，因为，这个文件名第一个字符为大写，这样有一种显目的感觉。最好不要用“GNUmakefile”，这个文件是GNU的make识别的。有另外一些make只对全小写的“makefile”文件名敏感，但是基本上来说，大多数的make都支持“makefile”和“Makefile”这两种默认文件名。<br><br>当然，你可以使用别的文件名来书写Makefile，比如：“Make.Linux”，“Make.Solaris”，“Make.AIX”等，如果要指定特定的Makefile，你可以使用make的“-f”和“–file”参数，如：make -f Make.Linux或make –file Make.AIX。<br><br># 三、引用其他的makefile #<br><br>在Makefile使用include关键字可以把别的Makefile包含进来，这很像C语言的#include，被包含的文件会原模原样的放在当前文件的包含位置。include的语法是：<br><br>include <filename><br><br>filename可以是当前操作系统Shell的文件模式（可以保含路径和通配符）<br><br>在include前面可以有一些空字符，但是绝不能是[Tab]键开始。include和<filename>可以用一个或多个空格隔开。举个例子，你有这样几个Makefile：a.mk、b.mk、c.mk，还有一个文件叫foo.make，以及一个变量$(bar)，其包含了e.mk和f.mk，那么，下面的语句：<br><br>include foo.make </filename></filename></em>.mk $(bar)<br><br>等价于：<br><br>include foo.make a.mk b.mk c.mk e.mk f.mk<br><br>## <font color="purple">make找寻Makefile</font> ##<br>make命令开始时，会把找寻include所指出的其它Makefile，并把其内容安置在当前的位置。就好像C/C++的#include指令一样。如果文件都没有指定绝对路径或是相对路径的话，make会在当前目录下首先寻找，如果当前目录下没有找到，那么，make还会在下面的几个目录下找：<br><br>1、如果make执行时，有“-I”或“–include-dir”参数，那么make就会在这个参数所指定的目录下去寻找。？？？？？？？？<br>2、如果目录<prefix>/include（一般是：/usr/local/bin或/usr/include）存在的话，make也会去找。<br>3、如果有文件没有找到的话，make会生成一条警告信息，但不会马上出现致命错误。它会继续载入其它的文件，一旦完成makefile的读取，make会再重试这些没有找到，或是不能读取的文件，如果还是不行，make才会出现一条致命信息。如果你想让make不理那些无法读取的文件，而继续执行，你可以在include前加一个减号“-”。如：<br><br>-include <filename><br>其表示，无论include过程中出现什么错误，都不要报错继续执行。和其它版本make兼容的相关命令是sinclude，其作用和这一个是一样的。四、环境变量 MAKEFILES<br><br>如果你的当前环境中定义了环境变量MAKEFILES，那么，make会把这个变量中的值做一个类似于include的动作。这个变量中的值是其它的Makefile，用空格分隔。只是，它和include不同的是，从这个环境变中引入的Makefile的“目标”不会起作用，如果环境变量中定义的文件发现错误，make也会不理。<br><br>但是在这里我还是建议不要使用这个环境变量，因为只要这个变量一被定义，那么当你使用make时，所有的Makefile都会受到它的影响，这绝不是你想看到的。在这里提这个事，只是为了告诉大家，也许有时候你的Makefile出现了怪事，那么你可以看看当前环境中有没有定义这个变量。<br><br><br># 五、make的工作方式 #<br><br>GNU的make工作时的执行步骤入下：（想来其它的make也是类似）<br><br>1、读入所有的Makefile。<br>2、读入被include的其它Makefile。<br>3、初始化文件中的变量。<br>4、推导隐晦规则，并分析所有规则。<br>5、为所有的目标文件创建依赖关系链。<br>6、根据依赖关系，决定哪些目标要重新生成。<br>7、执行生成命令。<br><br>1-5步为第一个阶段，6-7为第二个阶段。第一个阶段中，如果定义的变量被使用了，那么，make会把其展开在使用的位置。但make并不会完全马上展开，make使用的是拖延战术，如果变量出现在依赖关系的规则中，那么仅当这条依赖被决定要使用了，变量才会在其内部展开。<br><br># 六、规则举例 #<br><br>foo.o : foo.c defs.h # foo模块<br>cc -c -g foo.c<br><br>看到这个例子，各位应该不是很陌生了，前面也已说过，foo.o是我们的目标，foo.c和defs.h是目标所依赖的源文件，而只有一个命令“cc -c -g foo.c”（以Tab键开头）。这个规则告诉我们两件事：<br><br>1、文件的依赖关系，foo.o依赖于foo.c和defs.h的文件，如果foo.c和defs.h的文件日期要比foo.o文件日期要新，或是foo.o不存在，那么依赖关系发生。<br>2、如果生成（或更新）foo.o文件。也就是那个cc命令，其说明了，如何生成foo.o这个文件。（当然foo.c文件include了defs.h文件）<br><br>七、规则的语法<br><br>targets : prerequisites<br>command<br>…<br><br>或是这样：<br><br>targets : prerequisites ; command<br>command<br>…<br><br>targets是文件名，以空格分开，可以使用通配符。一般来说，我们的目标基本上是一个文件，但也有可能是多个文件。<br><br>command是命令行，如果其不与“targetrerequisites”在一行，那么，必须以[Tab键]开头，如果和prerequisites在一行，那么可以用分号做为分隔。（见上）<br><br>prerequisites也就是目标所依赖的文件（或依赖目标）。如果其中的某个文件要比目标文件要新，那么，目标就被认为是“过时的”，被认为是需要重生成的。这个在前面已经讲过了。<br><br>如果命令太长，你可以使用反斜框（‘/’）作为换行符。make对一行上有多少个字符没有限制。规则告诉make两件事，文件的依赖关系和如何成成目标文件。<br><br>？？？？一般来说，make会以UNIX的标准Shell，也就是/bin/sh来执行命令。<br><br># 八、在规则中使用通配符 #<br><br>如果我们想定义一系列比较类似的文件，我们很自然地就想起使用通配符。make支持三各通配符：“<em>”，“?”和“[…]”。这是和Unix的B-Shell是相同的。<br><br>波浪号（“~”）字符在文件名中也有比较特殊的用途。如果是“~/test”，这就表示当前用户的$HOME目录下的test目录。而“~hchen/test”则表示用户hchen的宿主目录下的test目录。（这些都是Unix下的小知识了，make也支持）而在Windows或是MS-DOS下，用户没有宿主目录，那么波浪号所指的目录则根据环境变量“HOME”而定。<br><br>通配符代替了你一系列的文件，如“</em>.c”表示所以后缀为c的文件。一个需要我们注意的是，如果我们的文件名中有通配符，如：“<em>”，那么可以用转义字符“\”，如“\</em>”来表示真实的“<em>”字符，而不是任意长度的字符串。<br><br>好吧，还是先来看几个例子吧：<br><br>clean:<br>rm -f </em>.o<br><br>上面这个例子我不不多说了，这是操作系统Shell所支持的通配符。这是在命令中的通配符。<br><br>print: <em>.c<br>lpr -p $?<br>touch print<br><br>上面这个例子说明了通配符也可以在我们的规则中，目标print依赖于所有的[.c]文件。其中的“$?”是一个自动化变量，我会在后面给你讲述。<br><br>objects = </em>.o<br><br>上面这个例子，表示了，通符同样可以用在变量中。并不是说[<em>.o]会展开，不！objects的值就是“</em>.o”。Makefile中的变量其实就是C/C++中的宏。如果你要让通配符在变量中展开，也就是让objects的值是所有[.o]的文件名的集合，那么，你可以这样：<br><br>objects := $(wildcard <em>.o)<br><br>这种用法由关键字“wildcard”指出，关于Makefile的关键字，我们将在后面讨论。<br><br><br># 九、伪目标 #<br><br>最早先的一个例子中，我们提到过一个“clean”的目标，这是一个“伪目标”，<br><br>clean:<br>rm </em>.o temp<br><br>正像我们前面例子中的“clean”一样，即然我们生成了许多文件编译文件，我们也应该提供一个清除它们的“目标”以备完整地重编译而用。 （以“make clean”来使用该目标）<br><br>因为，我们并不生成“clean”这个文件。“伪目标”并不是一个文件，只是一个标签，由于“伪目标”不是文件，所以make无法生成它的依赖关系和决定它是否要执行。我们只有通过显示地指明这个“目标”才能让其生效。当然，“伪目标”的取名不能和文件名重名，不然其就失去了“伪目标”的意义了。<br><br>当然，为了避免和文件重名的这种情况，我们可以使用一个特殊的标记“.PHONY”来显示地指明一个目标是“伪目标”，向make说明，不管是否有这个文件，这个目标就是“伪目标”。<br><br>.PHONY : clean<br><br>只要有这个声明，不管是否有“clean”文件，要运行“clean”这个目标，只有“make clean”这样。于是整个过程可以这样写：<br><br>.PHONY: clean<br>clean:<br>rm <em>.o temp<br><br>伪目标一般没有依赖的文件。但是，我们也可以为伪目标指定所依赖的文件。伪目标同样可以作为“默认目标”，只要将其放在第一个。一个示例就是，如果你的Makefile需要一口气生成若干个可执行文件，但你只想简单地敲一个make完事，并且，所有的目标文件都写在一个Makefile中，那么你可以使用“伪目标”这个特性：<br><br>顺便提一句，从上面的例子我们可以看出，目标也可以成为依赖。所以，伪目标同样也可成为依赖。看下面的例子：<br><br>.PHONY: cleanall cleanobj cleandiff<br><br>cleanall : cleanobj cleandiff<br>rm program<br><br>cleanobj :<br>rm </em>.o<br><br>cleandiff :<br>rm *.diff<br><br>“make clean”将清除所有要被清除的文件。“cleanobj”和“cleandiff”这两个伪目标有点像“子程序”的意思。我们可以输入“make cleanall”和“make cleanobj”和“make cleandiff”命令来达到清除不同种类文件的目的。<br><br># 十、文件搜寻 #<br><br>在一些大的工程中，有大量的源文件，我们通常的做法是把这许多的源文件分类，并存放在不同的目录中。所以，当make需要去找寻文件的依赖关系时，你可以在文件前加上路径，但最好的方法是把一个路径告诉make，让make在自动去找。<br><br>Makefile文件中的特殊变量“VPATH”就是完成这个功能的，如果没有指明这个变量，make只会在当前的目录中去找寻依赖文件和目标文件。如果定义了这个变量，那么，make就会在当当前目录找不到的情况下，到所指定的目录中去找寻文件了。<br><br>VPATH = src:../headers<br><br>上面的的定义指定两个目录，“src”和“../headers”，make会按照这个顺序进行搜索。目录由“冒号”分隔。（当然，当前目录永远是最高优先搜索的地方）<br><br>另一个设置文件搜索路径的方法是使用make的“vpath”关键字（注意，它是全小写的），这不是变量，这是一个make的关键字，这和上面提到的那个VPATH变量很类似，但是它更为灵活。它可以指定不同的文件在不同的搜索目录中。这是一个很灵活的功能。它的使用方法有三种：<br><br>1、vpath <pattern> <directories><br><br>为符合模式<pattern>的文件指定搜索目录<directories>。<br><br>2、vpath <pattern><br><br>清除符合模式<pattern>的文件的搜索目录。<br><br>3、vpath<br><br>清除所有已被设置好了的文件搜索目录。<br><br>vapth使用方法中的<pattern>需要包含“%”字符。“%”的意思是匹配零或若干字符，例如，“%.h”表示所有以“.h”结尾的文件。<pattern>指定了要搜索的文件集，而<directories>则指定了<pattern>的文件集的搜索的目录。例如：<br><br>vpath %.h ../headers<br><br>该语句表示，要求make在“../headers”目录下搜索所有以“.h”结尾的文件。（如果某文件在当前目录没有找到的话）<br><br>我们可以连续地使用vpath语句，以指定不同搜索策略。如果连续的vpath语句中出现了相同的<pattern>，或是被重复了的<pattern>，那么，make会按照vpath语句的先后顺序来执行搜索。如：<br><br>vpath %.c foo<br>vpath % blish<br>vpath %.c bar<br><br>其表示“.c”结尾的文件，先在“foo”目录，然后是“blish”，最后是“bar”目录。<br><br>vpath %.c foo:bar<br>vpath % blish<br><br>而上面的语句则表示“.c”结尾的文件，先在“foo”目录，然后是“bar”目录，最后才是“blish”目录。<br></pattern></pattern></pattern></directories></pattern></pattern></pattern></pattern></directories></pattern></directories></pattern></filename></prefix></font>
+
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Makefile/">Makefile</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/06/06/LinuxMakefile/" data-title="Linux Makefile 初级篇 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/06/01/vim配置/"  title="vim配置（taglist, NERDTree插件的安装）">
+ <strong>NEXT:</strong><br/> 
+ <span>vim配置（taglist, NERDTree插件的安装）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>4</sup></a></li>
+		
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>14</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="" title="Linux命令">Linux命令<sup>1</sup></a></li>
+		
+			<li><a href="" title="Linux错误">Linux错误<sup>1</sup></a></li>
+		
+			<li><a href="" title="Makefile">Makefile<sup>1</sup></a></li>
+		
+			<li><a href="" title="Project">Project<sup>3</sup></a></li>
+		
+			<li><a href="" title="vim配置">vim配置<sup>1</sup></a></li>
+		
+			<li><a href="" title="排序">排序<sup>9</sup></a></li>
+		
+			<li><a href="" title="面试题">面试题<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml## RSS address." target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="widget tag">
+<h3 class="title">我的Github</h3>
+<ul>
+   <li>
+   <a href="https://github.com/caibaoying" title="Baoying Cai's Github">
+       <font color="purple">GitHub</font>
+   </li>
+</ul>
+
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://github.com/caibaoying/caibaoying.github.io" target="_blank" title="Caibaoying">Caibaoying</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"Panda2016"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

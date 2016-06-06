@@ -4,19 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>冒泡排序 | Panda&#39;s blog</title>
+    <title>Linux下实现进度条 | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="冒泡排序思想
-降序道理相同，这里不再例举。
-代码实现flag标志位表示该数组是不是有序的，遍历依此如果有序，则直接break
-void BubbSort(int* a, size_t size)
-{
-    assert(a);
-    int flag = 1;
-    for (int i = ">
+    <meta name="description" content="linux下实现一个简单的进度条：回车和换行符的区别符号    ASCII码      意义\n        10        换行NL\r        13        回车CR回车 \r 本义是光标重新回到本行开头，r的英文return，控制字符可以写成CR，即Carriage Retu">
     
     
     
@@ -74,15 +67,15 @@ void BubbSort(int* a, size_t size)
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/03/BubbSort/" title="冒泡排序" itemprop="url">冒泡排序</a>
+      <a href="/2016/06/06/LinuxProgressBar/" title="Linux下实现进度条" itemprop="url">Linux下实现进度条</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-05-03T05:52:46.000Z" itemprop="datePublished">2016-05-03</time>
-    更新日期:<time datetime="2016-05-05T04:53:04.075Z" itemprop="dateModified">2016-05-05</time>
+    <time datetime="2016-06-06T02:40:30.000Z" itemprop="datePublished">2016-06-06</time>
+    更新日期:<time datetime="2016-06-06T04:30:59.448Z" itemprop="dateModified">2016-06-06</time>
     
   </p>
 </header>
@@ -91,71 +84,34 @@ void BubbSort(int* a, size_t size)
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#冒泡排序"><span class="toc-number">1.</span> <span class="toc-text">冒泡排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux下实现一个简单的进度条："><span class="toc-number">1.</span> <span class="toc-text">linux下实现一个简单的进度条：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#回车和换行符的区别"><span class="toc-number">1.1.</span> <span class="toc-text">回车和换行符的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码"><span class="toc-number">1.2.</span> <span class="toc-text">代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Makefile"><span class="toc-number">1.3.</span> <span class="toc-text">Makefile</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结果"><span class="toc-number">1.4.</span> <span class="toc-text">结果</span></a></li></ol></li></ol>
 		</div>
 		
-		<h1 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h1><h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/BubbSort.png" alt=""></p>
-<p>降序道理相同，这里不再例举。</p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>flag标志位表示该数组是不是有序的，遍历依此如果有序，则直接break</p>
-<pre><code>void BubbSort(int* a, size_t size)
-{
-    assert(a);
-    int flag = 1;
-    for (int i = 0; i &lt; size; ++i)
-    {
-        for (int j = 1; j &lt; size - i; ++j)
-        {
-            //升序
-            if (a[j - 1] &gt; a[j])
-            {
-                swap(a[j - 1], a[j]);
-                flag = 0;
-            }
-        }
-        if (flag)
-            break;
-    }
-}
-</code></pre><p><strong>优化版</strong><br>代码描述：<br>情景：假如有个a[100]，前50位是有序的，后50位无序，或者，前50无序，后50有序<br>综合以上情况，代码如下：</p>
-<p>如果说 <strong>j-1</strong> ,<strong> j</strong> 这两个位置发生了交换，那么说明从j这个位置开始往后可能是无序的，如果有序，就不发生交换，cur == 0; 循环结束；如果无序，则cur !=0 ,接着往下冒泡，直到有序。</p>
-<pre><code>void BubbOptimizaSort(int* a, size_t size)
-{
-    assert(a);
-    int cur = size;
-    while (cur &gt; 0)
-    {
-        int tmp = cur; //保存size
-        cur = 0;
-        for (int j = 1; j &lt; tmp; ++j)
-        {
-            if (a[j - 1] &gt; a[j])
-            {
-                swap(a[j - 1], a[j]);
-                cur = j;
-            }
-        }
-    }
-}
-</code></pre>  
+		<h1 id="linux下实现一个简单的进度条："><a href="#linux下实现一个简单的进度条：" class="headerlink" title="linux下实现一个简单的进度条："></a>linux下实现一个简单的进度条：</h1><h2 id="回车和换行符的区别"><a href="#回车和换行符的区别" class="headerlink" title="回车和换行符的区别"></a>回车和换行符的区别</h2><font color="black"><br>符号    ASCII码      意义<br>\n        10        换行NL<br>\r        13        回车CR<br><br>回车 \r 本义是光标重新回到本行开头，r的英文return，控制字符可以写成CR，即Carriage Return<br>换行 \n 本义是光标往下一行（不一定到下一行行首），n的英文newline，控制字符可以写成LF，即Line Feed<br><br>历史因素：<br>在计算机还没有出现之前，有一种叫做电传打字机（Teletype Model 33）的玩意，每秒钟可以打10个字符。但是它有一个问题，就是打完一行换行的时候，要用去0.2秒，正好可以打两个字符。要是在这0.2秒里面，又有新的字符传过来，那么这个字符将丢失。<br>于是，研制人员想了个办法解决这个问题，就是在每行后面加两个表示结束的字符。一个叫做“回车”，告诉打字机把打印头定位在左边界；另一个叫做“换行”，告诉打字机把纸向下移一行。<br>这就是“换行”和“回车”的来历，从它们的英语名字上也可以看出一二。<br><br>后来，计算机发明了，这两个概念也就被般到了计算机上。那时，存储器很贵，一些科学家认为在每行结尾加两个字符太浪费了，加一个就可以。于是，就出现了分歧。<br><br>/<em>======================================</em>/<br>\n:  UNIX 系统行末结束符<br>\n\r: window 系统行末结束符<br>\r:  MAC OS 系统行末结束符<br>/<em>======================================</em>/<br>一个直接后果是，Unix/Mac系统下的文件在Windows里打开的话，所有文字会变成一行；而Windows里的文件在Unix/Mac下打开的话，在每行的结尾可能会多出一个^M符号。<br><br>printf是行缓存，遇到’\n’才显示，如果即时刷新显示，需要调用 fflush函数。<br></font>
+
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/%E8%BF%9B%E5%BA%A6%E6%9D%A1/code.png" alt=""></p>
+<h2 id="Makefile"><a href="#Makefile" class="headerlink" title="Makefile"></a>Makefile</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/%E8%BF%9B%E5%BA%A6%E6%9D%A1/makefile.png" alt=""></p>
+<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/%E8%BF%9B%E5%BA%A6%E6%9D%A1/%E7%BB%93%E6%9E%9C.png" alt=""></p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/排序/">排序</a>
+  <span></span> <a href="/tags/linux-C编程/">linux-C编程</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/数据结构/">数据结构</a>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/05/03/BubbSort/" data-title="冒泡排序 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/06/06/LinuxProgressBar/" data-title="Linux下实现进度条 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -164,19 +120,11 @@ void BubbSort(int* a, size_t size)
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/05/03/QuickSort/" title="快排实现一">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  快排实现一</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/04/28/Project-文件压缩3/"  title="文件压缩之压缩与解压">
+<a href="/2016/06/06/LinuxMakefile/"  title="Linux Makefile 初级篇">
  <strong>NEXT:</strong><br/> 
- <span>文件压缩之压缩与解压
+ <span>Linux Makefile 初级篇
 </span>
 </a>
 </div>
@@ -193,7 +141,7 @@ void BubbSort(int* a, size_t size)
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#冒泡排序"><span class="toc-number">1.</span> <span class="toc-text">冒泡排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux下实现一个简单的进度条："><span class="toc-number">1.</span> <span class="toc-text">linux下实现一个简单的进度条：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#回车和换行符的区别"><span class="toc-number">1.1.</span> <span class="toc-text">回车和换行符的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码"><span class="toc-number">1.2.</span> <span class="toc-text">代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Makefile"><span class="toc-number">1.3.</span> <span class="toc-text">Makefile</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结果"><span class="toc-number">1.4.</span> <span class="toc-text">结果</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">

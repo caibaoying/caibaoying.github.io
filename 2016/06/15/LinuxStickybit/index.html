@@ -4,19 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>求二叉树中节点的最大距离 | Panda&#39;s blog</title>
+    <title>文件的粘滞位 （Sticky bit） | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="求二叉树中节点的最大距离思想计算一个二叉树的最大距离有两个情况:
-
-情况A: 路径经过左子树的最深节点，通过根节点，再到右子树的最深节点。
-
-
-情况B: 路径不穿过根节点，而是左子树或右子树的最大距离路径，取其大者。
-
-首先算出经过根节点的最大路径的距离，其实就是左右子树的深度和；然后分别算出左子树">
+    <meta name="description" content="文件的粘滞位作用：普通文件的 Sticky bit 会被linux内核忽略；目录的Sticky bit表示这个目录里的文件只能被owner和root删除。如果用户对目录有写权限，则可以删除其中的文件和子目录，及时改用户不是这些文件的所有者，而且也没有读或写的许可。Sticky bit出现在执行许可的">
     
     
     
@@ -74,15 +67,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/05/BinaryNodeMaxDistance/" title="求二叉树中节点的最大距离" itemprop="url">求二叉树中节点的最大距离</a>
+      <a href="/2016/06/15/LinuxStickybit/" title="文件的粘滞位 （Sticky bit）" itemprop="url">文件的粘滞位 （Sticky bit）</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-05-05T04:36:20.000Z" itemprop="datePublished">2016-05-05</time>
-    更新日期:<time datetime="2016-05-05T09:03:08.572Z" itemprop="dateModified">2016-05-05</time>
+    <time datetime="2016-06-15T04:15:14.000Z" itemprop="datePublished">2016-06-15</time>
+    更新日期:<time datetime="2016-06-16T08:09:39.577Z" itemprop="dateModified">2016-06-16</time>
     
   </p>
 </header>
@@ -91,135 +84,25 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#求二叉树中节点的最大距离"><span class="toc-number">1.</span> <span class="toc-text">求二叉树中节点的最大距离</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法描述"><span class="toc-number">1.2.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链接"><span class="toc-number">1.3.</span> <span class="toc-text">链接</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#文件的粘滞位"><span class="toc-number">1.</span> <span class="toc-text">文件的粘滞位</span></a></li></ol>
 		</div>
 		
-		<h1 id="求二叉树中节点的最大距离"><a href="#求二叉树中节点的最大距离" class="headerlink" title="求二叉树中节点的最大距离"></a>求二叉树中节点的最大距离</h1><h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p>计算一个二叉树的最大距离有两个情况:</p>
-<ul>
-<li>情况A: 路径经过左子树的最深节点，通过根节点，再到右子树的最深节点。</li>
-</ul>
-<ul>
-<li>情况B: 路径不穿过根节点，而是左子树或右子树的最大距离路径，取其大者。</li>
-</ul>
-<p>首先算出经过根节点的最大路径的距离，其实就是左右子树的深度和；然后分别算出左子树和右子树的最大距离，三者比较，最大值就是当前二叉树的最大距离了。</p>
-<p><img src="http://o6l9ml5eb.bkt.clouddn.com/MaxDistance.png" alt=""></p>
-<h2 id="算法描述"><a href="#算法描述" class="headerlink" title="算法描述"></a>算法描述</h2><ul>
-<li><strong>实现一</strong><br>// 数据结构定义<br>struct NODE<br>{<br>  NODE<em> pLeft;        // 左子树<br>  NODE</em> pRight;       // 右子树<br>  int nMaxLeft;       // 左子树中的最长距离<br>  int nMaxRight;      // 右子树中的最长距离<br>  char chValue;       // 该节点的值<br>};</li>
-</ul>
-<p>int nMaxLen = 0;</p>
-<p>// 寻找树中最长的两段距离<br>    void FindMaxLen(NODE* pRoot)<br>    {<br>        // 遍历到叶子节点，返回<br>        if(pRoot == NULL)<br>        {<br>            return;<br>        }</p>
-<pre><code>    // 如果左子树为空，那么该节点的左边最长距离为0
-    if(pRoot -&gt; pLeft == NULL)
-    {
-        pRoot -&gt; nMaxLeft = 0; 
-    }
-
-    // 如果右子树为空，那么该节点的右边最长距离为0
-    if(pRoot -&gt; pRight == NULL)
-    {
-        pRoot -&gt; nMaxRight = 0;
-    }
-
-    // 如果左子树不为空，递归寻找左子树最长距离
-    if(pRoot -&gt; pLeft != NULL)
-    {
-        FindMaxLen(pRoot -&gt; pLeft);
-    }
-
-    // 如果右子树不为空，递归寻找右子树最长距离
-    if(pRoot -&gt; pRight != NULL)
-    {
-        FindMaxLen(pRoot -&gt; pRight);
-    }
-
-    // 计算左子树最长节点距离
-    if(pRoot -&gt; pLeft != NULL)
-    {
-        int nTempMax = 0;
-        if(pRoot -&gt; pLeft -&gt; nMaxLeft &gt; pRoot -&gt; pLeft -&gt; nMaxRight)
-        {
-            nTempMax = pRoot -&gt; pLeft -&gt; nMaxLeft;
-        }
-        else
-        {
-            nTempMax = pRoot -&gt; pLeft -&gt; nMaxRight;
-        }
-        pRoot -&gt; nMaxLeft = nTempMax + 1;
-    }
-
-    // 计算右子树最长节点距离
-    if(pRoot -&gt; pRight != NULL)
-    {
-        int nTempMax = 0;
-        if(pRoot -&gt; pRight -&gt; nMaxLeft &gt; pRoot -&gt; pRight -&gt; nMaxRight)
-        {
-            nTempMax = pRoot -&gt; pRight -&gt; nMaxLeft;
-        }
-        else
-        {
-            nTempMax = pRoot -&gt; pRight -&gt; nMaxRight;
-        }
-        pRoot -&gt; nMaxRight = nTempMax + 1;
-    }
-
-    // 更新最长距离
-    if(pRoot -&gt; nMaxLeft + pRoot -&gt; nMaxRight &gt; nMaxLen)
-    {
-        nMaxLen = pRoot -&gt; nMaxLeft + pRoot -&gt; nMaxRight;
-    }
-}
-</code></pre><ul>
-<li><p><strong>实现二</strong><br>这个问题的核心是，情况A 及 B 需要不同的信息: A 需要子树的最大深度，B 需要子树的最大距离。只要函数能在一个节点同时计算及传回这两个信息，代码就可以很简单:</p>
-<p>  /#include /<iostream></iostream></p>
-<p>  using namespace std;</p>
-<p>  struct NODE<br>  {</p>
-<pre><code>NODE *pLeft;
-NODE *pRight;
-</code></pre><p>  };</p>
-<p>  struct RESULT<br>  {</p>
-<pre><code>int nMaxDistance;
-int nMaxDepth;
-</code></pre><p>  };</p>
-<p>  RESULT GetMaximumDistance(NODE* root)<br>  {</p>
-<pre><code>if (!root)
-{
-    RESULT empty = { 0, -1 };   // trick: nMaxDepth is -1 and then caller will plus 1 to balance it as zero.
-    return empty;
-}
-
-RESULT lhs = GetMaximumDistance(root-&gt;pLeft);
-RESULT rhs = GetMaximumDistance(root-&gt;pRight);
-
-RESULT result;
-result.nMaxDepth = max(lhs.nMaxDepth + 1, rhs.nMaxDepth + 1);
-result.nMaxDistance = max(max(lhs.nMaxDistance, rhs.nMaxDistance), lhs.nMaxDepth + rhs.nMaxDepth + 2);
-return result;
-</code></pre><p>  }<br>计算 result 的代码很清楚；nMaxDepth 就是左子树和右子树的深度加1；nMaxDistance 则取 A 和 B 情况的最大值。</p>
-</li>
-</ul>
-<p>为了减少 NULL 的条件测试，进入函数时，如果节点为 NULL，会传回一个 empty 变量。比较奇怪的是 empty.nMaxDepth = -1，目的是让调用方 +1 后，把当前的不存在的 (NULL) 子树当成最大深度为 0。</p>
-<p>除了提高了可读性，这个解法的另一个优点是减少了 O(节点数目) 大小的侵入式资料，而改为使用 O(树的最大深度) 大小的栈空间。这个设计使函数完全没有副作用(side effect)。</p>
-<h2 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h2><p><a href="http://www.cnblogs.com/miloyip/archive/2010/02/25/binary_tree_distance.html" title="链接" target="_blank" rel="external">http://www.cnblogs.com/miloyip/archive/2010/02/25/binary_tree_distance.html</a></p>
+		<h1 id="文件的粘滞位"><a href="#文件的粘滞位" class="headerlink" title="文件的粘滞位"></a>文件的粘滞位</h1><font color="black"><br>作用：<br>普通文件的 Sticky bit 会被linux内核忽略；<br>目录的Sticky bit表示这个目录里的文件只能被owner和root删除。<br>如果用户对目录有写权限，则可以删除其中的文件和子目录，及时改用户不是这些文件的所有者，而且也没有读或写的许可。<br>Sticky bit出现在执行许可的位置上，用t表示，设置了该位后，其他用户就不可以删除不属于他的文件和目录。<br><br>但是该目录下的目录不继承该权限，要再设置才可使用。<br>举个例子：根目录下的tmp目录<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/sticky_bit/tmp1.png" alt=""><br>注意other位置的t，这便是粘滞位。<br>/tmp长被用来存放临时文件，是所有用户。但是我们不希望别的用户随随便便就删除了自己的文件，于是就有了粘滞位。他的作用是让用户只能删除属于自己的文件。<br><br>那么原来的指向标志x到哪儿去了？系统这样规定：加入本来在该位上有x，则这些标志（suid,sgid,sticky）显示为小写字母（s,s,t）;否则就显示为大写；<br><br>当一个目录被设置为“粘滞位”，则该目录下的文件只能有<br>1、超级管理员删除<br>2、该目录的所有者删除<br>3、该文件的所有者删除<br>也就是说，即便该目录是任何人都可以写，但也只有文件的属主才可以删除文件。<br><br></font>
   
 	</div>
 		<footer class="article-footer clearfix">
 
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/面试题/">面试题</a>
-  </div>
-
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/数据结构/">数据结构</a>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/05/05/BinaryNodeMaxDistance/" data-title="求二叉树中节点的最大距离 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/06/15/LinuxStickybit/" data-title="文件的粘滞位 （Sticky bit） | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -228,19 +111,11 @@ return result;
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/05/20/LiunxInstall/" title="CentOs下安装Linux虚拟机常见的错误">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  CentOs下安装Linux虚拟机常见的错误</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/05/04/MergeSort/"  title="归并排序">
+<a href="/2016/06/14/LinuxAtexit/"  title="atexit函数">
  <strong>NEXT:</strong><br/> 
- <span>归并排序
+ <span>atexit函数
 </span>
 </a>
 </div>
@@ -257,7 +132,7 @@ return result;
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#求二叉树中节点的最大距离"><span class="toc-number">1.</span> <span class="toc-text">求二叉树中节点的最大距离</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法描述"><span class="toc-number">1.2.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链接"><span class="toc-number">1.3.</span> <span class="toc-text">链接</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#文件的粘滞位"><span class="toc-number">1.</span> <span class="toc-text">文件的粘滞位</span></a></li></ol>
   </div>
 
 <div id="asidepart">

@@ -9,7 +9,8 @@
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="# atexit: ### 概述 ##atexit 函数称为终止处理程序的注册程序，注册完成后，当函数终止是exit()函数会主动的调用前面注册的各个函数。一个进程可以登记32个函数，这些函数由exit自动调用，这些函数被称为终止处理函数，atexit函数可以登记这些函数。exit调用终止处理函数的">
+    <meta name="description" content="atexit:概述
+atexit 函数称为终止处理程序的注册程序，注册完成后，当函数终止是exit()函数会主动的调用前面注册的各个函数。一个进程可以登记32个函数，这些函数由exit自动调用，这些函数被称为终止处理函数，atexit函数可以登记这些函数。exit调用终止处理函数的顺序和atexit">
     
     
     
@@ -75,7 +76,7 @@
     </p>
   <p class="article-time">
     <time datetime="2016-06-14T15:40:00.000Z" itemprop="datePublished">2016-06-14</time>
-    更新日期:<time datetime="2016-06-16T06:55:12.163Z" itemprop="dateModified">2016-06-16</time>
+    更新日期:<time datetime="2016-06-16T07:00:04.965Z" itemprop="dateModified">2016-06-16</time>
     
   </p>
 </header>
@@ -84,10 +85,16 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#atexit"><span class="toc-number">1.</span> <span class="toc-text">atexit:</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#详细描述"><span class="toc-number">1.2.</span> <span class="toc-text">详细描述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#进程终止"><span class="toc-number">1.2.1.</span> <span class="toc-text">进程终止</span></a></li></ol></li></ol></li></ol>
 		</div>
 		
-		<font color="black"><br># atexit: #<br>## 概述 ##<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/atexit/atexit3.png" alt=""><br>atexit 函数称为终止处理程序的注册程序，注册完成后，当函数终止是exit()函数会主动的调用前面注册的各个函数。<br>一个进程可以登记32个函数，这些函数由exit自动调用，这些函数被称为终止处理函数，atexit函数可以登记这些函数。exit调用终止处理函数的顺序和atexit登记的顺序相反，如果一个函数被多次登记，也会被多次调用。<br>我认为这实质上是参数压栈造成的。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/atexit/atexit1.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/atexit/atexit2.png" alt=""><br><br>与析构函数的调用顺序<br>在atexit（f）调用之前，被静态分配的对象的析构函数将在f（）的调用之后被调用。在一个atexit（f)调用之后， 建立的这种对象的析构函数将在f的调用之前被调用。<br><br>## 详细描述 ##<br>### 进程终止 ###<br>进程终止的方式有8种：<br>正常终止5种：<br>1、从main函数返回；<br>2、调用exit函数；<br>3、调用_exit或_Exit；<br>4、最后一个线程从启动例程返回；<br>5、最后一个线程调用pthread_exit;<br>异常终止：<br>6、调用abort函数；<br>7、接到一个信号并终止；<br>8、最后一个线程对取消请求做出响应。<br><br>main函数<br>我们通常认为C语言的起始函数是main函数，实质上一个程序的启动函数并不一定是main函数，这个可以采用链接器来设置，但是gcc中默认main就是C语言的入口函数，在main函数启动之前，内核会调用一个特殊的启动例程，这个启动例程从内核中取得命令行参数和环境变量值，为调用main函数做好准备，因此对于应用程序来说，main函数并不是起始，但是对于C语言而言，main函数就是入口地址，其他的链接器帮助我们完成，实际上main函数的指向是使用了exec函数，这是一个函数族，这也是内核执行一个程序的唯一方法。（进程控制）<br><br>exit ：是一个C库标准函数。此函数执行会首先调用由 atexit注册的函数，然后执行关闭所有标准IO流，刷新流缓冲区等操作。对于常用的有返回值的 return 调用，相当于调用了 exit 。如 return(0)== exit(0);<br>使用_exit()函数直接将进程关闭，缓冲区就会丢失。<br><br>_exit : 是一个系统调用。此函数不会调用 atexit 注册的函数，也不会运行信号处理程序。对标准IO流的缓冲区是否进行刷新取决于该函数在系统中的实现。一般UNIX下不会刷新。 exit函数会调用此函数。（在windows下的_exit函数会对标准IO流的缓冲进行刷新）<br><br>_Exit : 是一个C库标准函数。其动作类似 _exit 。<br><br>return与exit的区别<br>在进程操作中exit是结束当前进程或程序并把控制权返回给调用该程序或者进程的进程即父进程并告诉父进程该当前进程的运行状态，而return是从当前函数返回，如果是在main函数中，main函数结束时隐式地调用exit函数，自然也就结束了当前进程。<br>return是语言级别的，它表示了调用堆栈的返回；而exit是系统调用级别的，它表示了一个进程的结束。exit函数是退出应用程序，并将应用程序的一个状态返回给OS，这个状态标识了应用程序的一些运行信息。<br><br>在main函数里面return(0)和exit(0)是一样的，子函数用return返回；而子进程用exit退出，调用exit时要调用一段终止处理程序，然后关闭所有I/O流。<br><br></font>
+		<h1 id="atexit"><a href="#atexit" class="headerlink" title="atexit:"></a>atexit:</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/atexit/atexit3.png" alt=""></p>
+<font color="black"><br>atexit 函数称为终止处理程序的注册程序，注册完成后，当函数终止是exit()函数会主动的调用前面注册的各个函数。<br>一个进程可以登记32个函数，这些函数由exit自动调用，这些函数被称为终止处理函数，atexit函数可以登记这些函数。exit调用终止处理函数的顺序和atexit登记的顺序相反，如果一个函数被多次登记，也会被多次调用。<br>我认为这实质上是参数压栈造成的。<br></font>
+
+<p><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/atexit/atexit1.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/atexit/atexit2.png" alt=""></p>
+<font color="black"><br>与析构函数的调用顺序<br>在atexit（f）调用之前，被静态分配的对象的析构函数将在f（）的调用之后被调用。在一个atexit（f)调用之后， 建立的这种对象的析构函数将在f的调用之前被调用。<br></font>
+
+<h2 id="详细描述"><a href="#详细描述" class="headerlink" title="详细描述"></a>详细描述</h2><h3 id="进程终止"><a href="#进程终止" class="headerlink" title="进程终止"></a>进程终止</h3><font color="black"><br>进程终止的方式有8种：<br>正常终止5种：<br>1、从main函数返回；<br>2、调用exit函数；<br>3、调用_exit或_Exit；<br>4、最后一个线程从启动例程返回；<br>5、最后一个线程调用pthread_exit;<br>异常终止：<br>6、调用abort函数；<br>7、接到一个信号并终止；<br>8、最后一个线程对取消请求做出响应。<br><br>main函数<br>我们通常认为C语言的起始函数是main函数，实质上一个程序的启动函数并不一定是main函数，这个可以采用链接器来设置，但是gcc中默认main就是C语言的入口函数，在main函数启动之前，内核会调用一个特殊的启动例程，这个启动例程从内核中取得命令行参数和环境变量值，为调用main函数做好准备，因此对于应用程序来说，main函数并不是起始，但是对于C语言而言，main函数就是入口地址，其他的链接器帮助我们完成，实际上main函数的指向是使用了exec函数，这是一个函数族，这也是内核执行一个程序的唯一方法。（进程控制）<br><br>exit ：是一个C库标准函数。此函数执行会首先调用由 atexit注册的函数，然后执行关闭所有标准IO流，刷新流缓冲区等操作。对于常用的有返回值的 return 调用，相当于调用了 exit 。如 return(0)== exit(0);<br>使用_exit()函数直接将进程关闭，缓冲区就会丢失。<br><br>_exit : 是一个系统调用。此函数不会调用 atexit 注册的函数，也不会运行信号处理程序。对标准IO流的缓冲区是否进行刷新取决于该函数在系统中的实现。一般UNIX下不会刷新。 exit函数会调用此函数。（在windows下的_exit函数会对标准IO流的缓冲进行刷新）<br><br>_Exit : 是一个C库标准函数。其动作类似 _exit 。<br><br>return与exit的区别<br>在进程操作中exit是结束当前进程或程序并把控制权返回给调用该程序或者进程的进程即父进程并告诉父进程该当前进程的运行状态，而return是从当前函数返回，如果是在main函数中，main函数结束时隐式地调用exit函数，自然也就结束了当前进程。<br>return是语言级别的，它表示了调用堆栈的返回；而exit是系统调用级别的，它表示了一个进程的结束。exit函数是退出应用程序，并将应用程序的一个状态返回给OS，这个状态标识了应用程序的一些运行信息。<br><br>在main函数里面return(0)和exit(0)是一样的，子函数用return返回；而子进程用exit退出，调用exit时要调用一段终止处理程序，然后关闭所有I/O流。<br><br></font>
 
 
 
@@ -142,7 +149,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#atexit"><span class="toc-number">1.</span> <span class="toc-text">atexit:</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#详细描述"><span class="toc-number">1.2.</span> <span class="toc-text">详细描述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#进程终止"><span class="toc-number">1.2.1.</span> <span class="toc-text">进程终止</span></a></li></ol></li></ol></li></ol>
   </div>
 
 <div id="asidepart">

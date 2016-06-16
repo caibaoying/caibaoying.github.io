@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Linux下实现进度条 | Panda&#39;s blog</title>
+    <title>atexit函数 | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="linux下实现一个简单的进度条：回车和换行符的区别符号    ASCII码      意义\n        10        换行NL\r        13        回车CR回车 \r 本义是光标重新回到本行开头，r的英文return，控制字符可以写成CR，即Carriage Retu">
+    <meta name="description" content="# atexit: ### 概述 ##atexit 函数称为终止处理程序的注册程序，注册完成后，当函数终止是exit()函数会主动的调用前面注册的各个函数。一个进程可以登记32个函数，这些函数由exit自动调用，这些函数被称为终止处理函数，atexit函数可以登记这些函数。exit调用终止处理函数的">
     
     
     
@@ -67,15 +67,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/06/06/LinuxProgressBar/" title="Linux下实现进度条" itemprop="url">Linux下实现进度条</a>
+      <a href="/2016/06/14/LinuxAtexit/" title="atexit函数" itemprop="url">atexit函数</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-06-06T02:40:30.000Z" itemprop="datePublished">2016-06-06</time>
-    更新日期:<time datetime="2016-06-06T04:30:59.448Z" itemprop="dateModified">2016-06-06</time>
+    <time datetime="2016-06-14T15:40:00.000Z" itemprop="datePublished">2016-06-14</time>
+    更新日期:<time datetime="2016-06-16T06:55:12.163Z" itemprop="dateModified">2016-06-16</time>
     
   </p>
 </header>
@@ -84,21 +84,22 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux下实现一个简单的进度条："><span class="toc-number">1.</span> <span class="toc-text">linux下实现一个简单的进度条：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#回车和换行符的区别"><span class="toc-number">1.1.</span> <span class="toc-text">回车和换行符的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码"><span class="toc-number">1.2.</span> <span class="toc-text">代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Makefile"><span class="toc-number">1.3.</span> <span class="toc-text">Makefile</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结果"><span class="toc-number">1.4.</span> <span class="toc-text">结果</span></a></li></ol></li></ol>
+		
 		</div>
 		
-		<h1 id="linux下实现一个简单的进度条："><a href="#linux下实现一个简单的进度条：" class="headerlink" title="linux下实现一个简单的进度条："></a>linux下实现一个简单的进度条：</h1><h2 id="回车和换行符的区别"><a href="#回车和换行符的区别" class="headerlink" title="回车和换行符的区别"></a>回车和换行符的区别</h2><font color="black"><br>符号    ASCII码      意义<br>\n        10        换行NL<br>\r        13        回车CR<br><br>回车 \r 本义是光标重新回到本行开头，r的英文return，控制字符可以写成CR，即Carriage Return<br>换行 \n 本义是光标往下一行（不一定到下一行行首），n的英文newline，控制字符可以写成LF，即Line Feed<br><br>历史因素：<br>在计算机还没有出现之前，有一种叫做电传打字机（Teletype Model 33）的玩意，每秒钟可以打10个字符。但是它有一个问题，就是打完一行换行的时候，要用去0.2秒，正好可以打两个字符。要是在这0.2秒里面，又有新的字符传过来，那么这个字符将丢失。<br>于是，研制人员想了个办法解决这个问题，就是在每行后面加两个表示结束的字符。一个叫做“回车”，告诉打字机把打印头定位在左边界；另一个叫做“换行”，告诉打字机把纸向下移一行。<br>这就是“换行”和“回车”的来历，从它们的英语名字上也可以看出一二。<br><br>后来，计算机发明了，这两个概念也就被般到了计算机上。那时，存储器很贵，一些科学家认为在每行结尾加两个字符太浪费了，加一个就可以。于是，就出现了分歧。<br><br>/<em>======================================</em>/<br>\n:  UNIX 系统行末结束符<br>\n\r: window 系统行末结束符<br>\r:  MAC OS 系统行末结束符<br>/<em>======================================</em>/<br>一个直接后果是，Unix/Mac系统下的文件在Windows里打开的话，所有文字会变成一行；而Windows里的文件在Unix/Mac下打开的话，在每行的结尾可能会多出一个^M符号。<br><br>printf是行缓存，遇到’\n’才显示，如果即时刷新显示，需要调用 fflush函数。<br></font>
+		<font color="black"><br># atexit: #<br>## 概述 ##<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/atexit/atexit3.png" alt=""><br>atexit 函数称为终止处理程序的注册程序，注册完成后，当函数终止是exit()函数会主动的调用前面注册的各个函数。<br>一个进程可以登记32个函数，这些函数由exit自动调用，这些函数被称为终止处理函数，atexit函数可以登记这些函数。exit调用终止处理函数的顺序和atexit登记的顺序相反，如果一个函数被多次登记，也会被多次调用。<br>我认为这实质上是参数压栈造成的。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/atexit/atexit1.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/atexit/atexit2.png" alt=""><br><br>与析构函数的调用顺序<br>在atexit（f）调用之前，被静态分配的对象的析构函数将在f（）的调用之后被调用。在一个atexit（f)调用之后， 建立的这种对象的析构函数将在f的调用之前被调用。<br><br>## 详细描述 ##<br>### 进程终止 ###<br>进程终止的方式有8种：<br>正常终止5种：<br>1、从main函数返回；<br>2、调用exit函数；<br>3、调用_exit或_Exit；<br>4、最后一个线程从启动例程返回；<br>5、最后一个线程调用pthread_exit;<br>异常终止：<br>6、调用abort函数；<br>7、接到一个信号并终止；<br>8、最后一个线程对取消请求做出响应。<br><br>main函数<br>我们通常认为C语言的起始函数是main函数，实质上一个程序的启动函数并不一定是main函数，这个可以采用链接器来设置，但是gcc中默认main就是C语言的入口函数，在main函数启动之前，内核会调用一个特殊的启动例程，这个启动例程从内核中取得命令行参数和环境变量值，为调用main函数做好准备，因此对于应用程序来说，main函数并不是起始，但是对于C语言而言，main函数就是入口地址，其他的链接器帮助我们完成，实际上main函数的指向是使用了exec函数，这是一个函数族，这也是内核执行一个程序的唯一方法。（进程控制）<br><br>exit ：是一个C库标准函数。此函数执行会首先调用由 atexit注册的函数，然后执行关闭所有标准IO流，刷新流缓冲区等操作。对于常用的有返回值的 return 调用，相当于调用了 exit 。如 return(0)== exit(0);<br>使用_exit()函数直接将进程关闭，缓冲区就会丢失。<br><br>_exit : 是一个系统调用。此函数不会调用 atexit 注册的函数，也不会运行信号处理程序。对标准IO流的缓冲区是否进行刷新取决于该函数在系统中的实现。一般UNIX下不会刷新。 exit函数会调用此函数。（在windows下的_exit函数会对标准IO流的缓冲进行刷新）<br><br>_Exit : 是一个C库标准函数。其动作类似 _exit 。<br><br>return与exit的区别<br>在进程操作中exit是结束当前进程或程序并把控制权返回给调用该程序或者进程的进程即父进程并告诉父进程该当前进程的运行状态，而return是从当前函数返回，如果是在main函数中，main函数结束时隐式地调用exit函数，自然也就结束了当前进程。<br>return是语言级别的，它表示了调用堆栈的返回；而exit是系统调用级别的，它表示了一个进程的结束。exit函数是退出应用程序，并将应用程序的一个状态返回给OS，这个状态标识了应用程序的一些运行信息。<br><br>在main函数里面return(0)和exit(0)是一样的，子函数用return返回；而子进程用exit退出，调用exit时要调用一段终止处理程序，然后关闭所有I/O流。<br><br></font>
 
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/%E8%BF%9B%E5%BA%A6%E6%9D%A1/code.png" alt=""></p>
-<h2 id="Makefile"><a href="#Makefile" class="headerlink" title="Makefile"></a>Makefile</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/%E8%BF%9B%E5%BA%A6%E6%9D%A1/makefile.png" alt=""></p>
-<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/%E8%BF%9B%E5%BA%A6%E6%9D%A1/%E7%BB%93%E6%9E%9C.png" alt=""></p>
+
+
+
+
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/linux-C编程/">linux-C编程</a>
+  <span></span> <a href="/tags/Linux进程/">Linux进程</a>
   </div>
 
 
@@ -111,7 +112,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/06/06/LinuxProgressBar/" data-title="Linux下实现进度条 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/06/14/LinuxAtexit/" data-title="atexit函数 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -120,19 +121,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/06/06/Linux-task-struct/" title="Linux task_struct">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  Linux task_struct</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/06/06/LinuxMakefile/"  title="Linux Makefile 初级篇">
+<a href="/2016/06/08/LinuxProcessManagment/"  title="Linux进程调度算法">
  <strong>NEXT:</strong><br/> 
- <span>Linux Makefile 初级篇
+ <span>Linux进程调度算法
 </span>
 </a>
 </div>
@@ -149,7 +142,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux下实现一个简单的进度条："><span class="toc-number">1.</span> <span class="toc-text">linux下实现一个简单的进度条：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#回车和换行符的区别"><span class="toc-number">1.1.</span> <span class="toc-text">回车和换行符的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码"><span class="toc-number">1.2.</span> <span class="toc-text">代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Makefile"><span class="toc-number">1.3.</span> <span class="toc-text">Makefile</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结果"><span class="toc-number">1.4.</span> <span class="toc-text">结果</span></a></li></ol></li></ol>
+  
   </div>
 
 <div id="asidepart">

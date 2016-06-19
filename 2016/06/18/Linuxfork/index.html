@@ -4,17 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>直接插入排序 | Panda&#39;s blog</title>
+    <title>Linux中的的fork函数 | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="直接插入排序插入排序的基本方法是：每步将一个待排序的记录按其关键字的大小插到前面已经排序的序列中的适当位置，直到全部记录插入完毕为止。
-思想
-代码实现void DictInsertSort(int* a, int n)
-{
-    assert(a);
-    for (int i = 1; i &amp;">
+    <meta name="description" content="Linux进程的fork()函数#include pid_t fork(void);一个现有的进程可以调用fork创建一个新的进程。返回值： 子进程中返回0，父进程返回子进程的ID,出错返回-1.如下：子进程是父进程的副本。例如：子进程获得父进程的数据空间、堆和栈的副本（主要是数据结构的副本）。父子">
     
     
     
@@ -72,15 +67,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/04/InsertSort/" title="直接插入排序" itemprop="url">直接插入排序</a>
+      <a href="/2016/06/18/Linuxfork/" title="Linux中的的fork函数" itemprop="url">Linux中的的fork函数</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-05-04T04:16:17.000Z" itemprop="datePublished">2016-05-04</time>
-    更新日期:<time datetime="2016-05-05T04:52:03.836Z" itemprop="dateModified">2016-05-05</time>
+    <time datetime="2016-06-18T13:25:23.000Z" itemprop="datePublished">2016-06-18</time>
+    更新日期:<time datetime="2016-06-19T09:31:27.399Z" itemprop="dateModified">2016-06-19</time>
     
   </p>
 </header>
@@ -89,51 +84,30 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#直接插入排序"><span class="toc-number">1.</span> <span class="toc-text">直接插入排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux进程的fork-函数"><span class="toc-number">1.</span> <span class="toc-text">Linux进程的fork()函数</span></a></li></ol>
 		</div>
 		
-		<h1 id="直接插入排序"><a href="#直接插入排序" class="headerlink" title="直接插入排序"></a>直接插入排序</h1><p>插入排序的基本方法是：每步将一个待排序的记录按其关键字的大小插到前面已经排序的序列中的适当位置，直到全部记录插入完毕为止。</p>
-<h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/InsertSort1.png" alt=""></p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><pre><code>void DictInsertSort(int* a, int n)
-{
-    assert(a);
-    for (int i = 1; i &lt; n; ++i)
-    {
-        int tmp = a[i];
-        for (int j = i; j &gt;= 0; --j)
-        {
-            if (tmp &lt; a[j - 1])
-            {
-                a[j] = a[j - 1];
-            }
-            else
-            {
-                a[j] = tmp;
-                break;
-            }
-        }
-    }
-}
-</code></pre>  
+		<h1 id="Linux进程的fork-函数"><a href="#Linux进程的fork-函数" class="headerlink" title="Linux进程的fork()函数"></a>Linux进程的fork()函数</h1><font color="black"><br>#include <unistd.h><br>pid_t fork(void);<br><br>一个现有的进程可以调用fork创建一个新的进程。<br>返回值： 子进程中返回0，父进程返回子进程的ID,出错返回-1.如下：<br><br>子进程是父进程的副本。例如：子进程获得父进程的数据空间、堆和栈的副本（主要是数据结构的副本）。父子进程不共享这些存储空间部分。父子进程共享正文段。由于fork之后经常归属exec，所以现在很多实现并不指向一个父进程数据的完全复制。作为替代，使用了写时拷贝的技术。这些区域有父子进程所共享，而且内核将他们的访问权限改变为只读。如果父子进程中的人一个视图修改这些区域，则内核只为修改区域的那块内存制作一个副本。<br><br>所以子进程对变量所做的更改并不影响父进程中该变量的值。<br><br>⼀般来说fork之后⽗进程和⼦进程的执⾏顺序是不确定的，这取决于内核的调度算法。<br></unistd.h></font><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/fork/fork2.png" alt=""><br><br>## 案例一 ##<br>## 程序分析： ##<br><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/fork/fork3.png" alt=""><br><br>## 运行结果 ##<br><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/fork/fork4.png" alt=""><br><br>## 解释 ##<br><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linux/process/fork/fork5.png" alt=""><br><font color="black"><br>由于子进程里没有对i变量进行设置，所以i为父子进程所共享。<br>1、i==0时，父进程fork一次，产生子进程，父子进程个调用一次printf；<br>2、(1)i==1时，父进程再fork一次，产生子进程，父子进程个调用一次printf；<br>(2)子进程也fork一次，产生子进程，相对的他称为父进程，各调用一次printf；<br>3、i==2时；推出循环。<br>综上：3次fork，6次printf；<br></font>
+  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/排序/">排序</a>
+  <span></span> <a href="/tags/Linux进程/">Linux进程</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/数据结构/">数据结构</a>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/05/04/InsertSort/" data-title="直接插入排序 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/06/18/Linuxfork/" data-title="Linux中的的fork函数 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -142,19 +116,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/05/04/SelectSort/" title="选择排序">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  选择排序</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/05/04/ShellSort/"  title="希尔排序">
+<a href="/2016/06/15/LinuxStickybit/"  title="文件的粘滞位 （Sticky bit）">
  <strong>NEXT:</strong><br/> 
- <span>希尔排序
+ <span>文件的粘滞位 （Sticky bit）
 </span>
 </a>
 </div>
@@ -171,7 +137,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#直接插入排序"><span class="toc-number">1.</span> <span class="toc-text">直接插入排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux进程的fork-函数"><span class="toc-number">1.</span> <span class="toc-text">Linux进程的fork()函数</span></a></li></ol>
   </div>
 
 <div id="asidepart">

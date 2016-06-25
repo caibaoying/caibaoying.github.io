@@ -1,0 +1,378 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>LinuxFile | Panda&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Caibaoying">
+    
+    <meta name="description" content="Linux_Struct file 结构体讲解struct file结构体定义在/linux/include/linux/fs.h(Linux 2.6.11内核)中，其原型是：struct file {        /
+          fu_list becomes invalid after">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml## RSS address." title="Panda&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Panda&#39;s blog" title="Panda&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Panda&#39;s blog">Panda&#39;s blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:github.com/caibaoying/caibaoying.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/06/20/LinuxFile/" title="LinuxFile" itemprop="url">LinuxFile</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-06-20T13:54:51.000Z" itemprop="datePublished">2016-06-20</time>
+    更新日期:<time datetime="2016-06-20T14:26:08.517Z" itemprop="dateModified">2016-06-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux-Struct-file-结构体讲解"><span class="toc-number">1.</span> <span class="toc-text">Linux_Struct file 结构体讲解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、"><span class="toc-number">1.1.</span> <span class="toc-text">一、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、"><span class="toc-number">1.2.</span> <span class="toc-text">二、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、"><span class="toc-number">1.3.</span> <span class="toc-text">三、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、"><span class="toc-number">1.4.</span> <span class="toc-text">四、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、"><span class="toc-number">1.5.</span> <span class="toc-text">五、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、"><span class="toc-number">1.6.</span> <span class="toc-text">六、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七、"><span class="toc-number">1.7.</span> <span class="toc-text">七、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#八、"><span class="toc-number">1.8.</span> <span class="toc-text">八、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#九、"><span class="toc-number">1.9.</span> <span class="toc-text">九、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十、"><span class="toc-number">1.10.</span> <span class="toc-text">十、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十一、"><span class="toc-number">1.11.</span> <span class="toc-text">十一、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十二、"><span class="toc-number">1.12.</span> <span class="toc-text">十二、</span></a></li></ol></li></ol>
+		</div>
+		
+		<h1 id="Linux-Struct-file-结构体讲解"><a href="#Linux-Struct-file-结构体讲解" class="headerlink" title="Linux_Struct file 结构体讲解"></a>Linux_Struct file 结构体讲解</h1><font color="black"><br>struct file结构体定义在/linux/include/linux/fs.h(Linux 2.6.11内核)中，其原型是：<br>struct file {<br>        /<em>
+         </em> fu_list becomes invalid after file_free is called and queued via<br>         <em> fu_rcuhead for RCU freeing
+         </em>/<br>        union {<br>                struct list_head        fu_list;<br>                struct rcu_head         fu_rcuhead;<br>        } f_u;<br>        struct path             f_path;<br>#define f_dentry        f_path.dentry<br>#define f_vfsmnt        f_path.mnt<br>        const struct file_operations    <em>f_op;<br>        atomic_t                f_count;<br>        unsigned int            f_flags;<br>        mode_t                  f_mode;<br>        loff_t                  f_pos;<br>        struct fown_struct      f_owner;<br>        unsigned int            f_uid, f_gid;<br>        struct file_ra_state    f_ra;<br>        unsigned long           f_version;<br><br>#ifdef CONFIG_SECURITY<br>        void                    </em>f_security;<br>#endif<br>        /<em> needed for tty driver, and maybe others </em>/<br>        void                    <em>private_data;<br>#ifdef CONFIG_EPOLL<br>        /</em> Used by fs/eventpoll.c to link all the hooks to this file <em>/<br>        struct list_head        f_ep_links;<br>        spinlock_t              f_ep_lock;<br>#endif /</em> #ifdef CONFIG_EPOLL <em>/<br>        struct address_space    </em>f_mapping;<br>};<br>文件结构体代表一个打开的文件，系统中的每个打开的文件在内核空间都有一个关联的struct file。它由内核在打开文件时创建，并传递给在文件上进行操作的任何函数。在文件的所有实例都关闭后，内核释放这个数据结构。在内核创建和驱动源码中，struct file的指针通常被命名为file或filp。一下是对结构中的每个数据成员的解释：<br></font>
+
+<h2 id="一、"><a href="#一、" class="headerlink" title="一、"></a>一、</h2><font color="black"><br>union {<br>    struct list_head fu_list;<br>    struct rcu_head rcuhead;<br>}f_u;<br>其中的struct list_head定义在 linux/include/linux/list.h中，原型为：<br>struct list_head {<br>        struct list_head <em>next, </em>prev;<br>};<br>用于通用文件对象链表的指针。<br>struct rcu_head定义在linux/include/linux/rcupdate.h中，其原型为：<br>/<em>*
+</em> struct rcu_head - callback structure for use with RCU<br><em> @next: next update requests in a list
+</em> @func: actual update function to call after the grace period.<br><em>/<br>struct rcu_head {<br>        struct rcu_head </em>next;<br>        void (<em>func)(struct rcu_head </em>head);<br>};<br>RCU(Read-Copy Update)是Linux 2.6内核中新的锁机制，具体在这里有介绍：<br><a href="http://www.ibm.com/developerworks/cn/linux/l-rcu/" target="_blank" rel="external">http://www.ibm.com/developerworks/cn/linux/l-rcu/</a><br></font>
+
+<h2 id="二、"><a href="#二、" class="headerlink" title="二、"></a>二、</h2><font color="black"><br>struct path             f_path;<br>被定义在linux/include/linux/namei.h中，其原型为：<br>struct path {<br>        struct vfsmount <em>mnt;<br>        struct dentry </em>dentry;<br>};<br>在早些版本的内核中并没有此结构，而是直接将path的两个数据成员作为struct file的数据成员，<br>struct vfsmount <em>mnt的作用是指出该文件的已安装的文件系统，<br>struct dentry </em>dentry是与文件相关的目录项对象。<br></font>
+
+<h2 id="三、"><a href="#三、" class="headerlink" title="三、"></a>三、</h2><font color="black"><br>const struct file_operations    <em>f_op;<br>被定义在linux/include/linux/fs.h中，其中包含着与文件关联的操作，如:<br>loff_t (</em>llseek) (struct file <em>, loff_t, int);<br>ssize_t (</em>read) (struct file <em>, char __user </em>, size_t, loff_t <em>);<br>ssize_t (</em>write) (struct file <em>, const char __user </em>, size_t, loff_t <em>);<br>等。当打开一个文件时，内核就创建一个与该文件相关联的struct file结构，其中的</em>f_op就指向的是<br>具体对该文件进行操作的函数。例如用户调用系统调用read来读取该文件的内容时，那么系统调用read最终会陷入内核调用sys_read函数，而sys_read最终会调用于该文件关联的struct file结构中的f_op-&gt;read函数对文件内容进行读取。<br></font>
+
+<h2 id="四、"><a href="#四、" class="headerlink" title="四、"></a>四、</h2><font color="black"><br>atomic_t                f_count;<br>atomic_t被定义为：<br>typedef struct { volatile int counter; } atomic_t;<br>volatile修饰字段告诉gcc不要对该类型的数据做优化处理，对它的访问都是对内存的访问，而不是对寄存器的访问。<br>本质是int类型，之所以这样写是让编译器对基于该类型变量的操作进行严格的类型检查。此处f_count的作用是记录对文件对象的引用计数，也即当前有多少个进程在使用该文件。<br></font>
+
+<h2 id="五、"><a href="#五、" class="headerlink" title="五、"></a>五、</h2><font color="black"><br>unsigned int            f_flags;<br>当打开文件时指定的标志，对应系统调用open的int flags参数。驱动程序为了支持非阻塞型操作需要检查这个标志。<br></font>
+
+<h2 id="六、"><a href="#六、" class="headerlink" title="六、"></a>六、</h2><font color="black"><br>mode_t                  f_mode;<br>对文件的读写模式，对应系统调用open的mod_t mode参数。如果驱动程序需要这个值，可以直接读取这个字段。<br>mod_t被定义为：<br>typedef unsigned int <strong>kernel_mode_t;<br>typedef </strong>kernel_mode_t         mode_t;<br></font>
+
+<h2 id="七、"><a href="#七、" class="headerlink" title="七、"></a>七、</h2><font color="black"><br>loff_t                  f_pos;<br>当前的文件指针位置，即文件的读写位置。<br>loff_t被定义为：<br>typedef long long       <strong>kernel_loff_t;<br>typedef </strong>kernel_loff_t         loff_t;<br></font>
+
+<h2 id="八、"><a href="#八、" class="headerlink" title="八、"></a>八、</h2><font color="black"><br>struct fown_struct      f_owner;<br>struct fown_struct在linux/include/linux/fs.h被定义，原型为:<br>struct fown_struct {<br>        rwlock_t lock;          /<em> protects pid, uid, euid fields </em>/<br>        struct pid <em>pid;        /</em> pid or -pgrp where SIGIO should be sent <em>/<br>        enum pid_type pid_type; /</em> Kind of process group SIGIO should be sent to <em>/<br>        uid_t uid, euid;        /</em> uid/euid of process setting the owner <em>/<br>        int signum;             /</em> posix.1b rt signal to be delivered on IO */<br>};<br>该结构的作用是通过信号进行I/O时间通知的数据。<br></font>
+
+<h2 id="九、"><a href="#九、" class="headerlink" title="九、"></a>九、</h2><font color="black"><br>unsigned int            f_uid, f_gid;<br>标识文件的所有者id，所有者所在组的id.<br></font>
+
+<h2 id="十、"><a href="#十、" class="headerlink" title="十、"></a>十、</h2><font color="black"><br>struct file_ra_state    f_ra;<br>struct file_ra_state结构被定义在/linux/include/linux/fs.h中，原型为：<br>struct file_ra_state {<br>        pgoff_t start;                  /<em> where readahead started </em>/<br>        unsigned long size;             /<em> # of readahead pages </em>/<br>        unsigned long async_size;       /<em> do asynchronous readahead when<br>                                           there are only # of pages ahead </em>/<br>        unsigned long ra_pages;         /<em> Maximum readahead window </em>/<br>        unsigned long mmap_hit;         /<em> Cache hit stat for mmap accesses </em>/<br>        unsigned long mmap_miss;        /<em> Cache miss stat for mmap accesses </em>/<br>        unsigned long prev_index;       /<em> Cache last read() position </em>/<br>        unsigned int prev_offset;       /<em> Offset where last read() ended in a page </em>/<br>};<br>文件预读状态，文件预读算法使用的主要数据结构，当打开一个文件时，f_ra中出了perv_page(默认为－1)和ra_apges(对该文件允许的最大预读量)这两个字段外，其他的所有西端都置为0。<br></font>
+
+<h2 id="十一、"><a href="#十一、" class="headerlink" title="十一、"></a>十一、</h2><font color="black"><br>unsigned long           f_version;<br>记录文件的版本号，每次使用后都自动递增。<br></font>
+
+<h2 id="十二、"><a href="#十二、" class="headerlink" title="十二、"></a>十二、</h2><font color="black"><br>#ifdef CONFIG_SECURITY<br>        void                    *f_security;<br></font>  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/linux-C编程/">linux-C编程</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/06/20/LinuxFile/" data-title="LinuxFile | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/06/18/Linuxfork/"  title="Linux中的的fork函数">
+ <strong>NEXT:</strong><br/> 
+ <span>Linux中的的fork函数
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux-Struct-file-结构体讲解"><span class="toc-number">1.</span> <span class="toc-text">Linux_Struct file 结构体讲解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、"><span class="toc-number">1.1.</span> <span class="toc-text">一、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、"><span class="toc-number">1.2.</span> <span class="toc-text">二、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、"><span class="toc-number">1.3.</span> <span class="toc-text">三、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、"><span class="toc-number">1.4.</span> <span class="toc-text">四、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、"><span class="toc-number">1.5.</span> <span class="toc-text">五、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、"><span class="toc-number">1.6.</span> <span class="toc-text">六、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七、"><span class="toc-number">1.7.</span> <span class="toc-text">七、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#八、"><span class="toc-number">1.8.</span> <span class="toc-text">八、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#九、"><span class="toc-number">1.9.</span> <span class="toc-text">九、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十、"><span class="toc-number">1.10.</span> <span class="toc-text">十、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十一、"><span class="toc-number">1.11.</span> <span class="toc-text">十一、</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#十二、"><span class="toc-number">1.12.</span> <span class="toc-text">十二、</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>11</sup></a></li>
+		
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>14</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="" title="Linux命令">Linux命令<sup>1</sup></a></li>
+		
+			<li><a href="" title="Linux进程">Linux进程<sup>3</sup></a></li>
+		
+			<li><a href="" title="Linux错误">Linux错误<sup>1</sup></a></li>
+		
+			<li><a href="" title="Makefile">Makefile<sup>1</sup></a></li>
+		
+			<li><a href="" title="Project">Project<sup>3</sup></a></li>
+		
+			<li><a href="" title="linux-C编程">linux-C编程<sup>2</sup></a></li>
+		
+			<li><a href="" title="task_struct">task_struct<sup>1</sup></a></li>
+		
+			<li><a href="" title="vim配置">vim配置<sup>1</sup></a></li>
+		
+			<li><a href="" title="排序">排序<sup>9</sup></a></li>
+		
+			<li><a href="" title="面试题">面试题<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml## RSS address." target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="widget tag">
+<h3 class="title">我的Github</h3>
+<ul>
+   <li>
+   <a href="https://github.com/caibaoying" title="Baoying Cai's Github">
+       <font color="purple">GitHub</font>
+   </li>
+</ul>
+
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://github.com/caibaoying/caibaoying.github.io" target="_blank" title="Caibaoying">Caibaoying</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"Panda2016"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

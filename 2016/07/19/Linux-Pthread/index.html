@@ -4,18 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>选择排序 | Panda&#39;s blog</title>
+    <title>线程安全与可重入函数 | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="选择排序思想
-算法描述void SelectionSort(int* a, size_t size)
-{
-    for (int i = 0; i &amp;lt; size; ++i)
-    {
-        int MinIndex = i;
-        for (int j = i + 1;">
+    <meta name="description" content="1、可重入函数与不可重入函数当捕捉到信号时，不论进程的主控制流程当前执行到哪，都会先跳到信号处理函数中执行，从信号处理函数返回后再继续执行主控制流程。信号处理函数是一个单独的控制流程，因为他和主控制流程是异步的，二者不存在调用和被调用的关系，并且使用不同的堆栈空间。引入了信号处理函数使得一个进程具有">
     
     
     
@@ -73,15 +67,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/04/SelectSort/" title="选择排序" itemprop="url">选择排序</a>
+      <a href="/2016/07/19/Linux-Pthread/" title="线程安全与可重入函数" itemprop="url">线程安全与可重入函数</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-05-04T04:52:15.000Z" itemprop="datePublished">2016-05-04</time>
-    更新日期:<time datetime="2016-05-05T04:48:04.903Z" itemprop="dateModified">2016-05-05</time>
+    <time datetime="2016-07-18T16:04:45.000Z" itemprop="datePublished">2016-07-19</time>
+    更新日期:<time datetime="2016-07-18T16:47:50.812Z" itemprop="dateModified">2016-07-19</time>
     
   </p>
 </header>
@@ -90,101 +84,34 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#选择排序"><span class="toc-number">1.</span> <span class="toc-text">选择排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法描述"><span class="toc-number">1.2.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化"><span class="toc-number">1.3.</span> <span class="toc-text">优化</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1、可重入函数与不可重入函数"><span class="toc-number">1.</span> <span class="toc-text">1、可重入函数与不可重入函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#确保函数可重入的条件"><span class="toc-number">2.</span> <span class="toc-text">确保函数可重入的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不可重入的后果"><span class="toc-number">3.</span> <span class="toc-text">不可重入的后果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2、线程安全函数"><span class="toc-number">4.</span> <span class="toc-text">2、线程安全函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-可重入函数与线程安全的区别与联系"><span class="toc-number">5.</span> <span class="toc-text">3. 可重入函数与线程安全的区别与联系</span></a></li></ol>
 		</div>
 		
-		<h1 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h1><h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/SelectSort1.png" alt=""></p>
-<h2 id="算法描述"><a href="#算法描述" class="headerlink" title="算法描述"></a>算法描述</h2><pre><code>void SelectionSort(int* a, size_t size)
-{
-    for (int i = 0; i &lt; size; ++i)
-    {
-        int MinIndex = i;
-        for (int j = i + 1; j &lt; size; ++j)
-        {
-            if (a[j] &lt; a[MinIndex])
-            {
-                MinIndex = j;
-            }
-        }
-        swap(a[i], a[MinIndex]);
-    }
-}
-</code></pre><h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><p>从两头开始比较，每次选出一个最大，同时也选出一个最小，这样效率会更高一些。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/SelectSort2.png" alt=""></p>
-<pre><code>void SelectSort(int* a, size_t size, int left, int right)
-{
-    assert(a);
-    int Left = left, Right = right;
-    if (left &gt;= right)
-    {
-        return;
-    }
-    if (a[left] &gt; a[right])
-    {
-        swap(a[left], a[right]);
-    }
-    while (Left &lt; Right)
-    {
-        if (a[Left + 1] &gt;= a[Right - 1])
-        {
-            if (a[right] &lt; a[Left + 1])
-            {
-                swap(a[right], a[Left + 1]);
-            }
-            else
-            {
-                --Right;
-            }
-            if (a[left] &gt; a[Right - 1])
-            {
-                swap(a[left], a[Right - 1]);
-            }
-            else
-            {
-                ++Left;
-            }
-        }
-        if (a[Left + 1] &lt; a[Right - 1])
-        {
-            if (a[right] &lt; a[Right - 1])
-            {
-                swap(a[right], a[Right - 1]);
-            }
-            else
-            {
-                --Right;
-            }
-            if (a[left] &gt; a[Left + 1])
-            {
-                swap(a[left], a[Left + 1]);
-            }
-            else
-            {
-                ++Left;
-            }
-        }
-    }
-    SelectSort(a, size, ++left, --right);
-}
-</code></pre>  
+		<h2 id="1、可重入函数与不可重入函数"><a href="#1、可重入函数与不可重入函数" class="headerlink" title="1、可重入函数与不可重入函数"></a>1、可重入函数与不可重入函数</h2><p>当捕捉到信号时，不论进程的主控制流程当前执行到哪，都会先跳到信号处理函数中执行，从信号处理函数返回后再继续执行主控制流程。信号处理函数是一个单独的控制流程，因为他和主控制流程是异步的，二者不存在调用和被调用的关系，并且使用不同的堆栈空间。引入了信号处理函数使得一个进程具有多个控制流程，如果这些控制流程访问相同的全局资源（全局资源、硬件资源等就有可能出现冲突，如下面的例子所示。）<br>举例：假如程序执行到某个函数fun()时，收到信号，于是暂停目前正在执行的函数，转到信号处理函数，而这个信号处理函数的执行过程中，又恰恰也会进入fun()函数，这样就发生了 “重入”，此时如果能够正确的运行，而且处理完成后，之前暂停的fun()也能够正确运行，则说明它是可重入的。反之，不可重入。</p>
+<h2 id="确保函数可重入的条件"><a href="#确保函数可重入的条件" class="headerlink" title="确保函数可重入的条件"></a>确保函数可重入的条件</h2><p>1、不在函数内部使用静态或全局数据<br>2、不返回静态或全局数据，所有数据都由函数的调用者提供<br>3、使用本地数据，或者通过制作全局数据的本地拷贝来保护全局数据<br>4、不调用不可重入函数，比如：malloc,free，因为malloc是用全局链表来管理堆的。调用了标准I/O库函数。标准I/O库的很多实现都以不可重入的方式使用全局数据结构。</p>
+<h2 id="不可重入的后果"><a href="#不可重入的后果" class="headerlink" title="不可重入的后果"></a>不可重入的后果</h2><p>可重入与线程安全并不等同。一般说来，可重入的函数一定是线程安全的，但反过来不一定成立。</p>
+<h2 id="2、线程安全函数"><a href="#2、线程安全函数" class="headerlink" title="2、线程安全函数"></a>2、线程安全函数</h2><p>一般说来，一个函数被称为是线程安全的，并且仅当被多个并发线程反复调用，他会一直产生正确的结果。<br>确保线程安全：<br>要确保函数线程安全，主要需要考虑的是线程之间的共享变量。属于同一进程的怒通线程会共享进程内存空间中的全局区和堆，而私有的线程则主要包括栈和寄存器。因此，对于同一进程的不同线程来说，每个线程的局部变量都是私有的，而全局变量、局部静态变量、分配于堆的变量都是共享的。在对这些共享变量进行访问时，如果要保证线程安全，则必须通过加锁的方式。<br>线程不安全的后果：<br>线程不安全可能导致的后果是显而易见的——共享变量的值由于不同线程的访问，可能发生不可预料的变化，进而导致程序的错误，甚至崩溃。 </p>
+<h2 id="3-可重入函数与线程安全的区别与联系"><a href="#3-可重入函数与线程安全的区别与联系" class="headerlink" title="3. 可重入函数与线程安全的区别与联系"></a>3. 可重入函数与线程安全的区别与联系</h2><p>线程安全是在多个线程的情况下引发的，而可重入函数可以在只有一个线程的情况下来说；<br>线程安全不一定是可重入的，而可重入函数则一定是线程安全的；<br>如果一个函数中有全局变量，那么这个函数既不是线程安全也不是可重入的；<br>如果将对临界资源的访问加上锁，则这个函数是线程安全的，但如果重入函数的话若锁还未释放则会产生死锁，因此不是可重入的；<br>如果一个函数当中的数据全是自身栈空间的，那么这个函数既是线程安全也是可重入的；<br>线程安全函数能够使不同的线程访问同一块地址空间，而可重入函数要求不同的执行流对数据的操作互不影响使结果是相同的</p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/排序/">排序</a>
+  <span></span> <a href="/tags/Linux/">Linux</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/数据结构/">数据结构</a>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/05/04/SelectSort/" data-title="选择排序 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/07/19/Linux-Pthread/" data-title="线程安全与可重入函数 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -193,19 +120,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/05/04/HeapSort/" title="堆排序">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  堆排序</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/05/04/InsertSort/"  title="直接插入排序">
+<a href="/2016/07/18/Linux-SEM-UNDO/"  title="IPC信号量中的UNDO问题">
  <strong>NEXT:</strong><br/> 
- <span>直接插入排序
+ <span>IPC信号量中的UNDO问题
 </span>
 </a>
 </div>
@@ -222,7 +141,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#选择排序"><span class="toc-number">1.</span> <span class="toc-text">选择排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法描述"><span class="toc-number">1.2.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化"><span class="toc-number">1.3.</span> <span class="toc-text">优化</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1、可重入函数与不可重入函数"><span class="toc-number">1.</span> <span class="toc-text">1、可重入函数与不可重入函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#确保函数可重入的条件"><span class="toc-number">2.</span> <span class="toc-text">确保函数可重入的条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#不可重入的后果"><span class="toc-number">3.</span> <span class="toc-text">不可重入的后果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2、线程安全函数"><span class="toc-number">4.</span> <span class="toc-text">2、线程安全函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-可重入函数与线程安全的区别与联系"><span class="toc-number">5.</span> <span class="toc-text">3. 可重入函数与线程安全的区别与联系</span></a></li></ol>
   </div>
 
 <div id="asidepart">

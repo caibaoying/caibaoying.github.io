@@ -4,18 +4,13 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>选择排序 | Panda&#39;s blog</title>
+    <title>IPC信号量中的UNDO问题 | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="选择排序思想
-算法描述void SelectionSort(int* a, size_t size)
-{
-    for (int i = 0; i &amp;lt; size; ++i)
-    {
-        int MinIndex = i;
-        for (int j = i + 1;">
+    <meta name="description" content="什么是信号信号量为了防止出现多个程序同时访问一个共享资源而引发的一系列问题，我们用信号量来授权，在任一时刻只能有一个执行线程访问代码的临界区，临界区是指执行数据更新的代码需要独占式地执行。信号量是一个特殊的变量，程序对其访问都是原子操作，且只允许对他进行等待（P）和发送(V)信息操作。
+信号量的工作">
     
     
     
@@ -73,15 +68,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/04/SelectSort/" title="选择排序" itemprop="url">选择排序</a>
+      <a href="/2016/07/18/Linux-SEM-UNDO/" title="IPC信号量中的UNDO问题" itemprop="url">IPC信号量中的UNDO问题</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-05-04T04:52:15.000Z" itemprop="datePublished">2016-05-04</time>
-    更新日期:<time datetime="2016-05-05T04:48:04.903Z" itemprop="dateModified">2016-05-05</time>
+    <time datetime="2016-07-18T14:10:51.000Z" itemprop="datePublished">2016-07-18</time>
+    更新日期:<time datetime="2016-07-18T14:52:52.461Z" itemprop="dateModified">2016-07-18</time>
     
   </p>
 </header>
@@ -90,101 +85,34 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#选择排序"><span class="toc-number">1.</span> <span class="toc-text">选择排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法描述"><span class="toc-number">1.2.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化"><span class="toc-number">1.3.</span> <span class="toc-text">优化</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是信号信号量"><span class="toc-number">1.</span> <span class="toc-text">什么是信号信号量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#信号量的工作原理"><span class="toc-number">2.</span> <span class="toc-text">信号量的工作原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sem-undo数据结构"><span class="toc-number">3.</span> <span class="toc-text">sem_undo数据结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sembuf结构定义如下："><span class="toc-number">4.</span> <span class="toc-text">sembuf结构定义如下：</span></a></li></ol>
 		</div>
 		
-		<h1 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h1><h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/SelectSort1.png" alt=""></p>
-<h2 id="算法描述"><a href="#算法描述" class="headerlink" title="算法描述"></a>算法描述</h2><pre><code>void SelectionSort(int* a, size_t size)
-{
-    for (int i = 0; i &lt; size; ++i)
-    {
-        int MinIndex = i;
-        for (int j = i + 1; j &lt; size; ++j)
-        {
-            if (a[j] &lt; a[MinIndex])
-            {
-                MinIndex = j;
-            }
-        }
-        swap(a[i], a[MinIndex]);
-    }
-}
-</code></pre><h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><p>从两头开始比较，每次选出一个最大，同时也选出一个最小，这样效率会更高一些。<br><img src="http://o6l9ml5eb.bkt.clouddn.com/SelectSort2.png" alt=""></p>
-<pre><code>void SelectSort(int* a, size_t size, int left, int right)
-{
-    assert(a);
-    int Left = left, Right = right;
-    if (left &gt;= right)
-    {
-        return;
-    }
-    if (a[left] &gt; a[right])
-    {
-        swap(a[left], a[right]);
-    }
-    while (Left &lt; Right)
-    {
-        if (a[Left + 1] &gt;= a[Right - 1])
-        {
-            if (a[right] &lt; a[Left + 1])
-            {
-                swap(a[right], a[Left + 1]);
-            }
-            else
-            {
-                --Right;
-            }
-            if (a[left] &gt; a[Right - 1])
-            {
-                swap(a[left], a[Right - 1]);
-            }
-            else
-            {
-                ++Left;
-            }
-        }
-        if (a[Left + 1] &lt; a[Right - 1])
-        {
-            if (a[right] &lt; a[Right - 1])
-            {
-                swap(a[right], a[Right - 1]);
-            }
-            else
-            {
-                --Right;
-            }
-            if (a[left] &gt; a[Left + 1])
-            {
-                swap(a[left], a[Left + 1]);
-            }
-            else
-            {
-                ++Left;
-            }
-        }
-    }
-    SelectSort(a, size, ++left, --right);
-}
-</code></pre>  
+		<h2 id="什么是信号信号量"><a href="#什么是信号信号量" class="headerlink" title="什么是信号信号量"></a>什么是信号信号量</h2><p>为了防止出现多个程序同时访问一个共享资源而引发的一系列问题，我们用信号量来授权，在任一时刻只能有一个执行线程访问代码的临界区，临界区是指执行数据更新的代码需要独占式地执行。<br>信号量是一个特殊的变量，程序对其访问都是原子操作，且只允许对他进行等待（P）和发送(V)信息操作。</p>
+<h2 id="信号量的工作原理"><a href="#信号量的工作原理" class="headerlink" title="信号量的工作原理"></a>信号量的工作原理</h2><p>由于信号量只能进行两种操作等待和发送信号，如下：<br>P(sv) :如果sv的值大于零，就给他减一；如果它的值为零，就挂起该进程的执行<br>V(sv) :如果有其他进程因等待ｓｖ而被挂起，就让他恢复，如果没有进程因等待ｓｖ而挂起就给他加１.</p>
+<h2 id="sem-undo数据结构"><a href="#sem-undo数据结构" class="headerlink" title="sem_undo数据结构"></a>sem_undo数据结构</h2><p>以往使用信号量的情形通常都是用于进程间互斥，锁定临界区。信号量还是比文件锁有优势的，效率不是高那么一点，起码不用打开文件关闭文件这些耗时的工作。但是信号量最大的一个问题就是一旦锁定，若在解锁之前出现程序崩溃等segment fault问题，将直接导致锁定的信号量无法恢复，形成永久占用。文件锁则没有这个问题，进程的退出将导致文件描述符关闭，在该描述符上进行的锁定操作就自行解除了。</p>
+<p>好在设计者们已经考虑了这个问题，在加锁的时候回有一个UNDO的设置，也就是在调用semop的时候指定操作结构体当中可以放置一个UNDO参数，调用方式如下：<br>semop(sem_id, &amp;lock_sem, 1);<br>其中sem就是定义的一个操作结构体，一般定义为：<br>static struct sembuf lock_sem = {<br>    0, -1, SEM_UNDO<br>};<br>static struct sembuf unlock_sem = {<br>    0, 1, SEM_UNDO<br>};</p>
+<h2 id="sembuf结构定义如下："><a href="#sembuf结构定义如下：" class="headerlink" title="sembuf结构定义如下："></a>sembuf结构定义如下：</h2><p>struct sembuf{<br>    short sem_num;//除非使用一组信号量，否则它为0<br>    short sem_op;//信号量在一次操作中需要改变的数据，通常是两个数，一个是-1，即P（等待）操作，<br>                    //一个是+1，即V（发送信号）操作。<br>    short sem_flg;//通常为SEM_UNDO,使操作系统跟踪信号，<br>                    //并在进程没有释放该信号量而终止时，操作系统释放信号量<br>};<br>这样的UNDO选项会让内核记录一个与调用进程相关的UNDO记录，如果该进程崩溃，则根据这个进程的UNDO记录自动恢复相应信号量的计数值。</p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/排序/">排序</a>
+  <span></span> <a href="/tags/Linux进程间通信/">Linux进程间通信</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/数据结构/">数据结构</a>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/05/04/SelectSort/" data-title="选择排序 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/07/18/Linux-SEM-UNDO/" data-title="IPC信号量中的UNDO问题 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -193,19 +121,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/05/04/HeapSort/" title="堆排序">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  堆排序</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/05/04/InsertSort/"  title="直接插入排序">
+<a href="/2016/07/18/Linuxpipe/"  title="linux pipe">
  <strong>NEXT:</strong><br/> 
- <span>直接插入排序
+ <span>linux pipe
 </span>
 </a>
 </div>
@@ -222,7 +142,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#选择排序"><span class="toc-number">1.</span> <span class="toc-text">选择排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法描述"><span class="toc-number">1.2.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化"><span class="toc-number">1.3.</span> <span class="toc-text">优化</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是信号信号量"><span class="toc-number">1.</span> <span class="toc-text">什么是信号信号量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#信号量的工作原理"><span class="toc-number">2.</span> <span class="toc-text">信号量的工作原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sem-undo数据结构"><span class="toc-number">3.</span> <span class="toc-text">sem_undo数据结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sembuf结构定义如下："><span class="toc-number">4.</span> <span class="toc-text">sembuf结构定义如下：</span></a></li></ol>
   </div>
 
 <div id="asidepart">

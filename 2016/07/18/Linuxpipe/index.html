@@ -4,19 +4,14 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>冒泡排序 | Panda&#39;s blog</title>
+    <title>linux pipe | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="冒泡排序思想
-降序道理相同，这里不再例举。
-代码实现flag标志位表示该数组是不是有序的，遍历依此如果有序，则直接break
-void BubbSort(int* a, size_t size)
-{
-    assert(a);
-    int flag = 1;
-    for (int i = ">
+    <meta name="description" content="linux管道管道是linux中很重要的一种通信方式，是把一个程序的输出直接连接到另一个程序的输入，常说的管道多指匿名管道，无名管道只能用于具有血缘关系的进程之间，这是他与命名管道最大的区别。
+命名管道叫named pipe或者FIFO(先进先出)，可以用函数mkfifo()创建。
+Linux管道的">
     
     
     
@@ -74,15 +69,15 @@ void BubbSort(int* a, size_t size)
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/03/BubbSort/" title="冒泡排序" itemprop="url">冒泡排序</a>
+      <a href="/2016/07/18/Linuxpipe/" title="linux pipe" itemprop="url">linux pipe</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-05-03T05:52:46.000Z" itemprop="datePublished">2016-05-03</time>
-    更新日期:<time datetime="2016-05-05T04:53:04.075Z" itemprop="dateModified">2016-05-05</time>
+    <time datetime="2016-07-18T12:44:09.000Z" itemprop="datePublished">2016-07-18</time>
+    更新日期:<time datetime="2016-07-18T13:34:31.038Z" itemprop="dateModified">2016-07-18</time>
     
   </p>
 </header>
@@ -91,71 +86,40 @@ void BubbSort(int* a, size_t size)
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#冒泡排序"><span class="toc-number">1.</span> <span class="toc-text">冒泡排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux管道"><span class="toc-number">1.</span> <span class="toc-text">linux管道</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux管道的实现机制"><span class="toc-number">1.1.</span> <span class="toc-text">Linux管道的实现机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#管道的结构"><span class="toc-number">1.2.</span> <span class="toc-text">管道的结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#管道的读写"><span class="toc-number">1.3.</span> <span class="toc-text">管道的读写</span></a></li></ol></li></ol>
 		</div>
 		
-		<h1 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h1><h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/BubbSort.png" alt=""></p>
-<p>降序道理相同，这里不再例举。</p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>flag标志位表示该数组是不是有序的，遍历依此如果有序，则直接break</p>
-<pre><code>void BubbSort(int* a, size_t size)
-{
-    assert(a);
-    int flag = 1;
-    for (int i = 0; i &lt; size; ++i)
-    {
-        for (int j = 1; j &lt; size - i; ++j)
-        {
-            //升序
-            if (a[j - 1] &gt; a[j])
-            {
-                swap(a[j - 1], a[j]);
-                flag = 0;
-            }
-        }
-        if (flag)
-            break;
-    }
-}
-</code></pre><p><strong>优化版</strong><br>代码描述：<br>情景：假如有个a[100]，前50位是有序的，后50位无序，或者，前50无序，后50有序<br>综合以上情况，代码如下：</p>
-<p>如果说 <strong>j-1</strong> ,<strong> j</strong> 这两个位置发生了交换，那么说明从j这个位置开始往后可能是无序的，如果有序，就不发生交换，cur == 0; 循环结束；如果无序，则cur !=0 ,接着往下冒泡，直到有序。</p>
-<pre><code>void BubbOptimizaSort(int* a, size_t size)
-{
-    assert(a);
-    int cur = size;
-    while (cur &gt; 0)
-    {
-        int tmp = cur; //保存size
-        cur = 0;
-        for (int j = 1; j &lt; tmp; ++j)
-        {
-            if (a[j - 1] &gt; a[j])
-            {
-                swap(a[j - 1], a[j]);
-                cur = j;
-            }
-        }
-    }
-}
-</code></pre>  
+		<h1 id="linux管道"><a href="#linux管道" class="headerlink" title="linux管道"></a>linux管道</h1><p>管道是linux中很重要的一种通信方式，是把一个程序的输出直接连接到另一个程序的输入，常说的管道多指匿名管道，无名管道只能用于具有血缘关系的进程之间，这是他与命名管道最大的区别。</p>
+<p>命名管道叫named pipe或者FIFO(先进先出)，可以用函数mkfifo()创建。</p>
+<h2 id="Linux管道的实现机制"><a href="#Linux管道的实现机制" class="headerlink" title="Linux管道的实现机制"></a>Linux管道的实现机制</h2><p>在Linux中，管道是一种使用非常频繁的通信机制。从本质上说，管道也是一种文件，但它又和一般的文件有所不同，管道可以克服使用文件进行通信的两个问题，具体表现为：<br>1、限制管道的大小。 实际上，管道是一个固定大小的缓冲区。在Linux中，该缓冲区的大小为1页，即4K字节，使得他的大小不像文件那样不加检验地增长。使用单个固定缓冲区也会带来问题，比如在写管道时可能变满，当这种情况发生时，随后对管道的write（）调用将默认地被阻塞，等待某些数据被读取，以便腾出足够的空间供write（）调用写。<br>2、读进程也可能工作得比写进程快。当所有当前进程数据已被读取时，管道变空。当这种情况发生时，一个随后的read（）调用将默认地被阻塞，等待某些数据被写入，这解决了read（）调用返回文件结束的问题。</p>
+<p>注意：从管道读数据是一次性操作，数据一旦被读，他就从管道中被抛弃，释放空间以便写更多的数据。</p>
+<h2 id="管道的结构"><a href="#管道的结构" class="headerlink" title="管道的结构"></a>管道的结构</h2><p>在Linux中，管道的实现并没有使用专门的数据结构，二是借用了文件系统的file结构和VFS的索引节点iNode。通过将两个文件系统的file结构指向同一个临时的VFS索引节点，而这个VFS索引节点又指向一个物理页面而实现的。</p>
+<h2 id="管道的读写"><a href="#管道的读写" class="headerlink" title="管道的读写"></a>管道的读写</h2><p>管道实现的源代码在fs/pipe.c中，在pipe.c中有很多函数，其中有两个函数比较重要，即管道读函数pipe_read()和管道写函数pipe_write().管道写函数通过将字节复制到VFS索引节点指向的物理内存而写入数据，而管道读函数则通过复制物理内存中的字节而读出数据。当然，内核必须利用一定的机制同步对管道的访问，为此，内核使用了锁、等待队列和信号。</p>
+<p>当写进程向管道中写入时，他利用标准的库函数write（），系统根据库函数传递的文件描述符，可找到该文件的file结构。file结构中指定了用来进行写操作的函数（即写入函数）地址，于是，内核调用该函数完成写操作。写入函数在向内存中写入数据之前，必须首先检查VFS索引节点中的信息，同时满足如下条件是，才能进行实际的内存复制工作：</p>
+<p>内存中有足够的空间可容纳所有要写入的数据；<br>内存没有被读程序锁定。</p>
+<p>如果同时满足上述条件，写入函数首先锁定内存，然后从写进程的地址空间中复制数据到内存。否则，写入进程就休眠在VFS索引节点的等待队列中，接下来，内核将调用调度程序，而调度程序会选择其他进程运行。写入进程实际处于可中断的等待状态，当内存中有足够的空间可以容纳写入数据，或内存被解锁时，读取进程会唤醒写入进程，这时，写入进程将接收到信号。当数据写入内存之后，内存被解锁，而所有休眠在索引节点的读取进程会被唤醒。</p>
+<p>管道的读取过程和写入过程类似。但是，进程可以在没有数据或内存被锁定时立即返回错误信息，而不是阻塞该进程，这依赖于文件或管道的打开模式。反之，进程可以休眠在索引节点的等待队列中等待写入进程写入数据。当所有的进程完成了管道操作之后，管道的索引节点被丢弃，而共享数据页也被释放。</p>
+<p>因为管道的实现涉及很多文件的操作；</p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/排序/">排序</a>
+  <span></span> <a href="/tags/Linux进程间通信/">Linux进程间通信</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/数据结构/">数据结构</a>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/05/03/BubbSort/" data-title="冒泡排序 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/07/18/Linuxpipe/" data-title="linux pipe | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -164,19 +128,11 @@ void BubbSort(int* a, size_t size)
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/05/03/QuickSort/" title="快排实现一">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  快排实现一</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/04/28/Project-文件压缩3/"  title="文件压缩之压缩与解压">
+<a href="/2016/07/03/Linuxexec/"  title="进程程序替换">
  <strong>NEXT:</strong><br/> 
- <span>文件压缩之压缩与解压
+ <span>进程程序替换
 </span>
 </a>
 </div>
@@ -193,7 +149,7 @@ void BubbSort(int* a, size_t size)
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#冒泡排序"><span class="toc-number">1.</span> <span class="toc-text">冒泡排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#linux管道"><span class="toc-number">1.</span> <span class="toc-text">linux管道</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux管道的实现机制"><span class="toc-number">1.1.</span> <span class="toc-text">Linux管道的实现机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#管道的结构"><span class="toc-number">1.2.</span> <span class="toc-text">管道的结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#管道的读写"><span class="toc-number">1.3.</span> <span class="toc-text">管道的读写</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">

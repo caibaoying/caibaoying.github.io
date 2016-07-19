@@ -4,17 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>直接插入排序 | Panda&#39;s blog</title>
+    <title>Linux_deadlock | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="直接插入排序插入排序的基本方法是：每步将一个待排序的记录按其关键字的大小插到前面已经排序的序列中的适当位置，直到全部记录插入完毕为止。
-思想
-代码实现void DictInsertSort(int* a, int n)
-{
-    assert(a);
-    for (int i = 1; i &amp;">
+    <meta name="description" content="死锁产生死锁的原因主要是：（1） 因为系统资源不足。（2） 进程运行推进的顺序不合适。（3） 资源分配不当等。如果系统资源充足，进程的资源请求都能够得到满足，死锁出现的可能性就很低，否则就会因争夺有限的资源而陷入死锁。其次，进程运行推进顺序与速度不同，也可能产生死锁。产生死锁的四个必要条件：（1） ">
     
     
     
@@ -72,15 +67,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/04/InsertSort/" title="直接插入排序" itemprop="url">直接插入排序</a>
+      <a href="/2016/07/19/Linux-deadlock/" title="Linux_deadlock" itemprop="url">Linux_deadlock</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-05-04T04:16:17.000Z" itemprop="datePublished">2016-05-04</time>
-    更新日期:<time datetime="2016-05-05T04:52:03.836Z" itemprop="dateModified">2016-05-05</time>
+    <time datetime="2016-07-19T14:24:49.000Z" itemprop="datePublished">2016-07-19</time>
+    更新日期:<time datetime="2016-07-19T14:30:25.877Z" itemprop="dateModified">2016-07-19</time>
     
   </p>
 </header>
@@ -89,51 +84,30 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#直接插入排序"><span class="toc-number">1.</span> <span class="toc-text">直接插入排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#死锁"><span class="toc-number">1.</span> <span class="toc-text">死锁</span></a></li></ol>
 		</div>
 		
-		<h1 id="直接插入排序"><a href="#直接插入排序" class="headerlink" title="直接插入排序"></a>直接插入排序</h1><p>插入排序的基本方法是：每步将一个待排序的记录按其关键字的大小插到前面已经排序的序列中的适当位置，直到全部记录插入完毕为止。</p>
-<h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p><img src="http://o6l9ml5eb.bkt.clouddn.com/InsertSort1.png" alt=""></p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><pre><code>void DictInsertSort(int* a, int n)
-{
-    assert(a);
-    for (int i = 1; i &lt; n; ++i)
-    {
-        int tmp = a[i];
-        for (int j = i; j &gt;= 0; --j)
-        {
-            if (tmp &lt; a[j - 1])
-            {
-                a[j] = a[j - 1];
-            }
-            else
-            {
-                a[j] = tmp;
-                break;
-            }
-        }
-    }
-}
-</code></pre>  
+		<h1 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h1><p>产生死锁的原因主要是：<br>（1） 因为系统资源不足。<br>（2） 进程运行推进的顺序不合适。<br>（3） 资源分配不当等。<br>如果系统资源充足，进程的资源请求都能够得到满足，死锁出现的可能性就很低，否则<br>就会因争夺有限的资源而陷入死锁。其次，进程运行推进顺序与速度不同，也可能产生死锁。<br>产生死锁的四个必要条件：<br>（1） 互斥条件：一个资源每次只能被一个进程使用。<br>（2） 请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放。<br>（3） 不剥夺条件:进程已获得的资源，在末使用完之前，不能强行剥夺。<br>（4） 循环等待条件:若干进程之间形成一种头尾相接的循环等待资源关系。<br>这四个条件是死锁的必要条件，只要系统发生死锁，这些条件必然成立，而只要上述条件之<br>一不满足，就不会发生死锁。<br>死锁的解除与预防：<br>理解了死锁的原因，尤其是产生死锁的四个必要条件，就可以最大可能地避免、预防和<br>解除死锁。所以，在系统设计、进程调度等方面注意如何不让这四个必要条件成立，如何确<br>定资源的合理分配算法，避免进程永久占据系统资源。此外，也要防止进程在处于等待状态<br>的情况下占用资源。因此，对资源的分配要给予合理的规划。</p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/排序/">排序</a>
+  <span></span> <a href="/tags/多线程/">多线程</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/数据结构/">数据结构</a>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/05/04/InsertSort/" data-title="直接插入排序 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/07/19/Linux-deadlock/" data-title="Linux_deadlock | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -142,19 +116,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/05/04/SelectSort/" title="选择排序">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  选择排序</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/05/04/ShellSort/"  title="希尔排序">
+<a href="/2016/07/19/Linux-Pthread/"  title="线程安全与可重入函数">
  <strong>NEXT:</strong><br/> 
- <span>希尔排序
+ <span>线程安全与可重入函数
 </span>
 </a>
 </div>
@@ -171,7 +137,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#直接插入排序"><span class="toc-number">1.</span> <span class="toc-text">直接插入排序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">1.2.</span> <span class="toc-text">代码实现</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#死锁"><span class="toc-number">1.</span> <span class="toc-text">死锁</span></a></li></ol>
   </div>
 
 <div id="asidepart">

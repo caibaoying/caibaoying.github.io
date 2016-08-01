@@ -76,7 +76,7 @@
     </p>
   <p class="article-time">
     <time datetime="2016-07-23T15:00:55.000Z" itemprop="datePublished">2016-07-23</time>
-    更新日期:<time datetime="2016-07-30T04:44:14.353Z" itemprop="dateModified">2016-07-30</time>
+    更新日期:<time datetime="2016-08-01T00:42:05.663Z" itemprop="dateModified">2016-08-01</time>
     
   </p>
 </header>
@@ -85,13 +85,13 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是I-O多路复用"><span class="toc-number">1.</span> <span class="toc-text">什么是I/O多路复用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#这就是它效率高的原因所在"><span class="toc-number">2.</span> <span class="toc-text">这就是它效率高的原因所在</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#典型应用如下："><span class="toc-number">3.</span> <span class="toc-text">典型应用如下：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重点知识详解"><span class="toc-number">4.</span> <span class="toc-text">重点知识详解</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是I-O多路复用"><span class="toc-number">1.</span> <span class="toc-text">什么是I/O多路复用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#这就是它效率高的原因所在"><span class="toc-number">2.</span> <span class="toc-text">这就是它效率高的原因所在</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#典型应用如下："><span class="toc-number">3.</span> <span class="toc-text">典型应用如下：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重点知识总结"><span class="toc-number">4.</span> <span class="toc-text">重点知识总结</span></a></li></ol>
 		</div>
 		
 		<h2 id="什么是I-O多路复用"><a href="#什么是I-O多路复用" class="headerlink" title="什么是I/O多路复用"></a>什么是I/O多路复用</h2><p>I/O多路复用技术通过把多个I/O的阻塞复用到同一个select的阻塞上，从而使得系统在单线程的情况下可以同时处理多个客户端请求。</p>
 <h2 id="这就是它效率高的原因所在"><a href="#这就是它效率高的原因所在" class="headerlink" title="这就是它效率高的原因所在"></a>这就是它效率高的原因所在</h2><p>除了可以采用多进程和多线程实现并发服务器之外，还可以采用I/O多路复用技术。通过该技术，系统内核缓冲I/O，当某个I/O准备好后，系统通知应用程序I/O刻度或可写，这样应用程序可以马上完成相应的I/O操作，而不需要等待西永完成相应I/O操作，从而应用程序不必因等待I/O操作而阻塞，浪费系统资源。<br>与多进程和多线程技术相比，I/O多路复用技术的最大优势是系统开销小，系统不必创建进程、线程，也不必维护这些进程、线程，从而大大减小了系统的开销。</p>
 <h2 id="典型应用如下："><a href="#典型应用如下：" class="headerlink" title="典型应用如下："></a>典型应用如下：</h2><p>（1）当客户处理多个文件描述符时（一般是交互式输入和网络套接口），必须使用I/O复用。<br>（2）当一个客户机同时处理多个套接口时，而这种情况是可能的，但很少出现；<br>（3）如果一个服务器既要处理TCP，又要处理UDP，一般用I/O多路复用；<br>（4）如果一个TCP服务器既要处理监听套接口，又要处理已连接套接口，一般也要用到I/O复用；<br>（5）如果一个服务器要处理多个服务或多个协议，一般要使用I/O复用。</p>
-<h2 id="重点知识详解"><a href="#重点知识详解" class="headerlink" title="重点知识详解"></a>重点知识详解</h2><p>目前支持I/O多路复用的系统调用有：select，pselect，poll，epoll，在linux网络编程过程中，很长一段时间都使用select做轮询和网络时间通知，然而select的一些固有缺陷导致了它的应用受到了很大的限制，最终Linux不得不在新的内核版本中寻找select的替代方案，最终选择了epoll。epoll与select的原理比较类似，为了克服select的缺点，epoll做了很多重大的改进，总结如下：</p>
+<h2 id="重点知识总结"><a href="#重点知识总结" class="headerlink" title="重点知识总结"></a>重点知识总结</h2><p>目前支持I/O多路复用的系统调用有：select，pselect，poll，epoll，在linux网络编程过程中，很长一段时间都使用select做轮询和网络时间通知，然而select的一些固有缺陷导致了它的应用受到了很大的限制，最终Linux不得不在新的内核版本中寻找select的替代方案，最终选择了epoll。epoll与select的原理比较类似，为了克服select的缺点，epoll做了很多重大的改进，总结如下：</p>
 <p>1、支持一个进程打开的socket描述符（FD)不受限制（仅受限于操作系统的最大文件句柄数）。</p>
 <p>select最大的缺陷就是单个进程所打开的FD是有一定限制的，他由FD_SIZE设置，默认是1024.对于那些需要支持上万个TCP链接的大型服务器来说显然太少了。可以选择修改这个宏，然后重新编译内核，不过这回带来网络效率的下降。我们也可以通过选择多进程的方案（传统的Apache方案）解决这个问题，不过虽然在Linux上创建进程的代价比较小，但任然是不可忽略的。另外，进程间交换数据非常麻烦，对于Java由于没有共享内存，需要通过socket通信或者其他方式进行数据同步，这带来了额外的性能损耗，增加了程序复杂度，所以也不是一种完美的解决方案。值得庆幸的是，epoll并没有这个限制，他所支持的FD上线是系统的最大文件句柄数，这个数字远远大于1024.例如。在1G内存的机器上大学是10万句柄左右，具体的值可以通过cat/proc/sys/fs/filemax查看，通常情况下这个值和系统的内存关系比较大。</p>
 <p>2、I/O效率不会随着FD数目的增加而线性下降。<br>传统的select/poll另一个致命的弱点就是当你拥有一个socket集合，由于网络延时或者链路空缺，任意时刻只有少部分的socket是活跃的，但是select/poll每次调用都会线性扫描全部集合，导致效率呈线性下降。epoll不存在这个问题，它只会对活跃的socket进行操作：这是因为内核实现中epoll是根据每个fd上面的callback函数实现的，那么，只有活跃的socket才会主动的去调用callback函数，其他的idle状态socket则不会。</p>
@@ -109,7 +109,7 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/网络/">网络</a>
+  <a class="article-category-link" href="/categories/网络编程/">网络编程</a>
 </div>
 
 
@@ -146,7 +146,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是I-O多路复用"><span class="toc-number">1.</span> <span class="toc-text">什么是I/O多路复用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#这就是它效率高的原因所在"><span class="toc-number">2.</span> <span class="toc-text">这就是它效率高的原因所在</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#典型应用如下："><span class="toc-number">3.</span> <span class="toc-text">典型应用如下：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重点知识详解"><span class="toc-number">4.</span> <span class="toc-text">重点知识详解</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是I-O多路复用"><span class="toc-number">1.</span> <span class="toc-text">什么是I/O多路复用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#这就是它效率高的原因所在"><span class="toc-number">2.</span> <span class="toc-text">这就是它效率高的原因所在</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#典型应用如下："><span class="toc-number">3.</span> <span class="toc-text">典型应用如下：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重点知识总结"><span class="toc-number">4.</span> <span class="toc-text">重点知识总结</span></a></li></ol>
   </div>
 
 <div id="asidepart">
@@ -162,7 +162,9 @@
 		
 			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>14</sup></a></li>
 		
-			<li><a href="/categories/网络/" title="网络">网络<sup>2</sup></a></li>
+			<li><a href="/categories/网络/" title="网络">网络<sup>1</sup></a></li>
+		
+			<li><a href="/categories/网络编程/" title="网络编程">网络编程<sup>1</sup></a></li>
 		
 		</ul>
 </div>

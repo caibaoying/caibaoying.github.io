@@ -1,0 +1,426 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>epoll详解以及select，poll，epoll的区别 | Panda&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Caibaoying">
+    
+    <meta name="description" content="select，poll，epoll的区别selectselect()系统调用提供一个机制来实现同步多元I/O：#include #include #include int select (int n,fd_set readfds,fd_set writefds,fd_set exceptfds,st">
+    
+    
+    
+    
+    <link rel="alternative" href="/atom.xml## RSS address." title="Panda&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Panda&#39;s blog" title="Panda&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Panda&#39;s blog">Panda&#39;s blog</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:github.com/caibaoying/caibaoying.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/08/01/Linux-select-poll-epoll/" title="epoll详解以及select，poll，epoll的区别" itemprop="url">epoll详解以及select，poll，epoll的区别</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-08-01T00:55:25.000Z" itemprop="datePublished">2016-08-01</time>
+    更新日期:<time datetime="2016-08-01T01:47:45.665Z" itemprop="dateModified">2016-08-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#select，poll，epoll的区别"><span class="toc-number">1.</span> <span class="toc-text">select，poll，epoll的区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#select"><span class="toc-number">1.1.</span> <span class="toc-text">select</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poll"><span class="toc-number">1.2.</span> <span class="toc-text">poll</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#epoll"><span class="toc-number">1.3.</span> <span class="toc-text">epoll</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#select与poll的总结"><span class="toc-number">2.</span> <span class="toc-text">select与poll的总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux下epoll高效的原因所在"><span class="toc-number">3.</span> <span class="toc-text">linux下epoll高效的原因所在</span></a></li></ol>
+		</div>
+		
+		<h2 id="select，poll，epoll的区别"><a href="#select，poll，epoll的区别" class="headerlink" title="select，poll，epoll的区别"></a>select，poll，epoll的区别</h2><h3 id="select"><a href="#select" class="headerlink" title="select"></a>select</h3><font color="black"><br>select()系统调用提供一个机制来实现同步多元I/O：<br><font color="green"><br>#include <sys time.h=""><br>#include <sys types.h=""><br>#include <unistd.h><br><br>int select (int n,<br>fd_set <em>readfds,<br>fd_set </em>writefds,<br>fd_set <em>exceptfds,<br>struct timeval </em>timeout);<br><br>FD_CLR(int fd, fd_set <em>set);<br>FD_ISSET(int fd, fd_set </em>set);<br>FD_SET(int fd, fd_set <em>set);<br>FD_ZERO(fd_set </em>set);<br></unistd.h></sys></sys></font>
+
+<p>调用select()将阻塞，直到指定的文件描述符准备好执行I/O，或者可选参数timeout指定的时间已经过去。<br>监视的文件描述符分为三类set，每一种对应等待不同的事件。readfds中列出的文件描述符被监视是否有数据可供读取（如果读取操作完成则不会阻塞）。writefds中列出的文件描述符则被监视是否写入操作完成而不阻塞。最后，exceptfds中列出的文件描述符则被监视是否发生异常，或者无法控制的数据是否可用（这些状态仅仅应用于套接字）。这三类set可以是NULL，这种情况下select()不监视这一类事件。<br>select()成功返回时，每组set都被修改以使它只包含准备好I/O的文件描述符。例如，假设有两个文件描述符，值分别是7和9，被放在readfds中。当select()返回时，如果7仍然在set中，则这个文件描述符已经准备好被读取而不会阻塞。如果9已经不在set中，则读取它将可能会阻塞（我说可能是因为数据可能正好在select返回后就可用，这种情况下，下一次调用select()将返回文件描述符准备好读取）。<br>第一个参数n，等于所有set中最大的那个文件描述符的值加1。因此，select()的调用者负责检查哪个文件描述符拥有最大值，并且把这个值加1再传递给第一个参数。<br>timeout参数是一个指向timeval结构体的指针，timeval定义如下：</p>
+<font color="green"><br>#include <sys time.h=""><br>struct timeval {<br>long tv_sec; /<em> seconds </em>/<br>long tv_usec; /<em> 10E-6 second </em>/<br>};<br></sys></font>
+
+<p>如果这个参数不是NULL，则即使没有文件描述符准备好I/O，select()也会在经过tv_sec秒和tv_usec微秒后返回。当select()返回时，timeout参数的状态在不同的系统中是未定义的，因此每次调用select()之前必须重新初始化timeout和文件描述符set。实际上，当前版本的Linux会自动修改timeout参数，设置它的值为剩余时间。因此，如果timeout被设置为5秒，然后在文件描述符准备好之前经过了3秒，则这一次调用select()返回时tv_sec将变为2。<br>如果timeout中的两个值都设置为0，则调用select()将立即返回，报告调用时所有未决的事件，但不等待任何随后的事件。<br>文件描述符set不会直接操作，一般使用几个助手宏来管理。这允许Unix系统以自己喜欢的方式来实现文件描述符set。但大多数系统都简单地实现set为位数组。FD_ZERO移除指定set中的所有文件描述符。每一次调用select()之前都应该先调用它。</p>
+<font color="green"><br>fd_set writefds;<br>FD_ZERO(&amp;writefds);<br></font>
+
+<p>FD_SET添加一个文件描述符到指定的set中，FD_CLR则从指定的set中移除一个文件描述符：</p>
+<font color="green"><br>FD_SET(fd, &amp;writefds); /<em> add ‘fd’ to the set </em>/<br>FD_CLR(fd, &amp;writefds); /<em> oops, remove ‘fd’ from the set </em>/<br></font>
+
+<p>设计良好的代码应该永远不使用FD_CLR，而且实际情况中它也确实很少被使用。<br>FD_ISSET测试一个文件描述符是否指定set的一部分。如果文件描述符在set中则返回一个非0整数，不在则返回0。FD_ISSET在调用select()返回之后使用，测试指定的文件描述符是否准备好相关动作：</p>
+<font color="green"><br>if (FD_ISSET(fd, &amp;readfds))<br>/<em> ‘fd’ is readable without blocking! </em>/<br></font>
+
+<p>因为文件描述符set是静态创建的，它们对文件描述符的最大数目强加了一个限制，能够放进set中的最大文件描述符的值由FD_SETSIZE指定。在Linux中，这个值是1024。本章后面我们还将看到这个限制的衍生物。<br>返回值和错误代码<br>select()成功时返回准备好I/O的文件描述符数目，包括所有三个set。如果提供了timeout，返回值可能是0；错误时返回-1，并且设置errno为下面几个值之一：<br>EBADF<br>给某个set提供了无效文件描述符。<br>EINTR<br>等待时捕获到信号，可以重新发起调用。<br>EINVAL<br>参数n为负数，或者指定的timeout非法。<br>ENOMEM<br>不够可用内存来完成请求。<br></p></font><p></p>
+<h3 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h3><font color="black"><br>poll()系统调用是System V的多元I/O解决方案。它解决了select()的几个不足，尽管select()仍然经常使用（多数还是出于习惯，或者打着可移植的名义）：<br><br>#include <sys poll.h=""><br>int poll (struct pollfd <em>fds, unsigned int nfds, int timeout);<br><br>和select()不一样，poll()没有使用低效的三个基于位的文件描述符set，而是采用了一个单独的结构体pollfd数组，由fds指针指向这个组。pollfd结构体定义如下：<br><font color="green"><br>#include <sys poll.h=""><br><br>struct pollfd {<br>int fd; /</sys></font></em> file descriptor <em>/<br>short events; /</em> requested events to watch <em>/<br>short revents; /</em> returned events witnessed */<br>};<br></sys></font>
+
+<p>每一个pollfd结构体指定了一个被监视的文件描述符，可以传递多个结构体，指示poll()监视多个文件描述符。每个结构体的events域是监视该文件描述符的事件掩码，由用户来设置这个域。revents域是文件描述符的操作结果事件掩码。内核在调用返回时设置这个域。events域中请求的任何事件都可能在revents域中返回。合法的事件如下：<br>POLLIN<br>有数据可读。<br>POLLRDNORM<br>有普通数据可读。<br>POLLRDBAND<br>有优先数据可读。<br>POLLPRI<br>有紧迫数据可读。<br>POLLOUT<br>写数据不会导致阻塞。<br>POLLWRNORM<br>写普通数据不会导致阻塞。<br>POLLWRBAND<br>写优先数据不会导致阻塞。<br>POLLMSG<br>SIGPOLL消息可用。</p>
+<p>此外，revents域中还可能返回下列事件：<br>POLLER<br>指定的文件描述符发生错误。<br>POLLHUP<br>指定的文件描述符挂起事件。<br>POLLNVAL<br>指定的文件描述符非法。</p>
+<p>这些事件在events域中无意义，因为它们在合适的时候总是会从revents中返回。使用poll()和select()不一样，你不需要显式地请求异常情况报告。<br>POLLIN | POLLPRI等价于select()的读事件，POLLOUT | POLLWRBAND等价于select()的写事件。POLLIN等价于POLLRDNORM | POLLRDBAND，而POLLOUT则等价于POLLWRNORM。<br>例如，要同时监视一个文件描述符是否可读和可写，我们可以设置events为POLLIN | POLLOUT。在poll返回时，我们可以检查revents中的标志，对应于文件描述符请求的events结构体。如果POLLIN事件被设置，则文件描述符可以被读取而不阻塞。如果POLLOUT被设置，则文件描述符可以写入而不导致阻塞。这些标志并不是互斥的：它们可能被同时设置，表示这个文件描述符的读取和写入操作都会正常返回而不阻塞。<br>timeout参数指定等待的毫秒数，无论I/O是否准备好，poll都会返回。timeout指定为负数值表示无限超时；timeout为0指示poll调用立即返回并列出准备好I/O的文件描述符，但并不等待其它的事件。这种情况下，poll()就像它的名字那样，一旦选举出来，立即返回。<br>返回值和错误代码<br>成功时，poll()返回结构体中revents域不为0的文件描述符个数；如果在超时前没有任何事件发生，poll()返回0；失败时，poll()返回-1，并设置errno为下列值之一：<br>EBADF<br>一个或多个结构体中指定的文件描述符无效。<br>EFAULT<br>fds指针指向的地址超出进程的地址空间。<br>EINTR<br>请求的事件之前产生一个信号，调用可以重新发起。<br>EINVAL<br>nfds参数超出PLIMIT_NOFILE值。<br>ENOMEM<br>可用内存不足，无法完成请求。<br></p>
+<h3 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h3><p>epoll的相关系统调用</p>
+<p>epoll只有epoll_create,epoll_ctl,epoll_wait 3个系统调用。</p>
+<font color="red">1. int epoll_create(int size);</font>
+
+<p>创建一个epoll的句柄。自从linux2.6.8之后，size参数是被忽略的。需要注意的是，当创建好epoll句柄后，它就是会占用一个fd值，在linux下如果查看/proc/进程id/fd/，是能够看到这个fd的，所以在使用完epoll后，必须调用close()关闭，否则可能导致fd被耗尽。</p>
+<font color="red">2. int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);</font>
+
+<p>epoll的事件注册函数，它不同于select()是在监听事件时告诉内核要监听什么类型的事件，而是在这里先注册要监听的事件类型。</p>
+<p>第一个参数是epoll_create()的返回值。</p>
+<p>第二个参数表示动作，用三个宏来表示：</p>
+<p>EPOLL_CTL_ADD：注册新的fd到epfd中；</p>
+<p>EPOLL_CTL_MOD：修改已经注册的fd的监听事件；</p>
+<p>EPOLL_CTL_DEL：从epfd中删除一个fd；</p>
+<p>第三个参数是需要监听的fd。</p>
+<p>第四个参数是告诉内核需要监听什么事，struct epoll_event结构如下：</p>
+<font color="green"><br>01.//保存触发事件的某个文件描述符相关的数据（与具体使用方式有关）<br>02.<br>03.typedef union epoll_data {<br>04.    void <em>ptr;<br>05.    int fd;<br>06.    <strong>uint32_t u32;<br>07.    </strong>uint64_t u64;<br>08.} epoll_data_t;<br>09. //感兴趣的事件和被触发的事件<br>10.struct epoll_event {<br>11.    __uint32_t events; /</em> Epoll events <em>/<br>12.    epoll_data_t data; /</em> User data variable */<br>13.};<br></font>
+
+<p>events可以是以下几个宏的集合：</p>
+<p>EPOLLIN ：表示对应的文件描述符可以读（包括对端SOCKET正常关闭）；</p>
+<p>EPOLLOUT：表示对应的文件描述符可以写；</p>
+<p>EPOLLPRI：表示对应的文件描述符有紧急的数据可读（这里应该表示有带外数据到来）；</p>
+<p>EPOLLERR：表示对应的文件描述符发生错误；</p>
+<p>EPOLLHUP：表示对应的文件描述符被挂断；</p>
+<p>EPOLLET： 将EPOLL设为边缘触发(Edge Triggered)模式，这是相对于水平触发(Level Triggered)来说的。</p>
+<p>EPOLLONESHOT：只监听一次事件，当监听完这次事件之后，如果还需要继续监听这个socket的话，需要再次把这个socket加入到EPOLL队列里</p>
+<font color="red">3. int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout);</font>
+
+<p>收集在epoll监控的事件中已经发送的事件。参数events是分配好的epoll_event结构体数组，epoll将会把发生的事件赋值到events数组中（events不可以是空指针，内核只负责把数据复制到这个events数组中，不会去帮助我们在用户态中分配内存）。maxevents告之内核这个events有多大，这个 maxevents的值不能大于创建epoll_create()时的size，参数timeout是超时时间（毫秒，0会立即返回，-1将不确定，也有说法说是永久阻塞）。如果函数调用成功，返回对应I/O上已准备好的文件描述符数目，如返回0表示已超时。<br></p>
+<h2 id="select与poll的总结"><a href="#select与poll的总结" class="headerlink" title="select与poll的总结"></a>select与poll的总结</h2><font color="black"><br>select本质上是通过设置或者检查存放fd标志位的数据结构来进行下一步处理。这样所带来的缺点是：<br>1 单个进程可监视的fd数量被限制<br>2 需要维护一个用来存放大量fd的数据结构，这样会使得用户空间和内核空间在传递该结构时复制开销大<br>3 对socket进行扫描时是线性扫描<br><br>poll本质上和select没有区别，它将用户传入的数组拷贝到内核空间，然后查询每个fd对应的设备状态，如果设备就绪则在设备等待队列中加入一项并继续遍历，如果遍历完所有fd后没有发现就绪设备，则挂起当前进程，直到设备就绪或者主动超时，被唤醒后它又要再次遍历fd。这个过程经历了多次无谓的遍历。<br>它没有最大连接数的限制，原因是它是基于链表来存储的，但是同样有一个缺点：大量的fd的数组被整体复制于用户态和内核地址空间之间，而不管这样的复制是不是有意义。<br>poll还有一个特点是“水平触发”，如果报告了fd后，没有被处理，那么下次poll时会再次报告该fd。<br><br>poll与select不同，通过一个pollfd数组向内核传递需要关注的事件，故没有描述符个数的限制，pollfd中的events字段和revents分别用于标示关注的事件和发生的事件，故pollfd数组只需要被初始化一次。<br><br>poll的实现机制与select类似，其对应内核中的sys_poll，只不过poll向内核传递pollfd数组，然后对pollfd中的每个描述符进行poll，相比处理fdset来说，poll效率更高。<br><br>poll返回后，需要对pollfd中的每个元素检查其revents值，来得指事件是否发生。<br></font>
+
+<h2 id="linux下epoll高效的原因所在"><a href="#linux下epoll高效的原因所在" class="headerlink" title="linux下epoll高效的原因所在"></a>linux下epoll高效的原因所在</h2><font color="black"><br>开发高性能网络程序时，windows开发者们言必称iocp，linux开发者们则言必称epoll。大家都明白epoll是一种IO多路复用技术，可以非常高效的处理数以百万计的socket句柄，比起以前的select和poll效率高大发了。我们用起epoll来都感觉挺爽，确实快，那么，它到底为什么可以高速处理这么多并发连接呢？<br><br>使用起来很清晰，首先要调用epoll_create建立一个epoll对象。参数size是内核保证能够正确处理的最大句柄数，多于这个最大数时内核可不保证效果。<br><br>epoll_ctl可以操作上面建立的epoll，例如，将刚建立的socket加入到epoll中让其监控，或者把 epoll正在监控的某个socket句柄移出epoll，不再监控它等等。<br><br>epoll_wait在调用时，在给定的timeout时间内，当在监控的所有句柄中有事件发生时，就返回用户态的进程。<br><br>从上面的调用方式就可以看到epoll比select/poll的<font color="purple">优越之处：因为后者每次调用时都要传递你所要监控的所有socket给select/poll系统调用，这意味着需要将用户态的socket列表copy到内核态，如果以万计的句柄会导致每次都要copy几十几百KB的内存到内核态，非常低效。而我们调用epoll_wait时就相当于以往调用select/poll，但是这时却不用传递socket句柄给内核，因为内核已经在epoll_ctl中拿到了要监控的句柄列表。</font>
+
+<p>所以，实际上在你调用epoll_create后，内核就已经在内核态开始准备帮你存储要监控的句柄了，每次调用epoll_ctl只是在往内核的数据结构里塞入新的socket句柄。<br>当一个进程调用epoll_creaqte方法时，Linux内核会创建一个eventpoll结构体，这个结构体中有两个成员与epoll的使用方式密切相关：</p>
+<font color="green"><br>01./<em><br>02.<br>03.  </em> This structure is stored inside the “private_data” member of the file<br>04.<br>05.  <em> structure and represents the main data structure for the eventpoll<br>06.<br>07.  </em> interface.<br>08.<br>09.  <em>/<br>10.<br>11. struct eventpoll {<br>12.<br>13.         /</em> Protect the access to this structure <em>/<br>14.<br>15.         spinlock_t lock;<br>16.<br>17.<br>18.<br>19.         /</em><br>20.<br>21.          <em> This mutex is used to ensure that files are not removed<br>22.<br>23.          </em> while epoll is using them. This is held during the event<br>24.<br>25.          <em> collection loop, the file cleanup path, the epoll file exit<br>26.<br>27.          </em> code and the ctl operations.<br>28.<br>29.          <em>/<br>30.<br>31.         struct mutex mtx;<br>32.<br>33.<br>34.<br>35.         /</em> Wait queue used by sys_epoll_wait() <em>/<br>36.<br>37.         wait_queue_head_t wq;<br>38.<br>39.<br>40.<br>41.         /</em> Wait queue used by file-&gt;poll() <em>/<br>42.<br>43.         wait_queue_head_t poll_wait;<br>44.<br>45.<br>46.<br>47.         /</em> List of ready file descriptors <em>/<br>48.<br>49.         struct list_head rdllist;<br>50.<br>51.<br>52.<br>53.         /</em> RB tree root used to store monitored fd structs <em>/<br>54.<br>55.         struct rb_root rbr;<font color="red">//红黑树根节点，这棵树存储着所有添加到epoll中的事件，也就是这个epoll监控的事件</font><br>56.<br>57.         /</em><br>58.          <em> This is a single linked list that chains all the “struct epitem” that<br>59.          </em> happened while transferring ready events to userspace w/out<br>60.          <em> holding -&gt;lock.<br>61.          </em>/<br>62.         struct epitem <em>ovflist;<br>63.<br>64.         /</em> wakeup_source used when ep_scan_ready_list is running <em>/<br>65.         struct wakeup_source </em>ws;<br>66.<br>67.         /<em> The user that created the eventpoll descriptor </em>/<br>68.         struct user_struct <em>user;<br>69.<br>70.         struct file </em>file;<br>71.<br>72.         /<em> used to optimize loop detection check </em>/<br>73.         int visited;<br>74.         struct list_head visited_list_link;<font color="red">//双向链表中保存着将要通过epoll_wait返回给用户的、满足条件的事件</font><br>75. };<br></font>
+
+<p>每一个epoll对象都有一个独立的eventpoll结构体，这个结构体会在内核空间中创造独立的内存，用于存储使用epoll_ctl方法向epoll对象中添加进来的事件。这样，重复的事件就可以通过红黑树而高效的识别出来。</p>
+<p>在epoll中，对于每一个事件都会建立一个epitem结构体：</p>
+<font color="green"><br>01./<em><br>02.  </em> Each file descriptor added to the eventpoll interface will<br>03.  <em> have an entry of this type linked to the “rbr” RB tree.<br>04.  </em> Avoid increasing the size of this struct, there can be many thousands<br>05.  <em> of these on a server and we do not want this to take another cache line.<br>06.  </em>/<br>07. struct epitem {<br>08.         /<em> RB tree node used to link this structure to the eventpoll RB tree </em>/<br>09.         struct rb_node rbn;<br>10.<br>11.         /<em> List header used to link this structure to the eventpoll ready list </em>/<br>12.         struct list_head rdllink;<br>13.<br>14.         /<em><br>15.          </em> Works together “struct eventpoll”-&gt;ovflist in keeping the<br>16.          <em> single linked chain of items.<br>17.          </em>/<br>18.         struct epitem <em>next;<br>19.<br>20.         /</em> The file descriptor information this item refers to <em>/<br>21.         struct epoll_filefd ffd;<br>22.<br>23.         /</em> Number of active wait queue attached to poll operations <em>/<br>24.         int nwait;<br>25.<br>26.         /</em> List containing poll wait queues <em>/<br>27.         struct list_head pwqlist;<br>28.<br>29.         /</em> The “container” of this item <em>/<br>30.         struct eventpoll </em>ep;<br>31.<br>32.         /<em> List header used to link this item to the “struct file” items list </em>/<br>33.         struct list_head fllink;<br>34.<br>35.         /<em> wakeup_source used when EPOLLWAKEUP is set </em>/<br>36.         struct wakeup_source __rcu <em>ws;<br>37.<br>38.         /</em> The structure that describe the interested events and the source fd */<br>39.         struct epoll_event event;<br>40. };<br><br></font>
+
+<p>此外，epoll还维护了一个双链表，用户存储发生的事件。当epoll_wait调用时，仅仅观察这个list链表里有没有数据即eptime项即可。有数据就返回，没有数据就sleep，等到timeout时间到后即使链表没数据也返回。所以，epoll_wait非常高效。</p>
+<p>而且，通常情况下即使我们要监控百万计的句柄，大多一次也只返回很少量的准备就绪句柄而已，所以，epoll_wait仅需要从内核态copy少量的句柄到用户态而已，如何能不高效？！</p>
+<p>那么，这个准备就绪list链表是怎么维护的呢？当我们执行epoll_ctl时，除了把socket放到epoll文件系统里file对象对应的红黑树上之外，还会给内核中断处理程序注册一个回调函数，告诉内核，如果这个句柄的中断到了，就把它放到准备就绪list链表里。所以，当一个socket上有数据到了，内核在把网卡上的数据copy到内核中后就来把socket插入到准备就绪链表里了。</p>
+<p>如此，一颗红黑树，一张准备就绪句柄链表，少量的内核cache，就帮我们解决了大并发下的socket处理问题。执行epoll_create时，创建了红黑树和就绪链表，执行epoll_ctl时，如果增加socket句柄，则检查在红黑树中是否存在，存在立即返回，不存在则添加到树干上，然后向内核注册回调函数，用于当中断事件来临时向准备就绪链表中插入数据。执行epoll_wait时立刻返回准备就绪链表里的数据即可。<br></p></font><p></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/I-O多路复用/">I/O多路复用</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/网络编程/">网络编程</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/08/01/Linux-select-poll-epoll/" data-title="epoll详解以及select，poll，epoll的区别 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/07/23/Linux多路复用/"  title="I/O多路复用">
+ <strong>NEXT:</strong><br/> 
+ <span>I/O多路复用
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#select，poll，epoll的区别"><span class="toc-number">1.</span> <span class="toc-text">select，poll，epoll的区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#select"><span class="toc-number">1.1.</span> <span class="toc-text">select</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poll"><span class="toc-number">1.2.</span> <span class="toc-text">poll</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#epoll"><span class="toc-number">1.3.</span> <span class="toc-text">epoll</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#select与poll的总结"><span class="toc-number">2.</span> <span class="toc-text">select与poll的总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux下epoll高效的原因所在"><span class="toc-number">3.</span> <span class="toc-text">linux下epoll高效的原因所在</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>16</sup></a></li>
+		
+			<li><a href="/categories/数据结构/" title="数据结构">数据结构<sup>14</sup></a></li>
+		
+			<li><a href="/categories/网络/" title="网络">网络<sup>1</sup></a></li>
+		
+			<li><a href="/categories/网络编程/" title="网络编程">网络编程<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="" title="I/O多路复用">I/O多路复用<sup>2</sup></a></li>
+		
+			<li><a href="" title="Linux">Linux<sup>1</sup></a></li>
+		
+			<li><a href="" title="Linux命令">Linux命令<sup>1</sup></a></li>
+		
+			<li><a href="" title="Linux进程">Linux进程<sup>3</sup></a></li>
+		
+			<li><a href="" title="Linux进程间通信">Linux进程间通信<sup>2</sup></a></li>
+		
+			<li><a href="" title="Linux错误">Linux错误<sup>1</sup></a></li>
+		
+			<li><a href="" title="Makefile">Makefile<sup>1</sup></a></li>
+		
+			<li><a href="" title="Project">Project<sup>3</sup></a></li>
+		
+			<li><a href="" title="linux-C编程">linux-C编程<sup>3</sup></a></li>
+		
+			<li><a href="" title="task_struct">task_struct<sup>1</sup></a></li>
+		
+			<li><a href="" title="vim配置">vim配置<sup>1</sup></a></li>
+		
+			<li><a href="" title="多线程">多线程<sup>1</sup></a></li>
+		
+			<li><a href="" title="排序">排序<sup>9</sup></a></li>
+		
+			<li><a href="" title="路由器">路由器<sup>1</sup></a></li>
+		
+			<li><a href="" title="面试题">面试题<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml## RSS address." target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="widget tag">
+<h3 class="title">我的Github</h3>
+<ul>
+   <li>
+   <a href="https://github.com/caibaoying" title="Baoying Cai's Github">
+       <font color="purple">GitHub</font>
+   </li>
+</ul>
+
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://github.com/caibaoying/caibaoying.github.io" target="_blank" title="Caibaoying">Caibaoying</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"Panda2016"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

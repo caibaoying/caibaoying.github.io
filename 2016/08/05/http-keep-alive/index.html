@@ -4,14 +4,13 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>CentOs下安装Linux虚拟机常见的错误 | Panda&#39;s blog</title>
+    <title>了解http keep-alive基本情况 | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="前言：   我自己安装时遇到了几个问题，当时初次接触觉得不知所措，刚好今天又遇到了连不上网的问题，所以今天整理一下
-安装时可能遇到的问题   问题描述：安装到某一阶段界面一片黑，没有任何反应，而且安装也随即停止
-   解决方法：进入bios里找到虚拟技术一栏开启并保存结果，再次安装即可避免这个问题。">
+    <meta name="description" content="HTTP Keep-Alive 很大程序上被误解了，下面介绍一下它在HTTP/1.0和HTTP/1.1版本下是如何工作的。
+Keep-Alive是HTTP协议中非常重要的一个属性。大家知道HTTP构建在TCP之上。在HTTP早期实现中，每个HTTP请求都要打开一个socket连接。这种做效率很低，因">
     
     
     
@@ -69,15 +68,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/20/LiunxInstall/" title="CentOs下安装Linux虚拟机常见的错误" itemprop="url">CentOs下安装Linux虚拟机常见的错误</a>
+      <a href="/2016/08/05/http-keep-alive/" title="了解http keep-alive基本情况" itemprop="url">了解http keep-alive基本情况</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-05-20T07:34:46.000Z" itemprop="datePublished">2016-05-20</time>
-    更新日期:<time datetime="2016-05-20T08:07:13.793Z" itemprop="dateModified">2016-05-20</time>
+    <time datetime="2016-08-05T02:00:51.000Z" itemprop="datePublished">2016-08-05</time>
+    更新日期:<time datetime="2016-08-05T02:33:10.436Z" itemprop="dateModified">2016-08-05</time>
     
   </p>
 </header>
@@ -86,38 +85,39 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言："><span class="toc-number">1.</span> <span class="toc-text">前言：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装时可能遇到的问题"><span class="toc-number">1.1.</span> <span class="toc-text">安装时可能遇到的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连不上网"><span class="toc-number">1.2.</span> <span class="toc-text">连不上网</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP-1-0"><span class="toc-number">1.</span> <span class="toc-text">HTTP/1.0</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP-1-1"><span class="toc-number">2.</span> <span class="toc-text">HTTP/1.1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Not-reliable（不可靠）"><span class="toc-number">3.</span> <span class="toc-text">Not reliable（不可靠）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Keep-Alive和POST"><span class="toc-number">4.</span> <span class="toc-text">Keep-Alive和POST</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一些容易犯的误区："><span class="toc-number">5.</span> <span class="toc-text">一些容易犯的误区：</span></a></li></ol>
 		</div>
 		
-		<h1 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h1><p>   我自己安装时遇到了几个问题，当时初次接触觉得不知所措，刚好今天又遇到了连不上网的问题，所以今天整理一下</p>
-<h2 id="安装时可能遇到的问题"><a href="#安装时可能遇到的问题" class="headerlink" title="安装时可能遇到的问题"></a>安装时可能遇到的问题</h2><p>   问题描述：安装到某一阶段界面一片黑，没有任何反应，而且安装也随即停止</p>
-<p>   解决方法：进入bios里找到虚拟技术一栏开启并保存结果，再次安装即可避免这个问题。</p>
-<h2 id="连不上网"><a href="#连不上网" class="headerlink" title="连不上网"></a>连不上网</h2><p>先在终端输入su,进入root后再进行一下操作<br>图一：<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxerror1.png" alt=""></p>
-<p>vi 或 vim进入 图一所示的ifcfg-eno16777736<br>将no改为yes wq保存并退出；然后重启下虚拟机即可联网了<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxerror2.png" alt=""></p>
-<p>最后结果：</p>
-<p><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxerror3.png" alt=""></p>
-<p>安装g++,vim,gdb,ctags<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxg++.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxvim.png" alt=""></p>
-<p>先用rpm -qa | grep gdb 查询是否已安装gdb,有则如图所示，没有则<br>输入  rpm -ivh gdb-6.8-37.el5.rpm<br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxgdb.png" alt=""><br><img src="http://o6l9ml5eb.bkt.clouddn.com/blog/linuxlinuxctags.png" alt=""></p>
+		<p>HTTP Keep-Alive 很大程序上被误解了，下面介绍一下它在HTTP/1.0和HTTP/1.1版本下是如何工作的。</p>
+<p>Keep-Alive是HTTP协议中非常重要的一个属性。大家知道HTTP构建在TCP之上。在HTTP早期实现中，每个HTTP请求都要打开一个socket连接。这种做效率很低，因为一个Web 页面中的很多HTTP请求都指向同一个服务器。例如，很多为Web页面中的图片发起的请求都指向一个通用的图片服务器。持久连接的引入解决了多对已请求服务器导致的socket连接低效性的问题。它使浏览器可以再一个单独的连接上进行多个请求。浏览器和服务器使用Connection头ilai指出对Keep-Alive的支持。</p>
+<p>HTTP是一个请求&lt;-&gt;响应模式的典型范例，即客户端向服务器发送一个请求信息，服务器来响应这个信息。在老的HTTP版本中，每个请求都将被创建一个新的客户端-&gt;服务器的连接，在这个连接上发送请求，然后接收请求。这样的模式有一个很大的优点就是，它很简单，很容易理解和编程实现；它也有一个很大的缺点就是，它效率很低，因此Keep-Alive被提出用来解决效率低的问题。</p>
+<h2 id="HTTP-1-0"><a href="#HTTP-1-0" class="headerlink" title="HTTP/1.0"></a>HTTP/1.0</h2><p>HTTP 1.0中默认是关闭的，需要在http头加入”Connection: Keep-Alive”，才能启用Keep-Alive；HTTP 1.1中默认启用Keep-Alive，如果加入”Connection: close”，才关闭。</p>
+<p>在HTTP/1.0版本中，并没有官方的标准来规定Keep-Alive如何工作，因此实际上它是被附加到HTTP/1.0协议上，如果客户端浏览器支持Keep-Alive，那么就在HTTP请求头中添加一个字段 Connection: Keep-Alive，当服务器收到附带有Connection: Keep-Alive的请求时，它也会在响应头中添加一个同样的字段来使用Keep-Alive。这样一来，客户端和服务器之间的HTTP连接就会被保持，不会断开（超过Keep-Alive规定的时间，意外断电等情况除外），当客户端发送另外一个请求时，就使用这条已经建立的连接。</p>
+<h2 id="HTTP-1-1"><a href="#HTTP-1-1" class="headerlink" title="HTTP/1.1"></a>HTTP/1.1</h2><p>目前大部分浏览器都是用HTTP 1.1协议，也就是说默认会启用Keep-Alive的连接请求。列举以下浏览器的并发数作参考：IE6,7在HTTP/1.0中默认最大并发连接数为4，在HTTP/1.1中默认最大并发连接数为2，IE8都为6，Firefox2在HTTP/1.0中默认最大并发连接数为2 在HTTP/1.1中默认最大并发连接数为8，firefox 3默认都是6。</p>
+<p>在HTTP/1.1版本中，官方规定的Keep-Alive使用标准和在HTTP/1.0版本中有些不同，默认情况下所在HTTP1.1中所有连接都被保持，除非在请求头或响应头中指明要关闭：Connection: Close ，这也就是为什么Connection: Keep-Alive字段再没有意义的原因。另外，还添加了一个新的字段Keep-Alive:，因为这个字段并没有详细描述用来做什么，可忽略它。</p>
+<h2 id="Not-reliable（不可靠）"><a href="#Not-reliable（不可靠）" class="headerlink" title="Not reliable（不可靠）"></a>Not reliable（不可靠）</h2><p>HTTP是一个无状态协议，这意味着每个请求都是独立的，Keep-Alive没能改变这个结果。另外，Keep-Alive也不能保证客户端和服务器之间的连接一定是活跃的，在HTTP1.1版本中也如此。唯一能保证的就是当连接被关闭时你能得到一个通知，所以不应该让程序依赖于Keep-Alive的保持连接特性，否则会有意想不到的后果。</p>
+<h2 id="Keep-Alive和POST"><a href="#Keep-Alive和POST" class="headerlink" title="Keep-Alive和POST"></a>Keep-Alive和POST</h2><p>在HTTP1.1细则中规定了在一个POST消息体后面不能有任何字符，还指出了对于某一个特定的浏览器可能并不遵循这个标准（比如在POST消息体的后面放置一个CRLF符）。而据我所知，大部分浏览器在POST消息体后都会自动跟一个CRLF符再发送，如何解决这个问题呢？根据上面的说明在POST请求头中禁止使用Keep-Alive，或者由服务器自动忽略这个CRLF，大部分服务器都会自动忽略，但是在未经测试之前是不可能知道一个服务器是否会这样做。</p>
+<h2 id="一些容易犯的误区："><a href="#一些容易犯的误区：" class="headerlink" title="一些容易犯的误区："></a>一些容易犯的误区：</h2><p>HTTP是一个无状态的面向连接的协议，无状态不代表HTTP不能保持TCP连接，更不能代表HTTP使用的是UDP协议（无连接）<br>从HTTP/1.1起，默认都开启了Keep-Alive，保持连接特性，简单地说，当一个网页打开完成后，客户端和服务器之间用于传输HTTP数据的TCP连接不会关闭，如果客户端再次访问这个服务器上的网页，会继续使用这一条已经建立的连接<br>Keep-Alive不会永久保持连接，它有一个保持时间，可以在不同的服务器软件（如Apache）中设定这个时间</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Linux错误/">Linux错误</a>
+  <span></span> <a href="/tags/http/">http</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  <a class="article-category-link" href="/categories/网络/">网络</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/05/20/LiunxInstall/" data-title="CentOs下安装Linux虚拟机常见的错误 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/08/05/http-keep-alive/" data-title="了解http keep-alive基本情况 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -126,19 +126,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/05/20/LinuxFind/" title="Linux的find命令">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  Linux的find命令</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/05/05/BinaryNodeMaxDistance/"  title="求二叉树中节点的最大距离">
+<a href="/2016/08/01/Linux-select-poll-epoll/"  title="epoll详解以及select，poll，epoll的区别">
  <strong>NEXT:</strong><br/> 
- <span>求二叉树中节点的最大距离
+ <span>epoll详解以及select，poll，epoll的区别
 </span>
 </a>
 </div>
@@ -155,7 +147,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言："><span class="toc-number">1.</span> <span class="toc-text">前言：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装时可能遇到的问题"><span class="toc-number">1.1.</span> <span class="toc-text">安装时可能遇到的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连不上网"><span class="toc-number">1.2.</span> <span class="toc-text">连不上网</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP-1-0"><span class="toc-number">1.</span> <span class="toc-text">HTTP/1.0</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HTTP-1-1"><span class="toc-number">2.</span> <span class="toc-text">HTTP/1.1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Not-reliable（不可靠）"><span class="toc-number">3.</span> <span class="toc-text">Not reliable（不可靠）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Keep-Alive和POST"><span class="toc-number">4.</span> <span class="toc-text">Keep-Alive和POST</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一些容易犯的误区："><span class="toc-number">5.</span> <span class="toc-text">一些容易犯的误区：</span></a></li></ol>
   </div>
 
 <div id="asidepart">

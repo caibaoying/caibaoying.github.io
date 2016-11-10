@@ -4,19 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>求二叉树中节点的最大距离 | Panda&#39;s blog</title>
+    <title>本地提交项目到gitlab | Panda&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Caibaoying">
     
-    <meta name="description" content="求二叉树中节点的最大距离思想计算一个二叉树的最大距离有两个情况:
-
-情况A: 路径经过左子树的最深节点，通过根节点，再到右子树的最深节点。
-
-
-情况B: 路径不穿过根节点，而是左子树或右子树的最大距离路径，取其大者。
-
-首先算出经过根节点的最大路径的距离，其实就是左右子树的深度和；然后分别算出左子树">
+    <meta name="description" content="对gitlab的初步理解一、安装git，个人觉得windows安装客户端，Linux用yum安装好就可以使用了。二、按照github/gitlab官网上给出的步骤先创建密钥，将密钥填写至该填写的位置。三、将本地代码提交至远端服务器   1、本地配置   git config –global user">
     
     
     
@@ -74,15 +67,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/05/BinaryNodeMaxDistance/" title="求二叉树中节点的最大距离" itemprop="url">求二叉树中节点的最大距离</a>
+      <a href="/2016/11/10/gitLab1/" title="本地提交项目到gitlab" itemprop="url">本地提交项目到gitlab</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://github.com/caibaoying/caibaoying.github.io" title="Caibaoying">Caibaoying</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-05-05T04:36:20.000Z" itemprop="datePublished">2016-05-05</time>
-    更新日期:<time datetime="2016-05-05T09:03:08.572Z" itemprop="dateModified">2016-05-05</time>
+    <time datetime="2016-11-10T15:21:44.000Z" itemprop="datePublished">2016-11-10</time>
+    更新日期:<time datetime="2016-11-10T15:45:04.893Z" itemprop="dateModified">2016-11-10</time>
     
   </p>
 </header>
@@ -91,135 +84,30 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#求二叉树中节点的最大距离"><span class="toc-number">1.</span> <span class="toc-text">求二叉树中节点的最大距离</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法描述"><span class="toc-number">1.2.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链接"><span class="toc-number">1.3.</span> <span class="toc-text">链接</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#对gitlab的初步理解"><span class="toc-number">1.</span> <span class="toc-text">对gitlab的初步理解</span></a></li></ol>
 		</div>
 		
-		<h1 id="求二叉树中节点的最大距离"><a href="#求二叉树中节点的最大距离" class="headerlink" title="求二叉树中节点的最大距离"></a>求二叉树中节点的最大距离</h1><h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p>计算一个二叉树的最大距离有两个情况:</p>
-<ul>
-<li>情况A: 路径经过左子树的最深节点，通过根节点，再到右子树的最深节点。</li>
-</ul>
-<ul>
-<li>情况B: 路径不穿过根节点，而是左子树或右子树的最大距离路径，取其大者。</li>
-</ul>
-<p>首先算出经过根节点的最大路径的距离，其实就是左右子树的深度和；然后分别算出左子树和右子树的最大距离，三者比较，最大值就是当前二叉树的最大距离了。</p>
-<p><img src="http://o6l9ml5eb.bkt.clouddn.com/MaxDistance.png" alt=""></p>
-<h2 id="算法描述"><a href="#算法描述" class="headerlink" title="算法描述"></a>算法描述</h2><ul>
-<li><strong>实现一</strong><br>// 数据结构定义<br>struct NODE<br>{<br>  NODE<em> pLeft;        // 左子树<br>  NODE</em> pRight;       // 右子树<br>  int nMaxLeft;       // 左子树中的最长距离<br>  int nMaxRight;      // 右子树中的最长距离<br>  char chValue;       // 该节点的值<br>};</li>
-</ul>
-<p>int nMaxLen = 0;</p>
-<p>// 寻找树中最长的两段距离<br>    void FindMaxLen(NODE* pRoot)<br>    {<br>        // 遍历到叶子节点，返回<br>        if(pRoot == NULL)<br>        {<br>            return;<br>        }</p>
-<pre><code>    // 如果左子树为空，那么该节点的左边最长距离为0
-    if(pRoot -&gt; pLeft == NULL)
-    {
-        pRoot -&gt; nMaxLeft = 0; 
-    }
-
-    // 如果右子树为空，那么该节点的右边最长距离为0
-    if(pRoot -&gt; pRight == NULL)
-    {
-        pRoot -&gt; nMaxRight = 0;
-    }
-
-    // 如果左子树不为空，递归寻找左子树最长距离
-    if(pRoot -&gt; pLeft != NULL)
-    {
-        FindMaxLen(pRoot -&gt; pLeft);
-    }
-
-    // 如果右子树不为空，递归寻找右子树最长距离
-    if(pRoot -&gt; pRight != NULL)
-    {
-        FindMaxLen(pRoot -&gt; pRight);
-    }
-
-    // 计算左子树最长节点距离
-    if(pRoot -&gt; pLeft != NULL)
-    {
-        int nTempMax = 0;
-        if(pRoot -&gt; pLeft -&gt; nMaxLeft &gt; pRoot -&gt; pLeft -&gt; nMaxRight)
-        {
-            nTempMax = pRoot -&gt; pLeft -&gt; nMaxLeft;
-        }
-        else
-        {
-            nTempMax = pRoot -&gt; pLeft -&gt; nMaxRight;
-        }
-        pRoot -&gt; nMaxLeft = nTempMax + 1;
-    }
-
-    // 计算右子树最长节点距离
-    if(pRoot -&gt; pRight != NULL)
-    {
-        int nTempMax = 0;
-        if(pRoot -&gt; pRight -&gt; nMaxLeft &gt; pRoot -&gt; pRight -&gt; nMaxRight)
-        {
-            nTempMax = pRoot -&gt; pRight -&gt; nMaxLeft;
-        }
-        else
-        {
-            nTempMax = pRoot -&gt; pRight -&gt; nMaxRight;
-        }
-        pRoot -&gt; nMaxRight = nTempMax + 1;
-    }
-
-    // 更新最长距离
-    if(pRoot -&gt; nMaxLeft + pRoot -&gt; nMaxRight &gt; nMaxLen)
-    {
-        nMaxLen = pRoot -&gt; nMaxLeft + pRoot -&gt; nMaxRight;
-    }
-}
-</code></pre><ul>
-<li><p><strong>实现二</strong><br>这个问题的核心是，情况A 及 B 需要不同的信息: A 需要子树的最大深度，B 需要子树的最大距离。只要函数能在一个节点同时计算及传回这两个信息，代码就可以很简单:</p>
-<p>  /#include /<iostream></iostream></p>
-<p>  using namespace std;</p>
-<p>  struct NODE<br>  {</p>
-<pre><code>NODE *pLeft;
-NODE *pRight;
-</code></pre><p>  };</p>
-<p>  struct RESULT<br>  {</p>
-<pre><code>int nMaxDistance;
-int nMaxDepth;
-</code></pre><p>  };</p>
-<p>  RESULT GetMaximumDistance(NODE* root)<br>  {</p>
-<pre><code>if (!root)
-{
-    RESULT empty = { 0, -1 };   // trick: nMaxDepth is -1 and then caller will plus 1 to balance it as zero.
-    return empty;
-}
-
-RESULT lhs = GetMaximumDistance(root-&gt;pLeft);
-RESULT rhs = GetMaximumDistance(root-&gt;pRight);
-
-RESULT result;
-result.nMaxDepth = max(lhs.nMaxDepth + 1, rhs.nMaxDepth + 1);
-result.nMaxDistance = max(max(lhs.nMaxDistance, rhs.nMaxDistance), lhs.nMaxDepth + rhs.nMaxDepth + 2);
-return result;
-</code></pre><p>  }<br>计算 result 的代码很清楚；nMaxDepth 就是左子树和右子树的深度加1；nMaxDistance 则取 A 和 B 情况的最大值。</p>
-</li>
-</ul>
-<p>为了减少 NULL 的条件测试，进入函数时，如果节点为 NULL，会传回一个 empty 变量。比较奇怪的是 empty.nMaxDepth = -1，目的是让调用方 +1 后，把当前的不存在的 (NULL) 子树当成最大深度为 0。</p>
-<p>除了提高了可读性，这个解法的另一个优点是减少了 O(节点数目) 大小的侵入式资料，而改为使用 O(树的最大深度) 大小的栈空间。这个设计使函数完全没有副作用(side effect)。</p>
-<h2 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h2><p><a href="http://www.cnblogs.com/miloyip/archive/2010/02/25/binary_tree_distance.html" title="链接" target="_blank" rel="external">http://www.cnblogs.com/miloyip/archive/2010/02/25/binary_tree_distance.html</a></p>
+		<h1 id="对gitlab的初步理解"><a href="#对gitlab的初步理解" class="headerlink" title="对gitlab的初步理解"></a>对gitlab的初步理解</h1><p>一、安装git，个人觉得windows安装客户端，Linux用yum安装好就可以使用了。<br>二、按照github/gitlab官网上给出的步骤先创建密钥，将密钥填写至该填写的位置。<br>三、将本地代码提交至远端服务器<br>   1、本地配置<br>   git config –global user.name ‘caibaoying’<br>   git config –global user.email ‘caibaoying@163.com’ #全局联系方式，可选<br>   2、新建Git项目并提交到Github/gitlab<br>   touch README.md<br>   git init #初始化一个本地库<br>   git add README.md #添加文件到本地仓库<br>   git rm README.md #本地倒库内删除<br>   git commit -m “first commit” #提交到本地库并备注，此时变更仍在本地。<br>   git commit -a  ##自动更新变化的文件，a可以理解为auto<br>   git remote add origin git@github.com:xxx/xxx.git  #增加一个远程服务器的别名。xxx/xxx.git就是用户名/项目名.git<br>   git remote rm xxx   ##删除远程版本库的别名<br>   git push -u origin master #将本地文件提交到Github的remoname版本库中。此时才更新了本地变更到github服务上。<br>   <font color="red"><br>   遇到的错误：<br>      我是先touch了一个README.me文件后，提交成功后，我又想把自己的项目再提交上去，结果就出现了问题；项目无法提交成功，我以为是命令有错误，检查之后发现没问题，最后发现问题出现在README.me和项目不在同一个文件夹下，导致出现了问题<br>   解决办法：<br>      gitlab在远端服务器上以Project为单位，github以仓库为单位，所以提交的文件要在相同的文件夹下，注意此问题。<br>   </font><br>四、未完待续。。。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/面试题/">面试题</a>
+  <span></span> <a href="/tags/gitlab/">gitlab</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/数据结构/">数据结构</a>
+  <a class="article-category-link" href="/categories/Python/">Python</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/05/05/BinaryNodeMaxDistance/" data-title="求二叉树中节点的最大距离 | Panda&#39;s blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://github.com/caibaoying/caibaoying.github.io/2016/11/10/gitLab1/" data-title="本地提交项目到gitlab | Panda&#39;s blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -228,19 +116,11 @@ return result;
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/05/20/LiunxInstall/" title="CentOs下安装Linux虚拟机常见的错误">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  CentOs下安装Linux虚拟机常见的错误</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/05/04/MergeSort/"  title="归并排序">
+<a href="/2016/08/24/Linux信号量/"  title="Linux信号量">
  <strong>NEXT:</strong><br/> 
- <span>归并排序
+ <span>Linux信号量
 </span>
 </a>
 </div>
@@ -257,7 +137,7 @@ return result;
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#求二叉树中节点的最大距离"><span class="toc-number">1.</span> <span class="toc-text">求二叉树中节点的最大距离</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想"><span class="toc-number">1.1.</span> <span class="toc-text">思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法描述"><span class="toc-number">1.2.</span> <span class="toc-text">算法描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#链接"><span class="toc-number">1.3.</span> <span class="toc-text">链接</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#对gitlab的初步理解"><span class="toc-number">1.</span> <span class="toc-text">对gitlab的初步理解</span></a></li></ol>
   </div>
 
 <div id="asidepart">
